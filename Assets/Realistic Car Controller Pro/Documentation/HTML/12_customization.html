@@ -1,0 +1,317 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>12_customization</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Customization</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Customization</a></li>
+<li style='margin-left:20px'><a href='#section-1'>RCCP_Customizer Setup</a></li>
+<li style='margin-left:40px'><a href='#section-2'>Key Properties</a></li>
+<li style='margin-left:40px'><a href='#section-3'>Initialization Timing</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Basic API</a></li>
+<li style='margin-left:20px'><a href='#section-5'>Manager Components</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Paint System</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Wheel Customization</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Spoiler System</a></li>
+<li style='margin-left:40px'><a href='#section-9'>Siren / Police Lights</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Decals</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Neons</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Performance Upgrades</a></li>
+<li style='margin-left:40px'><a href='#section-13'>Tuning Data (RCCP_VehicleUpgrade_CustomizationManager)</a></li>
+<li style='margin-left:20px'><a href='#section-14'>Loadout System</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Loadout Fields</a></li>
+<li style='margin-left:40px'><a href='#section-16'>How Save / Load Works</a></li>
+<li style='margin-left:40px'><a href='#section-17'>Loadout Update Flow</a></li>
+<li style='margin-left:20px'><a href='#section-18'>Customization UI</a></li>
+<li style='margin-left:40px'><a href='#section-19'>UI Prefab References</a></li>
+<li style='margin-left:40px'><a href='#section-20'>Key UI Components</a></li>
+<li style='margin-left:20px'><a href='#section-21'>Networking Considerations</a></li>
+<li style='margin-left:20px'><a href='#section-22'>Common Issues</a></li>
+<li style='margin-left:40px'><a href='#section-23'>Decals or neons not visible</a></li>
+<li style='margin-left:40px'><a href='#section-24'>Loadout not saving or loading</a></li>
+<li style='margin-left:40px'><a href='#section-25'>Paint not applying</a></li>
+<li style='margin-left:40px'><a href='#section-26'>Wheels not changing</a></li>
+<li style='margin-left:40px'><a href='#section-27'>Customization not applied on spawn</a></li>
+<li style='margin-left:20px'><a href='#section-28'>Related Topics</a></li>
+</ul></div>
+<p>RCCP's customization system lets players modify vehicles at runtime: paint color, wheels, spoilers, sirens, decals, neons, and performance upgrades. All customization is managed through the <code>RCCP_Customizer</code> component and its eight manager sub-components, with persistent save/load via PlayerPrefs and JSON serialization.</p>
+<h2 id='section-1'>RCCP_Customizer Setup</h2>
+<p>Add the <code>RCCP_Customizer</code> component to your vehicle (it inherits from <code>RCCP_Component</code>). This is the central hub that coordinates all customization managers and handles save/load operations.</p>
+<h3 id='section-2'>Key Properties</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>saveFileName</code></td><td>string</td><td>Vehicle name</td><td>Unique identifier for saving/loading this vehicle's customization. Auto-populated from the vehicle's GameObject name. <strong>Must be unique per vehicle</strong> if you want independent save slots.</td></tr>
+<tr><td><code>autoInitialize</code></td><td>bool</td><td><code>true</code></td><td>Automatically initializes all manager sub-components. Set to <code>false</code> for networked vehicles where you want to sync customization data manually.</td></tr>
+<tr><td><code>autoLoadLoadout</code></td><td>bool</td><td><code>true</code></td><td>Loads the last saved customization loadout on Awake.</td></tr>
+<tr><td><code>autoSave</code></td><td>bool</td><td><code>true</code></td><td>Automatically saves customization changes.</td></tr>
+<tr><td><code>initializeMethod</code></td><td>InitializeMethod</td><td><code>Start</code></td><td>Controls when managers are initialized. Options: <code>Awake</code>, <code>OnEnable</code>, <code>Start</code>, <code>DelayedWithFixedUpdate</code>.</td></tr>
+</table>
+<h3 id='section-3'>Initialization Timing</h3>
+<p>The <code>InitializeMethod</code> enum controls when all upgrade managers are initialized:</p>
+<table>
+<tr><th>Value</th><th>When</th><th>Use Case</th></tr>
+<tr><td><code>Awake</code></td><td>During Awake()</td><td>When customization must be ready before other components.</td></tr>
+<tr><td><code>OnEnable</code></td><td>During OnEnable()</td><td>When re-enabling a pooled vehicle.</td></tr>
+<tr><td><code>Start</code></td><td>During Start()</td><td>Default. Suitable for most scenarios.</td></tr>
+<tr><td><code>DelayedWithFixedUpdate</code></td><td>After one FixedUpdate frame</td><td>When other physics components need to initialize first.</td></tr>
+</table>
+<h3 id='section-4'>Basic API</h3>
+<pre><code>
+RCCP_Customizer customizer = vehicle.GetComponentInChildren&lt;RCCP_Customizer&gt;();
+
+// Manually initialize all managers
+customizer.Initialize();
+
+// Save the current customization state
+customizer.Save();
+
+// Load previously saved customization
+customizer.Load();
+
+// Delete saved data and restore defaults
+customizer.Delete();
+
+// Hide/show all visual upgrades (spoilers, sirens, decals, neons)
+customizer.HideAll();
+customizer.ShowAll();
+</code></pre>
+<h2 id='section-5'>Manager Components</h2>
+<p>The customizer delegates work to eight specialized manager components. Each manager handles one category of customization and is found automatically via <code>GetComponentInChildren</code>.</p>
+<table>
+<tr><th>Manager</th><th>Visual Component</th><th>Category</th></tr>
+<tr><td><code>RCCP_VehicleUpgrade_PaintManager</code></td><td><code>RCCP_VehicleUpgrade_Paint</code></td><td>Vehicle body color</td></tr>
+<tr><td><code>RCCP_VehicleUpgrade_WheelManager</code></td><td><code>RCCP_VehicleUpgrade_Wheel</code></td><td>Wheel model swapping</td></tr>
+<tr><td><code>RCCP_VehicleUpgrade_SpoilerManager</code></td><td><code>RCCP_VehicleUpgrade_Spoiler</code></td><td>Rear spoilers</td></tr>
+<tr><td><code>RCCP_VehicleUpgrade_SirenManager</code></td><td><code>RCCP_VehicleUpgrade_Siren</code></td><td>Police lights / sirens</td></tr>
+<tr><td><code>RCCP_VehicleUpgrade_DecalManager</code></td><td><code>RCCP_VehicleUpgrade_Decal</code></td><td>Body decals</td></tr>
+<tr><td><code>RCCP_VehicleUpgrade_NeonManager</code></td><td><code>RCCP_VehicleUpgrade_Neon</code></td><td>Underglow neons</td></tr>
+<tr><td><code>RCCP_VehicleUpgrade_UpgradeManager</code></td><td>(see Performance Upgrades)</td><td>Engine, brake, handling, speed</td></tr>
+<tr><td><code>RCCP_VehicleUpgrade_CustomizationManager</code></td><td>(see Tuning Data)</td><td>Suspension, transmission, aids</td></tr>
+</table>
+<h3 id='section-6'>Paint System</h3>
+<p><strong>Components:</strong> <code>RCCP_VehicleUpgrade_PaintManager</code> / <code>RCCP_VehicleUpgrade_Paint</code></p>
+<p>The paint system applies a color to the vehicle body materials at runtime. The selected color is stored in the loadout as a <code>Color</code> value (alpha of <code>0</code> means no paint has been applied).</p>
+<p>Use <code>RCCP_ColorPickerBySliders</code> for a ready-made UI color picker with RGB sliders.</p>
+<pre><code>
+// Apply a custom paint color
+RCCP_VehicleUpgrade_PaintManager paintManager = customizer.PaintManager;
+if (paintManager != null)
+    paintManager.Initialize();  // Applies the color stored in the loadout
+</code></pre>
+<h3 id='section-7'>Wheel Customization</h3>
+<p><strong>Components:</strong> <code>RCCP_VehicleUpgrade_WheelManager</code> / <code>RCCP_VehicleUpgrade_Wheel</code></p>
+<p>Wheel customization swaps the visual wheel models on all axles at runtime. Available wheel presets are defined in the <code>RCCP_ChangableWheels</code> ScriptableObject located in <code>Resources/</code>.</p>
+<p>Each preset in <code>RCCP_ChangableWheels</code> contains a wheel prefab. The wheel index stored in the loadout (<code>-1</code> means no custom wheels applied) maps to this array.</p>
+<p>To add new wheel options:</p>
+<ol>
+<li>Open <code>RCCP_ChangableWheels</code> from <code>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Configuration &gt; Wheels</code>.</li>
+<li>Add your wheel prefab to the list.</li>
+<li>The new wheel is immediately available for selection at runtime.</li>
+</ol>
+<h3 id='section-8'>Spoiler System</h3>
+<p><strong>Components:</strong> <code>RCCP_VehicleUpgrade_SpoilerManager</code> / <code>RCCP_VehicleUpgrade_Spoiler</code></p>
+<p>Add or swap spoiler prefabs on the vehicle. Each <code>RCCP_VehicleUpgrade_Spoiler</code> component represents one spoiler option. The manager tracks which spoiler is active by index (<code>-1</code> means none).</p>
+<h3 id='section-9'>Siren / Police Lights</h3>
+<p><strong>Components:</strong> <code>RCCP_VehicleUpgrade_SirenManager</code> / <code>RCCP_VehicleUpgrade_Siren</code></p>
+<p>Adds police-style flashing lights and optional siren audio to the vehicle. Uses the <code>RCCP_PoliceLights</code> component for the light animation. The siren index (<code>-1</code> means none) identifies which siren preset is active.</p>
+<h3 id='section-10'>Decals</h3>
+<p><strong>Components:</strong> <code>RCCP_VehicleUpgrade_DecalManager</code> / <code>RCCP_VehicleUpgrade_Decal</code></p>
+<p>Applies decal graphics to the vehicle body using Unity's <code>DecalProjector</code> component. Supports up to <strong>4 decal slots</strong>: front, back, left, and right. Each slot has its own index in the loadout (<code>-1</code> means no decal applied).</p>
+<blockquote>
+<p><strong>Important:</strong> Decals require <strong>URP or HDRP</strong>. The <code>DecalProjector</code> component is not available in the built-in render pipeline. If you are using the built-in pipeline, decals will not be visible. See <a href='18_render_pipelines.html'>Render Pipelines</a> for pipeline setup instructions.</p>
+</blockquote>
+<h3 id='section-11'>Neons</h3>
+<p><strong>Components:</strong> <code>RCCP_VehicleUpgrade_NeonManager</code> / <code>RCCP_VehicleUpgrade_Neon</code></p>
+<p>Adds underglow lighting effects beneath the vehicle using <code>DecalProjector</code>. The neon index (<code>-1</code> means none) identifies which neon preset is active.</p>
+<blockquote>
+<p><strong>Important:</strong> Like decals, neons require <strong>URP or HDRP</strong>. They will not work with the built-in render pipeline. See <a href='18_render_pipelines.html'>Render Pipelines</a> for pipeline setup instructions.</p>
+</blockquote>
+<h3 id='section-12'>Performance Upgrades</h3>
+<p><strong>Component:</strong> <code>RCCP_VehicleUpgrade_UpgradeManager</code></p>
+<p>Performance upgrades modify the vehicle's driving characteristics. Four upgrade categories are available, each with its own level (starting at <code>0</code> for stock):</p>
+<table>
+<tr><th>Upgrade</th><th>Component</th><th>Effect</th></tr>
+<tr><td>Engine</td><td><code>RCCP_VehicleUpgrade_Engine</code></td><td>Increases maximum engine torque output</td></tr>
+<tr><td>Brake</td><td><code>RCCP_VehicleUpgrade_Brake</code></td><td>Increases brake force for shorter stopping distances</td></tr>
+<tr><td>Handling</td><td><code>RCCP_VehicleUpgrade_Handling</code></td><td>Improves suspension stiffness and steering response</td></tr>
+<tr><td>Speed</td><td><code>RCCP_VehicleUpgrade_Speed</code></td><td>Increases maximum achievable speed</td></tr>
+</table>
+<p>The <code>RCCP_VehicleUpgrade_UpgradeManager</code> tracks the current level for each category:</p>
+<pre><code>
+RCCP_VehicleUpgrade_UpgradeManager upgradeManager = customizer.UpgradeManager;
+if (upgradeManager != null) {
+    int engineLevel = upgradeManager.EngineLevel;
+    int brakeLevel = upgradeManager.BrakeLevel;
+    int handlingLevel = upgradeManager.HandlingLevel;
+    int speedLevel = upgradeManager.SpeedLevel;
+}
+</code></pre>
+<h3 id='section-13'>Tuning Data (RCCP_VehicleUpgrade_CustomizationManager)</h3>
+<p><strong>Component:</strong> <code>RCCP_VehicleUpgrade_CustomizationManager</code></p>
+<p>This manager handles detailed vehicle tuning stored in <code>RCCP_CustomizationData</code>. Unlike the other upgrade categories that use simple level integers, this stores the full set of tunable parameters:</p>
+<h4>Suspension</h4>
+<table>
+<tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>suspensionDistanceFront</code></td><td>float</td><td><code>0.2</code></td><td>Front axle travel distance in meters</td></tr>
+<tr><td><code>suspensionDistanceRear</code></td><td>float</td><td><code>0.2</code></td><td>Rear axle travel distance in meters</td></tr>
+<tr><td><code>suspensionSpringForceFront</code></td><td>float</td><td><code>55000</code></td><td>Front spring force in Newtons</td></tr>
+<tr><td><code>suspensionSpringForceRear</code></td><td>float</td><td><code>55000</code></td><td>Rear spring force in Newtons</td></tr>
+<tr><td><code>suspensionDamperFront</code></td><td>float</td><td><code>3500</code></td><td>Front damper force</td></tr>
+<tr><td><code>suspensionDamperRear</code></td><td>float</td><td><code>3500</code></td><td>Rear damper force</td></tr>
+<tr><td><code>suspensionTargetFront</code></td><td>float</td><td><code>0.5</code></td><td>Front target position (0 = extended, 1 = compressed)</td></tr>
+<tr><td><code>suspensionTargetRear</code></td><td>float</td><td><code>0.5</code></td><td>Rear target position (0 = extended, 1 = compressed)</td></tr>
+</table>
+<h4>Camber and Transmission</h4>
+<table>
+<tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>cambersFront</code></td><td>float</td><td><code>0</code></td><td>Front wheel camber angle (-15 to 15 degrees)</td></tr>
+<tr><td><code>cambersRear</code></td><td>float</td><td><code>0</code></td><td>Rear wheel camber angle (-15 to 15 degrees)</td></tr>
+<tr><td><code>gearShiftingThreshold</code></td><td>float</td><td><code>0.8</code></td><td>Normalized RPM threshold for automatic gear shifts (0-1)</td></tr>
+<tr><td><code>clutchThreshold</code></td><td>float</td><td><code>0.1</code></td><td>Clutch engagement speed (0-1)</td></tr>
+</table>
+<h4>Stability Aids</h4>
+<table>
+<tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>counterSteering</code></td><td>bool</td><td><code>true</code></td><td>Automatic counter-steering for oversteer recovery</td></tr>
+<tr><td><code>steeringLimiter</code></td><td>bool</td><td><code>true</code></td><td>Limit steering angle based on vehicle speed</td></tr>
+<tr><td><code>ABS</code></td><td>bool</td><td><code>false</code></td><td>Anti-lock Braking System</td></tr>
+<tr><td><code>ESP</code></td><td>bool</td><td><code>false</code></td><td>Electronic Stability Program</td></tr>
+<tr><td><code>TCS</code></td><td>bool</td><td><code>false</code></td><td>Traction Control System</td></tr>
+<tr><td><code>SH</code></td><td>bool</td><td><code>false</code></td><td>Steering Helper (velocity-aligned steering correction)</td></tr>
+<tr><td><code>NOS</code></td><td>bool</td><td><code>false</code></td><td>Nitrous Oxide System</td></tr>
+<tr><td><code>revLimiter</code></td><td>bool</td><td><code>false</code></td><td>Engine rev limiter</td></tr>
+<tr><td><code>automaticTransmission</code></td><td>bool</td><td><code>false</code></td><td>Automatic transmission mode</td></tr>
+</table>
+<h4>Visual Settings</h4>
+<table>
+<tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>headlightColor</code></td><td>Color</td><td>White</td><td>Custom headlight color tint</td></tr>
+<tr><td><code>wheelSmokeColor</code></td><td>Color</td><td>White</td><td>Custom tire smoke particle color</td></tr>
+</table>
+<h2 id='section-14'>Loadout System</h2>
+<p>All customization state is stored in an <code>RCCP_CustomizationLoadout</code> instance, a serializable class that serves as the single source of truth for a vehicle's customization.</p>
+<h3 id='section-15'>Loadout Fields</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>paint</code></td><td>Color</td><td>White (alpha 0)</td><td>Vehicle body paint color. Alpha of <code>0</code> means no paint applied.</td></tr>
+<tr><td><code>spoiler</code></td><td>int</td><td><code>-1</code></td><td>Equipped spoiler index. <code>-1</code> means none.</td></tr>
+<tr><td><code>siren</code></td><td>int</td><td><code>-1</code></td><td>Equipped siren index. <code>-1</code> means none.</td></tr>
+<tr><td><code>wheel</code></td><td>int</td><td><code>-1</code></td><td>Equipped wheel set index. <code>-1</code> means none.</td></tr>
+<tr><td><code>engineLevel</code></td><td>int</td><td><code>0</code></td><td>Engine upgrade level. <code>0</code> is stock.</td></tr>
+<tr><td><code>handlingLevel</code></td><td>int</td><td><code>0</code></td><td>Handling upgrade level. <code>0</code> is stock.</td></tr>
+<tr><td><code>brakeLevel</code></td><td>int</td><td><code>0</code></td><td>Brake upgrade level. <code>0</code> is stock.</td></tr>
+<tr><td><code>speedLevel</code></td><td>int</td><td><code>0</code></td><td>Speed upgrade level. <code>0</code> is stock.</td></tr>
+<tr><td><code>decalIndexFront</code></td><td>int</td><td><code>-1</code></td><td>Front decal index. <code>-1</code> means none.</td></tr>
+<tr><td><code>decalIndexBack</code></td><td>int</td><td><code>-1</code></td><td>Back decal index. <code>-1</code> means none.</td></tr>
+<tr><td><code>decalIndexLeft</code></td><td>int</td><td><code>-1</code></td><td>Left side decal index. <code>-1</code> means none.</td></tr>
+<tr><td><code>decalIndexRight</code></td><td>int</td><td><code>-1</code></td><td>Right side decal index. <code>-1</code> means none.</td></tr>
+<tr><td><code>neonIndex</code></td><td>int</td><td><code>-1</code></td><td>Neon underglow index. <code>-1</code> means none.</td></tr>
+<tr><td><code>customizationData</code></td><td>RCCP_CustomizationData</td><td>(defaults)</td><td>Detailed tuning data (suspension, aids, transmission).</td></tr>
+</table>
+<h3 id='section-16'>How Save / Load Works</h3>
+<p>The customizer uses <code>PlayerPrefs</code> with JSON serialization:</p>
+<pre><code>
+// Saving: serializes the loadout to JSON and stores it in PlayerPrefs
+PlayerPrefs.SetString(saveFileName, JsonUtility.ToJson(loadout));
+
+// Loading: reads JSON from PlayerPrefs and deserializes to a loadout
+loadout = JsonUtility.FromJson&lt;RCCP_CustomizationLoadout&gt;(
+    PlayerPrefs.GetString(saveFileName)
+);
+</code></pre>
+<p>The <code>saveFileName</code> is the PlayerPrefs key. Each vehicle <strong>must</strong> have a unique <code>saveFileName</code> to avoid overwriting another vehicle's data.</p>
+<h3 id='section-17'>Loadout Update Flow</h3>
+<p>When any manager component changes a value, it calls <code>loadout.UpdateLoadout(component)</code> which uses a type-switch to copy the relevant data:</p>
+<ul>
+<li><code>RCCP_VehicleUpgrade_PaintManager</code> updates <code>paint</code></li>
+<li><code>RCCP_VehicleUpgrade_WheelManager</code> updates <code>wheel</code></li>
+<li><code>RCCP_VehicleUpgrade_UpgradeManager</code> updates <code>engineLevel</code>, <code>brakeLevel</code>, <code>handlingLevel</code>, <code>speedLevel</code></li>
+<li><code>RCCP_VehicleUpgrade_SpoilerManager</code> updates <code>spoiler</code></li>
+<li><code>RCCP_VehicleUpgrade_SirenManager</code> updates <code>siren</code></li>
+<li><code>RCCP_VehicleUpgrade_CustomizationManager</code> updates <code>customizationData</code></li>
+<li><code>RCCP_VehicleUpgrade_DecalManager</code> updates <code>decalIndexFront/Back/Left/Right</code></li>
+<li><code>RCCP_VehicleUpgrade_NeonManager</code> updates <code>neonIndex</code></li>
+</ul>
+<h2 id='section-18'>Customization UI</h2>
+<p>RCCP provides ready-made UI prefabs for customization screens, managed through the <code>RCCP_CustomizationSetups</code> ScriptableObject (located in <code>Resources/RCCP_CustomizationSetups.asset</code>).</p>
+<h3 id='section-19'>UI Prefab References</h3>
+<p>The <code>RCCP_CustomizationSetups</code> singleton holds references to UI prefabs for each category:</p>
+<table>
+<tr><th>Field</th><th>Description</th></tr>
+<tr><td><code>paints</code></td><td>Paint color selection UI panel</td></tr>
+<tr><td><code>wheels</code></td><td>Wheel selection UI panel</td></tr>
+<tr><td><code>upgrades</code></td><td>Performance upgrade UI panel</td></tr>
+<tr><td><code>spoilers</code></td><td>Spoiler selection UI panel</td></tr>
+<tr><td><code>sirens</code></td><td>Siren/police light UI panel</td></tr>
+<tr><td><code>decals</code></td><td>Decal selection UI panel</td></tr>
+<tr><td><code>neons</code></td><td>Neon underglow UI panel</td></tr>
+<tr><td><code>customization</code></td><td>Suspension and handling tuning UI panel</td></tr>
+</table>
+<h3 id='section-20'>Key UI Components</h3>
+<table>
+<tr><th>Component</th><th>Description</th></tr>
+<tr><td><code>RCCP_UI_Customizer</code></td><td>Main UI controller for the customization screen</td></tr>
+<tr><td><code>RCCP_UI_CustomizationSlider</code></td><td>Slider UI element for tuning parameters</td></tr>
+<tr><td><code>RCCP_CustomizationTrigger</code></td><td>Collider-based trigger zone that opens customization when the player drives in</td></tr>
+<tr><td><code>RCCP_CustomizationStation</code></td><td>Dedicated customization area with camera positioning</td></tr>
+<tr><td><code>RCCP_ColorPickerBySliders</code></td><td>RGB color picker with sliders for the paint system</td></tr>
+</table>
+<h2 id='section-21'>Networking Considerations</h2>
+<p>For networked multiplayer vehicles:</p>
+<ol>
+<li>Set <code>autoInitialize</code> to <code>false</code> on remote vehicles.</li>
+<li>Sync the <code>RCCP_CustomizationLoadout</code> data across the network using your networking solution (Mirror, Photon, etc.).</li>
+<li>After receiving loadout data, call <code>customizer.Initialize()</code> manually to apply the customization.</li>
+<li>Do not use <code>autoSave</code> or <code>autoLoadLoadout</code> on remote vehicles since their state comes from the network, not from local PlayerPrefs.</li>
+</ol>
+<h2 id='section-22'>Common Issues</h2>
+<h3 id='section-23'>Decals or neons not visible</h3>
+<p>Decals and neons use Unity's <code>DecalProjector</code>, which is only available in <strong>URP</strong> and <strong>HDRP</strong>. If you are using the built-in render pipeline, these features will not work. See <a href='18_render_pipelines.html'>Render Pipelines</a> for migration instructions.</p>
+<h3 id='section-24'>Loadout not saving or loading</h3>
+<ul>
+<li>Verify that <code>saveFileName</code> is set and not empty. It defaults to the vehicle's GameObject name.</li>
+<li>Ensure each vehicle has a <strong>unique</strong> <code>saveFileName</code>. Two vehicles sharing the same name will overwrite each other's data.</li>
+<li>Check that <code>autoSave</code> is enabled, or call <code>customizer.Save()</code> manually after changes.</li>
+</ul>
+<h3 id='section-25'>Paint not applying</h3>
+<ul>
+<li>Confirm the vehicle has a <code>RCCP_VehicleUpgrade_PaintManager</code> and at least one <code>RCCP_VehicleUpgrade_Paint</code> component.</li>
+<li>Check that the vehicle's body material supports color changes (the shader must have a <code>_Color</code> or <code>_BaseColor</code> property).</li>
+</ul>
+<h3 id='section-26'>Wheels not changing</h3>
+<ul>
+<li>Open <code>RCCP_ChangableWheels</code> via <code>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Configuration &gt; Wheels</code> and verify it has entries.</li>
+<li>Ensure the <code>RCCP_VehicleUpgrade_WheelManager</code> component exists on the vehicle.</li>
+</ul>
+<h3 id='section-27'>Customization not applied on spawn</h3>
+<ul>
+<li>Check the <code>initializeMethod</code> setting. If set to <code>DelayedWithFixedUpdate</code>, there will be a one-frame delay before customization is visible.</li>
+<li>Verify <code>autoLoadLoadout</code> is <code>true</code> if you want saved data applied automatically.</li>
+<li>If spawning vehicles from prefabs at runtime, make sure the prefab has the <code>RCCP_Customizer</code> component with a valid <code>saveFileName</code>.</li>
+</ul>
+<h2 id='section-28'>Related Topics</h2>
+<ul>
+<li><a href='03_vehicle_setup.html'>Vehicle Setup</a> -- Adding components to a vehicle</li>
+<li><a href='11_damage_system.html'>Damage System</a> -- Collision damage and repair</li>
+<li><a href='18_render_pipelines.html'>Render Pipelines</a> -- URP/HDRP setup for decals and neons</li>
+<li><a href='25_troubleshooting.html'>Troubleshooting</a> -- General debugging guide</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

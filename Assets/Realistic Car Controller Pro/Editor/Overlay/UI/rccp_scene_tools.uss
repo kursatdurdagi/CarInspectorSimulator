@@ -1,0 +1,641 @@
+.rccp-scene-tools-root {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-color: var(--color-separator);
+    border-bottom-color: var(--color-separator);
+    border-left-color: var(--color-separator);
+    border-right-color: var(--color-separator);
+}
+
+.rccp-scene-tools-root--floating {
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-color: var(--color-border-focus);
+    border-bottom-color: var(--color-border-focus);
+    border-left-color: var(--color-border-focus);
+    border-right-color: var(--color-border-focus);
+}
+
+.rccp-scene-tools-header {
+    background-color: var(--color-header-bg);
+    border-bottom-color: rgba(0, 0, 0, 0.9);
+}
+
+.rccp-scene-tools-header__title {
+    color: var(--color-text);
+    letter-spacing: 0.6px;
+}
+
+.rccp-scene-tools-search {
+    background-color: var(--color-search-bg);
+    border-bottom-color: var(--color-border);
+}
+
+.rccp-scene-tools-search__icon {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-search__field {
+    background-color: rgba(0, 0, 0, 0.14);
+    color: var(--color-text);
+}
+
+.rccp-scene-tools-search__field .unity-text-input {
+    color: var(--color-text);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.rccp-scene-tools-search__clear {
+    color: var(--color-text-secondary);
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color var(--transition-fast) ease-out;
+}
+
+.rccp-scene-tools-search__clear:hover {
+    background-color: rgba(217, 74, 74, 0.8);
+}
+
+.rccp-scene-tools-tabbar {
+    border-bottom-color: var(--color-border);
+}
+
+.rccp-scene-tools-tabbar__button {
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
+    border-bottom-color: rgba(0, 0, 0, 0);
+}
+
+.rccp-scene-tools-tabbar__button:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text);
+}
+
+.rccp-tab-active {
+    background-color: var(--color-tab-active);
+    color: #ffffff;
+    border-bottom-width: 2px;
+    border-bottom-color: var(--color-tab-active-border);
+}
+
+.rccp-tab-active:hover {
+    background-color: var(--color-tab-active);
+}
+
+.rccp-scene-tools-content {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.rccp-scene-tools-footer__separator {
+    background-color: var(--color-separator);
+}
+
+.rccp-scene-tools-footer__label {
+    color: var(--color-text-disabled);
+}
+
+.rccp-scene-tools-button {
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
+    border-radius: var(--radius-sm);
+    border-width: 0;
+}
+
+.rccp-scene-tools-button:hover {
+    background-color: var(--color-border);
+}
+
+.rccp-scene-tools-button--accent {
+    background-color: rgba(255, 87, 34, 0.85);
+    color: #ffffff;
+}
+
+.rccp-scene-tools-button--accent:hover {
+    background-color: rgba(255, 112, 67, 0.9);
+}
+
+.rccp-scene-tools-button--promo {
+    background-color: rgba(33, 150, 243, 0.82);
+    color: #ffffff;
+}
+
+.rccp-scene-tools-button--promo:hover {
+    background-color: rgba(66, 165, 245, 0.9);
+}
+
+.rccp-scene-tools-vehicles__status {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-vehicles__status--neutral {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-vehicles__status--ok {
+    color: var(--color-success);
+}
+
+.rccp-scene-tools-vehicles__status--warn {
+    color: #ffd15f;
+}
+
+.rccp-scene-tools-vehicles__status--error {
+    color: var(--color-error);
+}
+
+.rccp-scene-tools-empty-state {
+    align-items: center;
+    justify-content: center;
+}
+
+.rccp-scene-tools-empty-state__title {
+    color: var(--color-text);
+    -unity-font-style: bold;
+}
+
+.rccp-scene-tools-empty-state__description {
+    color: var(--color-text-secondary);
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+.rccp-scene-tools-vehicle-card {
+    border-radius: var(--radius-sm);
+    border-left-width: 2px;
+    border-left-color: rgba(0, 0, 0, 0);
+    flex-direction: row;
+}
+
+.rccp-scene-tools-vehicle-card__icon {
+    -unity-text-align: middle-center;
+}
+
+.rccp-scene-tools-vehicle-card__info {
+    flex-grow: 1;
+}
+
+.rccp-scene-tools-vehicle-card--ok {
+    background-color: rgba(76, 175, 80, 0.16);
+    border-left-color: rgba(76, 175, 80, 0.95);
+}
+
+.rccp-scene-tools-vehicle-card--warn {
+    background-color: rgba(255, 152, 0, 0.15);
+    border-left-color: rgba(255, 152, 0, 0.95);
+}
+
+.rccp-scene-tools-vehicle-card--error {
+    background-color: rgba(244, 67, 54, 0.16);
+    border-left-color: rgba(244, 67, 54, 0.95);
+}
+
+.rccp-scene-tools-vehicle-card__title {
+    color: var(--color-text);
+    -unity-font-style: bold;
+}
+
+.rccp-scene-tools-vehicle-card__actions {
+    flex-direction: row;
+}
+
+.rccp-scene-tools-vehicle-card__meta {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-status-dot {
+    background-color: var(--color-text-secondary);
+    border-radius: 9999px;
+}
+
+.rccp-scene-tools-status-dot--ok {
+    background-color: var(--color-success);
+}
+
+.rccp-scene-tools-status-dot--warn {
+    background-color: var(--color-warning);
+}
+
+.rccp-scene-tools-status-dot--error {
+    background-color: var(--color-error);
+}
+
+.rccp-scene-tools-vehicles__actions {
+    border-top-color: var(--color-border);
+}
+
+.rccp-scene-tools-section-title {
+    color: var(--color-text-secondary);
+    letter-spacing: 0.4px;
+}
+
+.rccp-scene-tools-diagnostics__status {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-diagnostics__status--ok {
+    color: var(--color-success);
+}
+
+.rccp-scene-tools-diagnostics__status--warn {
+    color: var(--color-warning);
+}
+
+.rccp-scene-tools-diagnostic-card {
+    border-radius: var(--radius-sm);
+    border-left-width: 2px;
+    border-left-color: rgba(0, 0, 0, 0);
+    flex-direction: row;
+    align-items: center;
+}
+
+.rccp-scene-tools-diagnostic-card__icon {
+    -unity-text-align: middle-center;
+}
+
+.rccp-scene-tools-diagnostic-card--success {
+    background-color: rgba(76, 175, 80, 0.12);
+    border-left-color: rgba(76, 175, 80, 0.95);
+}
+
+.rccp-scene-tools-diagnostic-card--warning {
+    background-color: rgba(255, 152, 0, 0.12);
+    border-left-color: rgba(255, 152, 0, 0.95);
+}
+
+.rccp-scene-tools-diagnostic-card--error {
+    background-color: rgba(244, 67, 54, 0.12);
+    border-left-color: rgba(244, 67, 54, 0.95);
+}
+
+.rccp-scene-tools-diagnostic-card--info {
+    background-color: rgba(96, 96, 96, 0.12);
+    border-left-color: rgba(96, 96, 96, 0.9);
+}
+
+.rccp-scene-tools-diagnostic-card__title {
+    color: var(--color-text);
+    flex-grow: 1;
+}
+
+.rccp-scene-tools-diagnostic-card__value {
+    color: var(--color-text);
+    -unity-font-style: bold;
+}
+
+.rccp-scene-tools-diagnostic-detail-card {
+    border-radius: var(--radius-sm);
+    border-left-width: 2px;
+    border-left-color: rgba(0, 0, 0, 0);
+}
+
+.rccp-scene-tools-diagnostic-detail-card__header {
+    flex-direction: row;
+    align-items: center;
+}
+
+.rccp-scene-tools-diagnostic-detail-card__components {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.rccp-scene-tools-diagnostic-detail-card--ok {
+    background-color: rgba(76, 175, 80, 0.12);
+    border-left-color: rgba(76, 175, 80, 0.95);
+}
+
+.rccp-scene-tools-diagnostic-detail-card--warn {
+    background-color: rgba(255, 152, 0, 0.12);
+    border-left-color: rgba(255, 152, 0, 0.95);
+}
+
+.rccp-scene-tools-diagnostic-detail-card--error {
+    background-color: rgba(244, 67, 54, 0.12);
+    border-left-color: rgba(244, 67, 54, 0.95);
+}
+
+.rccp-scene-tools-diagnostic-detail-card__title {
+    color: var(--color-text);
+    -unity-font-style: bold;
+    flex-grow: 1;
+}
+
+.rccp-scene-tools-component-indicator {
+    flex-direction: row;
+    align-items: center;
+}
+
+.rccp-scene-tools-component-indicator__dot {
+    border-radius: 9999px;
+}
+
+.rccp-scene-tools-component-indicator__label {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-component-indicator__label--present {
+    color: var(--color-text);
+}
+
+.rccp-scene-tools-component-indicator__label--missing {
+    color: var(--color-text-disabled);
+}
+
+.rccp-scene-tools-component-indicator__dot--ok {
+    background-color: var(--color-success);
+}
+
+.rccp-scene-tools-component-indicator__dot--error {
+    background-color: var(--color-error);
+}
+
+.rccp-scene-tools-component-indicator__dot--neutral {
+    background-color: var(--color-text-disabled);
+}
+
+.rccp-scene-tools-diagnostics__actions {
+    border-top-color: var(--color-border);
+}
+
+.rccp-scene-tools-setting-card {
+    border-radius: var(--radius-sm);
+    border-left-width: 2px;
+    border-left-color: rgba(0, 0, 0, 0);
+    flex-direction: row;
+    align-items: center;
+}
+
+.rccp-scene-tools-setting-card__icon {
+    -unity-text-align: middle-center;
+}
+
+.rccp-scene-tools-setting-card__info {
+    flex-grow: 1;
+}
+
+.rccp-scene-tools-setting-card--hover {
+    opacity: 0.95;
+}
+
+.rccp-scene-tools-setting-card--success {
+    background-color: rgba(76, 175, 80, 0.16);
+    border-left-color: rgba(76, 175, 80, 0.95);
+}
+
+.rccp-scene-tools-setting-card--error {
+    background-color: rgba(244, 67, 54, 0.16);
+    border-left-color: rgba(244, 67, 54, 0.95);
+}
+
+.rccp-scene-tools-setting-card--warning {
+    background-color: rgba(255, 152, 0, 0.16);
+    border-left-color: rgba(255, 152, 0, 0.95);
+}
+
+.rccp-scene-tools-setting-card--info {
+    background-color: rgba(33, 150, 243, 0.16);
+    border-left-color: rgba(33, 150, 243, 0.95);
+}
+
+.rccp-scene-tools-setting-card--purple {
+    background-color: rgba(126, 87, 194, 0.16);
+    border-left-color: rgba(126, 87, 194, 0.95);
+}
+
+.rccp-scene-tools-setting-card--green {
+    background-color: rgba(76, 125, 76, 0.16);
+    border-left-color: rgba(76, 125, 76, 0.95);
+}
+
+.rccp-scene-tools-setting-card--brown {
+    background-color: rgba(141, 110, 99, 0.16);
+    border-left-color: rgba(141, 110, 99, 0.95);
+}
+
+.rccp-scene-tools-setting-card__title {
+    color: var(--color-text);
+    -unity-font-style: bold;
+}
+
+.rccp-scene-tools-setting-card__description {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-setting-card__arrow {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-settings__actions {
+    border-top-color: var(--color-border);
+}
+
+.rccp-scene-tools-ai__title {
+    color: var(--color-text);
+}
+
+.rccp-scene-tools-ai__description {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-ai__separator {
+    background-color: var(--color-border);
+}
+
+.rccp-scene-tools-ai-card {
+    border-radius: var(--radius-sm);
+    border-left-width: 2px;
+    border-left-color: rgba(0, 0, 0, 0);
+}
+
+.rccp-scene-tools-ai-card--hover {
+    opacity: 0.96;
+}
+
+.rccp-scene-tools-ai-card--green {
+    background-color: var(--tone-green);
+    border-left-color: var(--tone-green-border);
+}
+
+.rccp-scene-tools-ai-card--blue {
+    background-color: var(--tone-blue);
+    border-left-color: var(--tone-blue-border);
+}
+
+.rccp-scene-tools-ai-card--purple {
+    background-color: var(--tone-purple);
+    border-left-color: var(--tone-purple-border);
+}
+
+.rccp-scene-tools-ai-card--neutral {
+    background-color: var(--tone-neutral);
+    border-left-color: var(--tone-neutral-border);
+}
+
+.rccp-scene-tools-ai-card--brown {
+    background-color: var(--tone-brown);
+    border-left-color: var(--tone-brown-border);
+}
+
+.rccp-scene-tools-ai-card--yellow {
+    background-color: var(--tone-yellow);
+    border-left-color: var(--tone-yellow-border);
+}
+
+.rccp-scene-tools-ai-card--red {
+    background-color: var(--tone-red);
+    border-left-color: var(--tone-red-border);
+}
+
+.rccp-scene-tools-ai-card--teal {
+    background-color: var(--tone-teal);
+    border-left-color: var(--tone-teal-border);
+}
+
+.rccp-scene-tools-ai-card__title {
+    color: var(--color-text);
+}
+
+.rccp-scene-tools-ai-card__description {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-ai-card__arrow {
+    color: var(--color-text-secondary);
+}
+
+/* ── Header Buttons ── */
+
+.rccp-scene-tools-header-btn {
+    width: 22px;
+    height: 22px;
+    margin-left: 4px;
+    color: #ffffff;
+    -unity-font-style: bold;
+    border-top-left-radius: var(--radius-sm);
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+    border-width: 0;
+    transition: background-color var(--transition-fast) ease-out;
+}
+
+.rccp-scene-tools-header-btn--close {
+    background-color: var(--color-header-btn-close);
+    font-size: 16px;
+}
+
+.rccp-scene-tools-header-btn--close:hover {
+    background-color: var(--color-header-btn-close-hover);
+}
+
+.rccp-scene-tools-header-btn--accent {
+    background-color: var(--color-header-btn-accent);
+    font-size: 12px;
+}
+
+.rccp-scene-tools-header-btn--accent:hover {
+    background-color: var(--color-header-btn-accent-hover);
+}
+
+.rccp-scene-tools-header-btn--dock {
+    font-size: 14px;
+}
+
+.rccp-scene-tools-header-btn--dock-floating {
+    background-color: var(--color-header-btn-muted);
+}
+
+.rccp-scene-tools-header-btn--dock-floating:hover {
+    background-color: var(--color-header-btn-muted-hover);
+}
+
+.rccp-scene-tools-header-btn--dock-docked {
+    background-color: var(--color-header-btn-accent);
+}
+
+.rccp-scene-tools-header-btn--dock-docked:hover {
+    background-color: var(--color-header-btn-accent-hover);
+}
+
+/* ── First-Time Tooltip ── */
+
+.rccp-scene-tools-tooltip {
+    position: absolute;
+    background-color: rgba(219, 125, 61, 0.96);
+    padding: 12px 16px;
+    top: 40px;
+    left: 10px;
+    right: 10px;
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-color: rgba(255, 179, 128, 0.5);
+    border-bottom-color: rgba(153, 77, 26, 0.8);
+    border-left-color: rgba(230, 128, 77, 0.6);
+    border-right-color: rgba(230, 128, 77, 0.6);
+}
+
+.rccp-scene-tools-tooltip__arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-bottom-width: 10px;
+    border-bottom-color: rgba(219, 125, 61, 0.96);
+    border-left-width: 10px;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-width: 10px;
+    border-right-color: rgba(0, 0, 0, 0);
+    top: -10px;
+    left: 20px;
+}
+
+.rccp-scene-tools-tooltip__title {
+    color: #ffffff;
+    -unity-font-style: bold;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.rccp-scene-tools-tooltip__description {
+    color: rgba(242, 242, 242, 1.0);
+    font-size: 11px;
+    white-space: normal;
+    margin-bottom: 10px;
+}
+
+.rccp-scene-tools-tooltip__dismiss {
+    align-self: flex-end;
+    background-color: rgba(168, 74, 10, 0.9);
+    color: #ffffff;
+    -unity-font-style: bold;
+    padding: 6px 16px;
+    border-top-left-radius: var(--radius-sm);
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+    border-width: 0;
+    transition: background-color var(--transition-fast) ease-out;
+}
+
+.rccp-scene-tools-tooltip__dismiss:hover {
+    background-color: rgba(194, 99, 36, 1.0);
+}
+
+/* ── Action Bar ── */
+
+.rccp-scene-tools-action-bar {
+    flex-direction: row;
+    justify-content: center;
+    border-top-width: 1px;
+    border-top-color: var(--color-border);
+}

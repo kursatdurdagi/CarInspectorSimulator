@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 55c422d76cbb9774cad169b8636114f4
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178967
+  packageName: Realistic Car Controller Pro
+  packageVersion: 2.41.1
+  assetPath: Assets/Realistic Car Controller Pro/Documentation/MD/17_telemetry_debug.md
+  uploadId: 912608

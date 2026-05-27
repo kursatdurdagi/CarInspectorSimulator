@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>08_logitech_steering_wheels</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Logitech Steering Wheels</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Logitech Steering Wheels</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Overview</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Supported Devices</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Prerequisites</a></li>
+<li style='margin-left:20px'><a href='#section-4'>Setup</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Step 1: Connect Your Wheel</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Step 2: Verify in Unity</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Step 3: Check Input Bindings</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Step 4: Customize Bindings (If Needed)</a></li>
+<li style='margin-left:20px'><a href='#section-9'>Input Architecture</a></li>
+<li style='margin-left:20px'><a href='#section-10'>Force Feedback</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Built-In Support</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Logitech Gaming SDK (Optional)</a></li>
+<li style='margin-left:20px'><a href='#section-13'>Pedal Configuration</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Combined Pedals (Single Axis)</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Separate Pedals (Recommended)</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Clutch Pedal</a></li>
+<li style='margin-left:20px'><a href='#section-17'>Testing</a></li>
+<li style='margin-left:20px'><a href='#section-18'>Troubleshooting</a></li>
+<li style='margin-left:20px'><a href='#section-19'>Next Steps</a></li>
+</ul></div>
+<p>Realistic Car Controller Pro supports hardware racing wheels and pedals through Unity's New Input System. Since RCCP uses an <code>InputActionAsset</code> for all input bindings, any USB controller that Unity recognizes as a gamepad or joystick device can drive your vehicles -- including Logitech racing wheels and other third-party peripherals.</p>
+<hr>
+<h2 id='section-1'>Overview</h2>
+<p>RCCP does not include a proprietary Logitech SDK integration. Instead, it relies on Unity's Input System package, which automatically detects connected HID (Human Interface Device) peripherals. When a racing wheel is connected, Unity maps its axes and buttons through the Input System's device layer, and RCCP's <code>RCCP_InputManager</code> reads those values through the same <code>InputActionAsset</code> used for keyboard and gamepad input.</p>
+<p>For advanced features like force feedback, RCCP exposes per-wheel <code>engineBrakeTorqueNm</code> on each <code>RCCP_WheelCollider</code>. A haptic bridge can normalize this runtime torque value to drive resistance effects. Full force feedback requires the Logitech Gaming SDK (available separately on the Unity Asset Store).</p>
+<hr>
+<h2 id='section-2'>Supported Devices</h2>
+<table>
+<tr><th>Device</th><th>Status</th></tr>
+<tr><td>Logitech G29</td><td>Supported via Input System</td></tr>
+<tr><td>Logitech G920</td><td>Supported via Input System</td></tr>
+<tr><td>Logitech G923</td><td>Supported via Input System</td></tr>
+<tr><td>Logitech G27 (legacy)</td><td>Supported if recognized by OS</td></tr>
+<tr><td>Thrustmaster T300 / T150</td><td>Supported if recognized by Input System</td></tr>
+<tr><td>Fanatec wheels</td><td>Supported if recognized by Input System</td></tr>
+<tr><td>Other USB wheels/pedals</td><td>Supported if Unity Input System detects them as a gamepad or joystick</td></tr>
+</table>
+<p>The key requirement is that Windows (or macOS) recognizes the device and Unity's Input System can see it. If the device shows up in Unity's Input Debugger, it will work with RCCP.</p>
+<hr>
+<h2 id='section-3'>Prerequisites</h2>
+<p>Before using a racing wheel with RCCP, make sure you have:</p>
+<ol>
+<li><strong>Unity's Input System package</strong> installed (required by RCCP -- see <a href='01_installation.html'>Installation</a>)</li>
+<li><strong>Device drivers</strong> installed on your OS:</li>
+</ol>
+<ul>
+<li>For Logitech: install <a href='https://www.logitechg.com/innovation/g-hub.html'>Logitech G HUB</a> on Windows</li>
+<li>For Thrustmaster: install the official Thrustmaster drivers</li>
+<li>For Fanatec: install the Fanatec driver package</li>
+</ul>
+<ol>
+<li><strong>Steering wheel connected and recognized</strong> by the operating system before launching Unity</li>
+<li>The RCCP <code>InputActionAsset</code> configured with appropriate bindings (included by default)</li>
+</ol>
+<hr>
+<h2 id='section-4'>Setup</h2>
+<h3 id='section-5'>Step 1: Connect Your Wheel</h3>
+<ol>
+<li>Connect the steering wheel via USB</li>
+<li>Verify it appears in your OS device manager (Windows: Device Manager &gt; Human Interface Devices)</li>
+<li>If using Logitech G HUB, confirm the wheel is detected and calibrated there</li>
+</ol>
+<h3 id='section-6'>Step 2: Verify in Unity</h3>
+<ol>
+<li>Open your Unity project</li>
+<li>Go to <strong>Window &gt; Analysis &gt; Input Debugger</strong></li>
+<li>Your steering wheel should appear in the device list (typically as a Joystick or HID device)</li>
+<li>If the wheel does not appear, check your drivers and USB connection</li>
+</ol>
+<h3 id='section-7'>Step 3: Check Input Bindings</h3>
+<p>RCCP uses an <code>InputActionAsset</code> stored at:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/InputActions/RCCP_InputActions.inputactions
+</code></pre>
+<p>This asset is loaded at runtime through the <code>RCCP_InputActions</code> ScriptableObject in the Resources folder. The default bindings include:</p>
+<table>
+<tr><th>Action</th><th>Keyboard</th><th>Gamepad / Wheel</th></tr>
+<tr><td>Steering</td><td>A/D or Arrow Keys</td><td>Left Stick X axis</td></tr>
+<tr><td>Throttle</td><td>W or Up Arrow</td><td>Right Trigger</td></tr>
+<tr><td>Brake</td><td>S or Down Arrow</td><td>Left Trigger</td></tr>
+<tr><td>Handbrake</td><td>Space</td><td>Button South (A/Cross)</td></tr>
+<tr><td>Gear Shift Up</td><td>Left Shift</td><td>Button North (Y/Triangle)</td></tr>
+<tr><td>Gear Shift Down</td><td>Left Ctrl</td><td>Button West (X/Square)</td></tr>
+<tr><td>NOS</td><td>N</td><td>Button East (B/Circle)</td></tr>
+</table>
+<p>Racing wheels typically map their steering axis to the Left Stick X binding and their pedals to the trigger axes. If your specific wheel maps differently, you can customize the bindings.</p>
+<h3 id='section-8'>Step 4: Customize Bindings (If Needed)</h3>
+<p>If your wheel's axes do not match the default bindings:</p>
+<ol>
+<li>Open the <code>RCCP_InputActions.inputactions</code> asset in Unity's Input Actions editor</li>
+<li>Select the <strong>Vehicle</strong> action map</li>
+<li>Click on the action you want to rebind (e.g., &quot;Steering&quot;)</li>
+<li>Add a new binding or modify the existing gamepad binding to match your wheel's axis</li>
+<li>Save the asset</li>
+</ol>
+<p>Players can also rebind controls at runtime if you include RCCP's rebinding UI. Rebinding overrides are saved to PlayerPrefs via <code>RCCP_RebindSaveLoad</code>.</p>
+<hr>
+<h2 id='section-9'>Input Architecture</h2>
+<p>Understanding how input flows from the wheel to the vehicle helps with debugging:</p>
+<ol>
+<li><strong>Hardware</strong> -- Wheel sends axis/button data over USB</li>
+<li><strong>OS Driver</strong> -- Logitech G HUB (or equivalent) translates raw USB data to standard HID input</li>
+<li><strong>Unity Input System</strong> -- Detects the device and maps it to the <code>InputActionAsset</code> bindings</li>
+<li><strong>RCCP_InputManager</strong> -- Reads the Input System actions each frame and populates <code>RCCP_Inputs</code></li>
+<li><strong>RCCP_CarController</strong> -- Receives input values and applies them to engine, steering, and brakes</li>
+</ol>
+<p>The <code>RCCP_InputManager</code> uses these named actions from the <strong>Vehicle</strong> action map:</p>
+<table>
+<tr><th>Action Name</th><th>Maps To</th></tr>
+<tr><td><code>Throttle</code></td><td><code>inputs.throttleInput</code></td></tr>
+<tr><td><code>Brake</code></td><td><code>inputs.brakeInput</code></td></tr>
+<tr><td><code>Steering</code></td><td><code>inputs.steerInput</code></td></tr>
+<tr><td><code>Handbrake</code></td><td><code>inputs.handbrakeInput</code></td></tr>
+<tr><td><code>NOS</code></td><td><code>inputs.nosInput</code></td></tr>
+<tr><td><code>Clutch</code></td><td><code>inputs.clutchInput</code></td></tr>
+<tr><td><code>Start/Stop Engine</code></td><td>Engine toggle</td></tr>
+<tr><td><code>Gear Shift Up</code> / <code>Gear Shift Down</code></td><td>Gear changes</td></tr>
+</table>
+<hr>
+<h2 id='section-10'>Force Feedback</h2>
+<h3 id='section-11'>Built-In Support</h3>
+<p>RCCP includes an <code>engineBrakeTorqueNm</code> property on each <code>RCCP_WheelCollider</code>. This value is calculated every physics frame by the drivetrain when engine braking is active. It is a torque magnitude in Nm, so normalize it for the range expected by your force feedback SDK.</p>
+<p>You can read this value from your own force feedback script:</p>
+<pre><code>
+RCCP_CarController vehicle = RCCP_SceneManager.Instance.activePlayerVehicle;
+
+// Get engine-brake torque from the front-left wheel and normalize it for haptics
+float brakeTorqueNm = vehicle.FrontAxle.leftWheelCollider.engineBrakeTorqueNm;
+float feedback = Mathf.Clamp01(brakeTorqueNm / 500f);
+</code></pre>
+<h3 id='section-12'>Logitech Gaming SDK (Optional)</h3>
+<p>For full force feedback with Logitech wheels (spring force, damper, surface effects), you need the <strong>Logitech Gaming SDK</strong> package, available on the Unity Asset Store:</p>
+<p><a href='https://assetstore.unity.com/packages/tools/integration/logitech-gaming-sdk-6630'>Logitech Gaming SDK on Asset Store</a></p>
+<p>This is a separate third-party package and is not included with RCCP. Once installed, you can write a bridge script that reads RCCP's <code>engineBrakeTorqueNm</code> and other vehicle state values, then sends normalized values to the Logitech SDK's force feedback API.</p>
+<hr>
+<h2 id='section-13'>Pedal Configuration</h2>
+<p>Most racing wheels have separate pedal axes. Common configurations:</p>
+<h3 id='section-14'>Combined Pedals (Single Axis)</h3>
+<p>Some wheels report throttle and brake on a single combined axis. If this happens:</p>
+<ol>
+<li>Open Input Debugger and identify which axis the pedals use</li>
+<li>You may need to split the axis in your InputAction bindings using composite bindings (positive/negative parts of a single axis)</li>
+</ol>
+<h3 id='section-15'>Separate Pedals (Recommended)</h3>
+<p>Most modern wheels (G29, G920, G923) report throttle and brake as separate axes. The default RCCP bindings expect:</p>
+<ul>
+<li><strong>Throttle</strong> on the Right Trigger axis</li>
+<li><strong>Brake</strong> on the Left Trigger axis</li>
+</ul>
+<p>If your pedals map to different axes, rebind them in the <code>RCCP_InputActions.inputactions</code> asset.</p>
+<h3 id='section-16'>Clutch Pedal</h3>
+<p>RCCP supports clutch input through the <code>Clutch</code> action in the Vehicle action map. If your wheel has a clutch pedal, bind it to this action for manual clutch control.</p>
+<hr>
+<h2 id='section-17'>Testing</h2>
+<ol>
+<li>Connect the steering wheel and launch Unity</li>
+<li>Open <strong>Window &gt; Analysis &gt; Input Debugger</strong> to confirm the device is detected</li>
+<li>Open any RCCP demo scene (e.g., from <a href='19_demo_content.html'>Demo Content</a>)</li>
+<li>Press Play</li>
+<li>Turn the wheel -- the vehicle should steer</li>
+<li>Press the throttle pedal -- the vehicle should accelerate</li>
+<li>Press the brake pedal -- the vehicle should slow down</li>
+<li>If any input does not work, check the Input Debugger to see which axes are being activated and adjust your bindings accordingly</li>
+</ol>
+<hr>
+<h2 id='section-18'>Troubleshooting</h2>
+<table>
+<tr><th>Problem</th><th>Likely Cause</th><th>Solution</th></tr>
+<tr><td>Wheel not detected in Input Debugger</td><td>Driver issue or USB problem</td><td>Ensure G HUB (or equivalent) is running, firmware is updated, try a different USB port</td></tr>
+<tr><td>Steering direction is reversed</td><td>Axis polarity inverted</td><td>Invert the Steering binding in the InputActions asset, or use the &quot;Invert&quot; processor</td></tr>
+<tr><td>Pedals not responding</td><td>Pedal axes not mapped correctly</td><td>Check Input Debugger to identify the correct axes, then update bindings</td></tr>
+<tr><td>Combined pedal axis (throttle + brake on one axis)</td><td>Wheel reports combined axis</td><td>Use composite bindings to split positive and negative ranges</td></tr>
+<tr><td>Force feedback not working</td><td>Logitech SDK not installed</td><td>Install the Logitech Gaming SDK package from the Asset Store</td></tr>
+<tr><td>Wheel works in other games but not Unity</td><td>Input System not detecting HID device</td><td>Check that the Input System package is installed and the device appears in Input Debugger</td></tr>
+<tr><td>Buttons on wheel not doing anything</td><td>Buttons not bound to RCCP actions</td><td>Open InputActions asset and add bindings for the specific button indices</td></tr>
+<tr><td>Input feels laggy or delayed</td><td>Frame rate or input polling</td><td>Ensure the project runs at a stable frame rate; check that the Input System update mode is set to &quot;Dynamic Update&quot; in Project Settings &gt; Input System Package</td></tr>
+</table>
+<hr>
+<h2 id='section-19'>Next Steps</h2>
+<ul>
+<li><a href='05_inputs.html'>Inputs</a> -- Default keyboard and gamepad input bindings</li>
+<li><a href='07_mobile.html'>Mobile</a> -- On-screen mobile touch controls</li>
+<li><a href='04_settings.html'>Settings</a> -- Configure input and controller settings</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

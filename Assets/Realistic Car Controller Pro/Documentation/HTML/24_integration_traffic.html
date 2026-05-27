@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>24_integration_traffic</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Integration: Realistic Traffic Controller</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Integration: Realistic Traffic Controller</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Overview</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Prerequisites</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Installing</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Step 1: Import Realistic Traffic Controller</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Step 2: Import the RCCP Integration Package</a></li>
+<li style='margin-left:20px'><a href='#section-6'>Scripting Symbol</a></li>
+<li style='margin-left:20px'><a href='#section-7'>Setup Guide</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Step 1: Set Up the Traffic Network</a></li>
+<li style='margin-left:40px'><a href='#section-9'>Step 2: Configure RCCP Vehicles as Traffic Participants</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Step 3: Configure the Player Vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Step 4: Layer Configuration</a></li>
+<li style='margin-left:20px'><a href='#section-12'>Features</a></li>
+<li style='margin-left:40px'><a href='#section-13'>Traffic AI Behavior</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Traffic Spawning and Despawning</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Traffic Lights</a></li>
+<li style='margin-left:20px'><a href='#section-16'>Common Issues</a></li>
+<li style='margin-left:40px'><a href='#section-17'>Traffic not spawning</a></li>
+<li style='margin-left:40px'><a href='#section-18'>Traffic colliding with the player</a></li>
+<li style='margin-left:40px'><a href='#section-19'>Traffic vehicles not moving</a></li>
+<li style='margin-left:40px'><a href='#section-20'>Traffic vehicles driving through red lights</a></li>
+<li style='margin-left:40px'><a href='#section-21'>Performance issues with many traffic vehicles</a></li>
+<li style='margin-left:20px'><a href='#section-22'>Removing the Integration</a></li>
+<li style='margin-left:20px'><a href='#section-23'>See Also</a></li>
+</ul></div>
+<p>Realistic Traffic Controller (RTC) is a separate BoneCracker Games product that provides AI-driven traffic simulation with lane-following, traffic lights, intersections, and vehicle spawning. The RCCP integration package allows RTC traffic vehicles to use the RCCP drivetrain, and enables the player's RCCP vehicle to coexist with RTC's traffic system.</p>
+<hr>
+<h2 id='section-1'>Overview</h2>
+<p>Realistic Traffic Controller manages:</p>
+<ul>
+<li><strong>Traffic lanes:</strong> Spline-based road networks that AI vehicles follow.</li>
+<li><strong>Traffic lights:</strong> Intersection signal controllers with configurable phases.</li>
+<li><strong>Traffic spawner:</strong> Spawns and despawns traffic vehicles based on distance from the player.</li>
+<li><strong>Traffic AI:</strong> Lane keeping, speed limits, braking, overtaking, and obstacle avoidance.</li>
+</ul>
+<p>The RCCP integration bridges the two systems so that:</p>
+<ul>
+<li>RCCP vehicles can be used as traffic participants driven by RTC's AI.</li>
+<li>The player's RCCP vehicle is recognized by RTC's traffic system (traffic vehicles avoid it, stop behind it, etc.).</li>
+<li>Traffic vehicles use RCCP's physics and drivetrain for realistic movement.</li>
+</ul>
+<hr>
+<h2 id='section-2'>Prerequisites</h2>
+<ol>
+<li><strong>Realistic Traffic Controller</strong> installed in your project. Purchase from the <a href='https://assetstore.unity.com/packages/tools/behavior-ai/realistic-traffic-controller-258961'>Unity Asset Store</a>.</li>
+<li>Realistic Car Controller Pro installed and working.</li>
+</ol>
+<hr>
+<h2 id='section-3'>Installing</h2>
+<h3 id='section-4'>Step 1: Import Realistic Traffic Controller</h3>
+<p>If RTC is not already in your project, purchase and import it from the Asset Store.</p>
+<h3 id='section-5'>Step 2: Import the RCCP Integration Package</h3>
+<ol>
+<li>Open the RCCP Welcome Window: <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Welcome Window</strong>.</li>
+<li>Navigate to the <strong>Addons</strong> tab.</li>
+<li>Under <strong>Realistic Traffic Controller</strong>, you will see two buttons:</li>
+</ol>
+<ul>
+<li><strong>Download and import Realistic Traffic Controller</strong> -- Opens the RTC Asset Store page.</li>
+<li><strong>Import Integration For Realistic Traffic Controller</strong> -- Imports the RCCP integration package.</li>
+</ul>
+<ol>
+<li>Click <strong>Import Integration For Realistic Traffic Controller</strong>.</li>
+<li>Unity imports <code>RCCP_RealisticTrafficControllerIntegration.unitypackage</code> from <code>Addons/Installers/</code>.</li>
+<li>Wait for Unity to recompile.</li>
+</ol>
+<p>The installer package is located at:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/Addons/Installers/RCCP_RealisticTrafficControllerIntegration.unitypackage
+</code></pre>
+<p>After import, the integration files are installed to:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/Addons/Installed/Realistic Traffic Controller/
+</code></pre>
+<hr>
+<h2 id='section-6'>Scripting Symbol</h2>
+<p>The RTC integration uses the <code>BCG_RTRC</code> scripting symbol. This is typically set automatically when RTC and the integration package are both present.</p>
+<table>
+<tr><th>Symbol</th><th>Source</th><th>Required</th></tr>
+<tr><td><code>BCG_RTRC</code></td><td>RTC integration (automatic)</td><td>Yes</td></tr>
+</table>
+<p>The <code>BCG_ENTEREXIT</code> vehicle script also references <code>BCG_RTC</code> for camera detection when RTC vehicles are used with the enter-exit system.</p>
+<hr>
+<h2 id='section-7'>Setup Guide</h2>
+<h3 id='section-8'>Step 1: Set Up the Traffic Network</h3>
+<p>Follow RTC's documentation to create your traffic lane network:</p>
+<ol>
+<li>Create road splines using RTC's road editor.</li>
+<li>Set up intersections with traffic light controllers.</li>
+<li>Configure lane speed limits and connectivity.</li>
+<li>Place the RTC traffic spawner in the scene.</li>
+</ol>
+<h3 id='section-9'>Step 2: Configure RCCP Vehicles as Traffic Participants</h3>
+<p>The integration allows RCCP vehicle prefabs to be used as traffic vehicles:</p>
+<ol>
+<li>Create RCCP vehicle prefabs that will serve as traffic vehicles.</li>
+<li>Register them with RTC's vehicle pool (in the RTC traffic spawner configuration).</li>
+<li>The integration component bridges RTC's AI input to RCCP's input system, so the traffic AI controls throttle, brake, and steering through RCCP's drivetrain.</li>
+</ol>
+<h3 id='section-10'>Step 3: Configure the Player Vehicle</h3>
+<p>The player's RCCP vehicle must be recognized by the traffic system:</p>
+<ol>
+<li>Ensure the player vehicle is on the correct physics layer.</li>
+<li>RTC's traffic AI uses raycasting and layer-based detection to identify obstacles. The player vehicle's layer must be included in RTC's obstacle detection layers.</li>
+<li>Configure RTC's settings to treat the player's layer as a &quot;vehicle&quot; obstacle.</li>
+</ol>
+<h3 id='section-11'>Step 4: Layer Configuration</h3>
+<p>Proper layer setup is critical for traffic interaction:</p>
+<table>
+<tr><th>Layer Purpose</th><th>Description</th></tr>
+<tr><td>Traffic vehicles</td><td>Layer assigned to RTC-managed traffic vehicles.</td></tr>
+<tr><td>Player vehicle</td><td>Layer assigned to the player's RCCP vehicle.</td></tr>
+<tr><td>Road/terrain</td><td>Layer for road surfaces and terrain.</td></tr>
+</table>
+<p>Both traffic and player vehicle layers must be included in each other's collision and detection matrices. Configure this in <strong>Edit &gt; Project Settings &gt; Physics</strong> (Layer Collision Matrix).</p>
+<hr>
+<h2 id='section-12'>Features</h2>
+<h3 id='section-13'>Traffic AI Behavior</h3>
+<p>When using RCCP vehicles as traffic participants, the traffic AI:</p>
+<ul>
+<li>Follows assigned traffic lanes at configured speed limits.</li>
+<li>Obeys traffic light signals (stops at red, proceeds on green).</li>
+<li>Brakes when approaching slower vehicles or obstacles.</li>
+<li>Detects and avoids the player vehicle.</li>
+<li>Uses RCCP's steering, throttle, and brake inputs through the integration bridge.</li>
+</ul>
+<h3 id='section-14'>Traffic Spawning and Despawning</h3>
+<p>RTC's traffic spawner creates and destroys traffic vehicles based on distance from a reference point (usually the player camera):</p>
+<ul>
+<li>Vehicles are spawned on lanes within the spawn radius.</li>
+<li>Vehicles beyond the despawn radius are removed.</li>
+<li>This keeps the active vehicle count manageable for performance.</li>
+</ul>
+<h3 id='section-15'>Traffic Lights</h3>
+<p>RTC manages traffic light phases at intersections. Traffic vehicles respect signals automatically. The player is not forced to stop at red lights (no gameplay enforcement), but traffic vehicles will stop, creating realistic intersection behavior.</p>
+<hr>
+<h2 id='section-16'>Common Issues</h2>
+<h3 id='section-17'>Traffic not spawning</h3>
+<ul>
+<li><strong>Check RTC setup.</strong> Ensure the RTC traffic spawner is in the scene and configured with vehicle prefabs.</li>
+<li><strong>Check lanes.</strong> Traffic vehicles need valid lane splines to follow. Verify that lanes are properly connected.</li>
+<li><strong>Check spawn distance.</strong> If the spawn radius is too small or the player is not near any lanes, no traffic will appear.</li>
+<li><strong>Check the integration.</strong> Ensure the integration package is imported and the scripting symbol is defined.</li>
+</ul>
+<h3 id='section-18'>Traffic colliding with the player</h3>
+<ul>
+<li><strong>Check layer setup.</strong> The player vehicle and traffic vehicles must be on layers that are included in each other's detection masks.</li>
+<li><strong>Check physics layers.</strong> In <strong>Edit &gt; Project Settings &gt; Physics</strong>, ensure the traffic and player layers can collide.</li>
+<li><strong>Check RTC obstacle detection.</strong> RTC's AI uses raycasts to detect obstacles. The player vehicle's layer must be in the obstacle detection layer mask.</li>
+</ul>
+<h3 id='section-19'>Traffic vehicles not moving</h3>
+<ul>
+<li><strong>Check RCCP integration.</strong> The integration component must be present on traffic vehicle prefabs to bridge RTC's AI commands to RCCP's input system.</li>
+<li><strong>Check vehicle setup.</strong> Each traffic vehicle must be a valid RCCP vehicle (with <code>RCCP_CarController</code>, engine, gearbox, etc.).</li>
+<li><strong>Check <code>canControl</code>.</strong> RCCP vehicles default to <code>canControl = false</code> in some configurations. The integration should set this appropriately.</li>
+</ul>
+<h3 id='section-20'>Traffic vehicles driving through red lights</h3>
+<ul>
+<li><strong>Check traffic light configuration.</strong> Verify that RTC's traffic light controllers are properly assigned to their intersection lanes.</li>
+<li><strong>Check stop line positions.</strong> RTC uses stop line positions to determine where vehicles should wait at red lights.</li>
+</ul>
+<h3 id='section-21'>Performance issues with many traffic vehicles</h3>
+<ul>
+<li>Reduce the maximum traffic vehicle count in RTC's spawner settings.</li>
+<li>Reduce the spawn/despawn radius.</li>
+<li>Use simpler RCCP vehicle configurations for traffic (fewer components, simpler physics).</li>
+<li>Consider disabling unnecessary RCCP features on traffic vehicles (e.g., damage, customization).</li>
+</ul>
+<hr>
+<h2 id='section-22'>Removing the Integration</h2>
+<ol>
+<li>Delete the folder: <code>Assets/Realistic Car Controller Pro/Addons/Installed/Realistic Traffic Controller/</code>.</li>
+<li>If the <code>BCG_RTRC</code> scripting symbol is still defined, remove it from <strong>Edit &gt; Project Settings &gt; Player &gt; Scripting Define Symbols</strong>.</li>
+<li>Wait for Unity to recompile.</li>
+</ol>
+<p>Note: Removing the integration does not remove RTC itself. RTC will continue to work independently; it simply will not use RCCP vehicles as traffic participants.</p>
+<hr>
+<h2 id='section-23'>See Also</h2>
+<ul>
+<li><a href='03_vehicle_setup.html'>Vehicle Setup</a> -- Creating RCCP vehicles (also for traffic vehicle prefabs).</li>
+<li><a href='13_ai_vehicles.html'>AI Vehicles</a> -- RCCP's built-in AI vehicle navigation (separate from RTC traffic).</li>
+<li><a href='04_settings.html'>Settings</a> -- Global RCCP settings.</li>
+<li><a href='20_integration_enter_exit.html'>Integration: Enter-Exit</a> -- Character enter-exit system (compatible with RTC vehicles via <code>BCG_RTC</code> symbol).</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

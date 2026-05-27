@@ -1,0 +1,51 @@
+Third-Party Notices
+===================
+
+Realistic Car Controller Pro includes the following third-party assets.
+Each is used under the terms of its respective license.
+
+
+1. good times rg (Font)
+-----------------------
+   File:     Font/good times rg.ttf
+   Author:   Ray Larabie / Typodermic Fonts Inc.
+   License:  Typodermic Fonts Freeware License (2014)
+   Website:  http://typodermicfonts.com
+   Usage:    Free for commercial use. Used in editor GUISkin only (not
+             embedded in builds). See "Font/good times rg LICENSE.html"
+             for full license terms.
+
+
+2. AppleTea (Font)
+------------------
+   File:     Font/AppleTea.otf
+   Author:   Wahyu Eka Prasetya
+   License:  Free for personal and commercial use
+   Usage:    Used in UI text elements.
+
+
+3. RCCP_PlayerPrefsX (Script)
+-----------------------------
+   File:     Scripts/Editors/RCCP_PlayerPrefsX.cs
+   Origin:   ArrayPrefs2 v1.4
+   Author:   Eric Haines (Eric5h5)
+   License:  Public domain / Creative Commons Zero (CC0)
+   Website:  http://wiki.unity3d.com/index.php/ArrayPrefs2
+   Usage:    Extended PlayerPrefs utility supporting arrays and additional
+             data types (bool, Vector2, Vector3, Quaternion, Color).
+
+
+4. Model_Skyline (3D Model)
+---------------------------
+   Author:   BUMSTRUM (3DMaesen)
+   License:  Used with permission of the author
+   Usage:    Demo vehicle 3D model. Used in RCCP demo scenes only for
+             showcase and testing purposes.
+
+
+5. Model_Sofie@Driving (3D Model / Animation)
+---------------------------------------------
+   Author:   BUMSTRUM (3DMaesen)
+   License:  Used with permission of the author
+   Usage:    Driver character model with driving animation. Used in RCCP
+             demo scenes only for showcase and testing purposes.

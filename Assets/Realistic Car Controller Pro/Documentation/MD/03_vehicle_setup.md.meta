@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fe753f26ddebd1c4c9865be783ee113c
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178967
+  packageName: Realistic Car Controller Pro
+  packageVersion: 2.41.1
+  assetPath: Assets/Realistic Car Controller Pro/Documentation/MD/03_vehicle_setup.md
+  uploadId: 912608

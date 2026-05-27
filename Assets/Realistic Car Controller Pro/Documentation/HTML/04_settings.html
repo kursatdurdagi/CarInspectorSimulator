@@ -1,0 +1,466 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>04_settings</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Settings</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Settings</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Accessing Settings</a></li>
+<li style='margin-left:40px'><a href='#section-2'>Runtime Clone (Important)</a></li>
+<li style='margin-left:20px'><a href='#section-3'>General Settings</a></li>
+<li style='margin-left:20px'><a href='#section-4'>Behavior Presets</a></li>
+<li style='margin-left:40px'><a href='#section-5'>How to use behaviors</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Stability Aids</a></li>
+<li style='margin-left:40px'><a href='#section-7'>ESP V2 (Yaw-Rate Bicycle Model)</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Steering Configuration</a></li>
+<li style='margin-left:40px'><a href='#section-9'>Differential Type</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Per-Vehicle Suspension Multipliers (V2.31.1+)</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Drift Mode Settings</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Gear Shifting</a></li>
+<li style='margin-left:40px'><a href='#section-13'>Anti-Roll Bar</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Wheel Friction</a></li>
+<li style='margin-left:20px'><a href='#section-15'>Wheel Physics</a></li>
+<li style='margin-left:20px'><a href='#section-16'>Units and Display</a></li>
+<li style='margin-left:20px'><a href='#section-17'>Input Rebinding</a></li>
+<li style='margin-left:20px'><a href='#section-18'>Mobile Settings</a></li>
+<li style='margin-left:40px'><a href='#section-19'>Controller Types</a></li>
+<li style='margin-left:20px'><a href='#section-20'>Layer Configuration</a></li>
+<li style='margin-left:40px'><a href='#section-21'>Layer Purposes</a></li>
+<li style='margin-left:20px'><a href='#section-22'>Light Rendering</a></li>
+<li style='margin-left:20px'><a href='#section-23'>Prefab References</a></li>
+<li style='margin-left:40px'><a href='#section-24'>Camera Prefabs</a></li>
+<li style='margin-left:40px'><a href='#section-25'>UI Prefabs</a></li>
+<li style='margin-left:40px'><a href='#section-26'>Particle Prefabs</a></li>
+<li style='margin-left:40px'><a href='#section-27'>Other Prefabs</a></li>
+<li style='margin-left:20px'><a href='#section-28'>Audio Settings</a></li>
+<li style='margin-left:40px'><a href='#section-29'>Engine Sounds</a></li>
+<li style='margin-left:40px'><a href='#section-30'>Effect Sounds</a></li>
+<li style='margin-left:40px'><a href='#section-31'>Audio Mixer</a></li>
+<li style='margin-left:20px'><a href='#section-32'>Rendering Settings</a></li>
+<li style='margin-left:20px'><a href='#section-33'>Recommended Settings for Common Scenarios</a></li>
+<li style='margin-left:40px'><a href='#section-34'>Realistic Driving Simulation</a></li>
+<li style='margin-left:40px'><a href='#section-35'>Arcade Racing</a></li>
+<li style='margin-left:40px'><a href='#section-36'>Drift Game</a></li>
+<li style='margin-left:20px'><a href='#section-37'>Next Steps</a></li>
+</ul></div>
+<p>Realistic Car Controller Pro stores all of its global configuration in a single ScriptableObject called <code>RCCP_Settings</code>. This is the central control panel for physics behavior, mobile input, layer management, audio defaults, and much more. Before you start building vehicles, it is worth spending a few minutes here to understand what each section does and why it matters.</p>
+<hr>
+<h2 id='section-1'>Accessing Settings</h2>
+<p>There are three ways to open and work with RCCP Settings:</p>
+<ul>
+<li><strong>From the menu:</strong> Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Settings</li>
+<li><strong>From code (editor or initialization):</strong> <code>RCCP_Settings.Instance</code></li>
+<li><strong>File location on disk:</strong> <code>Assets/Realistic Car Controller Pro/Resources/RCCP_Settings.asset</code></li>
+</ul>
+<h3 id='section-2'>Runtime Clone (Important)</h3>
+<p>At runtime, RCCP automatically creates a clone of the Settings asset so that any changes made during play mode do not overwrite your saved configuration. All built-in RCCP components already use this clone internally.</p>
+<p>If you are writing your own scripts and need to read settings at runtime, always use:</p>
+<pre><code>
+RCCP_Settings runtimeSettings = RCCP_RuntimeSettings.RCCPSettingsInstance;
+</code></pre>
+<p>Using <code>RCCP_Settings.Instance</code> directly at runtime would modify the original asset, which could cause unexpected changes that persist after you exit play mode.</p>
+<hr>
+<h2 id='section-3'>General Settings</h2>
+<p>These settings affect every vehicle in your project.</p>
+<table>
+<tr><th>Setting</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td>Multithreading</td><td>bool</td><td>true</td><td>Enables asynchronous processing for damage calculations on supported platforms. Falls back to single-threaded if the platform does not support it.</td></tr>
+<tr><td>Override FPS</td><td>bool</td><td>true</td><td>When enabled, overrides Unity's target frame rate with the value below.</td></tr>
+<tr><td>Max FPS</td><td>int</td><td>120</td><td>The target frame rate when Override FPS is enabled. Higher values give smoother visuals but require more CPU/GPU power.</td></tr>
+<tr><td>Override Fixed Timestep</td><td>bool</td><td>true</td><td>When enabled, overrides Unity's fixed timestep with the value below.</td></tr>
+<tr><td>Fixed Timestep</td><td>float</td><td>0.02</td><td>The interval (in seconds) between physics updates. 0.02 means 50 physics updates per second. Lower values (like 0.01) give more accurate physics but cost more CPU. For most games, 0.02 is the sweet spot.</td></tr>
+<tr><td>Max Angular Velocity</td><td>float</td><td>6</td><td>Maximum rotation speed for vehicle rigidbodies, range 0.5 to 20. If your vehicles do not spin fast enough during crashes or flips, increase this value.</td></tr>
+</table>
+<hr>
+<h2 id='section-4'>Behavior Presets</h2>
+<p>Behaviors are the heart of RCCP's physics tuning. A behavior preset defines a complete driving feel -- stability aids, steering response, drift characteristics, differential type, and wheel friction curves all in one package.</p>
+<p>You can create multiple behavior presets and switch between them at runtime to offer different driving modes (for example, a Realistic mode and an Arcade mode in the same game).</p>
+<h3 id='section-5'>How to use behaviors</h3>
+<ol>
+<li>In RCCP Settings, check the <strong>Override Behavior</strong> checkbox.</li>
+<li>The <strong>behaviorTypes</strong> array becomes editable. Each element is one preset.</li>
+<li>Set the <strong>Behavior Selected Index</strong> to choose which preset is active by default.</li>
+<li>At runtime, change the active behavior through the RCCP API or by modifying the selected index.</li>
+</ol>
+<h3 id='section-6'>Stability Aids</h3>
+<p>Every behavior preset includes toggles for six stability systems. These helpers make vehicles easier (or harder) to control depending on how you configure them.</p>
+<table>
+<tr><th>Aid</th><th>Default</th><th>What It Does</th></tr>
+<tr><td>ABS (Anti-lock Braking)</td><td>On</td><td>Prevents wheels from locking up under hard braking. Without ABS, slamming the brakes causes the wheels to stop rotating entirely, which reduces steering control and increases stopping distance.</td></tr>
+<tr><td>ESP (Electronic Stability)</td><td>On</td><td>Applies individual wheel brakes automatically to prevent the vehicle from spinning out during sharp turns or sudden direction changes. RCCP ships a yaw-rate bicycle-model ESP (see <strong>ESP V2</strong> below) — this toggle is the master on/off.</td></tr>
+<tr><td>TCS (Traction Control)</td><td>On</td><td>Limits wheel spin during acceleration. Prevents the driven wheels from spinning freely on slippery surfaces or under heavy throttle.</td></tr>
+<tr><td>Steering Helper</td><td>On</td><td>Automatically corrects the vehicle's direction to align with its velocity. Higher values make the car feel more &quot;on rails,&quot; lower values feel more raw.</td></tr>
+<tr><td>Traction Helper</td><td>On</td><td>Reduces wheel slip beyond a threshold. Similar to TCS but works as a broader stability system across all driving conditions.</td></tr>
+<tr><td>Angular Drag Helper</td><td>Off</td><td>Dampens the vehicle's rotational velocity at higher speeds to prevent spinning out. Useful for arcade-style games where you want the car to feel planted.</td></tr>
+</table>
+<p>Each aid also has <strong>minimum and maximum strength</strong> values that define how aggressively it intervenes. For example, Steering Helper Strength ranges from 0.1 (subtle correction) to 1.0 (aggressive correction).</p>
+<h3 id='section-7'>ESP V2 (Yaw-Rate Bicycle Model)</h3>
+<p>RCCP's ESP uses a production-style bicycle model to compute a <strong>reference yaw rate</strong> <code>ψ̇_ref = V · δ / (L + K_us · V²)</code>, clamped by the friction limit <code>ψ̇_max = μ · g / V</code>, then runs a PD controller on the error between actual and reference yaw. Based on that error (and sideslip β), ESP classifies the condition as oversteer or understeer and applies corrective brake torque to the appropriate wheel — plus a matching motor-torque cut so the driven wheel does not fight the brake.</p>
+<p>These settings live directly on the <code>RCCP_Stability</code> component on each vehicle (under the <strong>ESP</strong> and <strong>ESP V2</strong> headers in the Inspector). They are per-vehicle and not part of the global behavior preset.</p>
+<p><strong>V2.31.1 aggressive Sport baseline:</strong> the defaults shown below were retuned in V2.31.1 to an &quot;aggressive Sport baseline&quot; — they are deliberately tuned for production-feel intervention strength (early engagement, quick response, decisive correction), not a passive realism baseline. Existing serialized vehicle prefabs keep their authored values; only <code>new RCCP_Stability()</code> (i.e. freshly added stability components) picks up these defaults.</p>
+<p><strong>Core ESP settings:</strong></p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>ESP</td><td>bool</td><td>On</td><td>Master on/off for the whole ESP pipeline.</td></tr>
+<tr><td>ESP Intensity</td><td>0.0 – 1.0</td><td>0.5</td><td>Global gain on the brake torque ESP produces. Lower = subtler intervention.</td></tr>
+<tr><td>ESP Deadband</td><td>0.5 – 10 deg/s</td><td>6</td><td>Yaw-rate error threshold above which ESP engages. Lower = more aggressive. Production typical: 4 deg/s.</td></tr>
+<tr><td>ESP Deactivation Deadband</td><td>0.1 – 5 deg/s</td><td>2.5</td><td>Hysteresis band. Once engaged, ESP releases only when error drops below this. Should be 1–3 deg/s below the engagement deadband.</td></tr>
+<tr><td>ESP Min Intervention Time</td><td>0 – 0.5 sec</td><td>0.055</td><td>Minimum time ESP stays engaged after firing. Prevents flutter during transients. Production typical: 0.1–0.2s.</td></tr>
+</table>
+<p><strong>ESP Mode:</strong></p>
+<table>
+<tr><th>Mode</th><th>Behavior</th></tr>
+<tr><td>Normal</td><td>Standard thresholds, brake differential <strong>plus</strong> engine torque reduction. The default.</td></tr>
+<tr><td>Sport</td><td>~2× wider deadbands and no engine cut — just brake differential. For experienced drivers or simulation modes.</td></tr>
+</table>
+<p><strong>Bicycle model parameters:</strong></p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>Understeer Gradient (K_us)</td><td>0 – 0.01 rad·s²/m</td><td>0.01</td><td>Shapes <code>ψ̇_ref</code> at high speed. Typical passenger car: 0.0035. Sportier: 0.002. Comfort/SUV: 0.005+.</td></tr>
+<tr><td>Estimated Mu (μ)</td><td>0.1 – 1.2</td><td>0.85</td><td>Road friction coefficient used to clamp the reference yaw rate. 0.9–1.0 dry, 0.5–0.7 wet, 0.2–0.4 snow/ice.</td></tr>
+<tr><td>ESP P Gain</td><td>0.5 – 10</td><td>4</td><td>Proportional gain (multiplied by vehicle mass). Higher = stronger correction per unit of yaw error.</td></tr>
+<tr><td>ESP D Gain</td><td>0 – 2</td><td>0.3</td><td>Derivative gain. Dampens rapid yaw changes, speeds response to lift-off oversteer (which develops in 200–500 ms).</td></tr>
+<tr><td>Yaw Rate Time Constant</td><td>0.05 – 0.3 sec</td><td>0.25</td><td>First-order lag filter on <code>ψ̇_ref</code>. Prevents ESP from commanding instantaneous yaw changes from flicks.</td></tr>
+</table>
+<p><strong>Oversteer vs understeer classification:</strong></p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>ESP Mode Commit Time</td><td>0 – 0.5 sec</td><td>0.2</td><td>Minimum time ESP holds its oversteer/understeer classification before allowing a flip. Prevents wrong-wheel braking during transients.</td></tr>
+<tr><td>Sideslip Max Angle</td><td>3 – 20 deg</td><td>10</td><td>When `</td><td>β</td><td>` exceeds this, ESP forces oversteer classification even if yaw error alone would read as understeer. Outer bound of the controllable envelope.</td></tr>
+<tr><td>Sideslip Max Rate</td><td>5 – 30 deg/s</td><td>15</td><td>When `</td><td>dβ/dt</td><td>` exceeds this, ESP promotes to oversteer. Catches developing spins earlier than yaw error alone.</td></tr>
+</table>
+<p><strong>Dashboard indicator (UI debounce):</strong></p>
+<p>ESP exposes two engagement flags — <code>ESPEngaged</code> (the raw runtime state) and <code>ESPIndicatorEngaged</code> (the user-facing dashboard flag). The indicator is gated so the dashboard light does not flicker on micro-corrections the driver cannot feel:</p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>Min Noticeable Brake Torque</td><td>0 – 500 Nm</td><td>75</td><td>Smoothed max brake torque must exceed this before <code>ESPIndicatorEngaged</code> flips true. 0 = mirror <code>ESPEngaged</code> directly.</td></tr>
+<tr><td>UI Min Hold Time</td><td>0 – 1 sec</td><td>0.1</td><td>How long <code>ESPIndicatorEngaged</code> stays true after brake torque last crossed the threshold. Fast turn-on, slow turn-off.</td></tr>
+</table>
+<p><strong>Arcade speed preservation (opt-in):</strong></p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>Preserve Speed Factor</td><td>0.0 – 1.0</td><td>1</td><td>0 = realistic (ESP bleeds speed through the corner). 1 = full cancellation of ESP brake deceleration via a compensating forward force (corrective yaw still works, but the car does not slow down). Does <strong>not</strong> affect the engine torque cut — combine with ESP Mode = Sport to disable that separately.</td></tr>
+</table>
+<p>See <a href='17_telemetry_debug.html'>Telemetry and Debug</a> for how to read <code>ESPEngaged</code>, <code>ESPIndicatorEngaged</code>, yaw rate error, and sideslip in code. See <a href='25_troubleshooting.html'>Troubleshooting</a> for common ESP tuning issues.</p>
+<h3 id='section-8'>Steering Configuration</h3>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+<tr><td>Steering Curve</td><td>AnimationCurve</td><td>Defines how steering angle changes with speed. X-axis is speed in km/h, Y-axis is the maximum steering angle in degrees. At 0 km/h the default curve gives 40 degrees; at 200 km/h it drops to 5 degrees. This prevents twitchy steering at highway speeds.</td></tr>
+<tr><td>Steering Sensitivity</td><td>1.0</td><td>How quickly steering input reaches full lock. Higher values mean faster response.</td></tr>
+<tr><td>Counter Steering</td><td>On</td><td>Automatically counter-steers during oversteer to help the driver recover.</td></tr>
+<tr><td>Limit Steering</td><td>On</td><td>Reduces the maximum steering angle at high speed using the steering curve above.</td></tr>
+</table>
+<p>Additional range settings control the min/max bounds for counter-steering strength (default 0.5 to 1.0) and steering speed sensitivity (default 0.5 to 1.0).</p>
+<h3 id='section-9'>Differential Type</h3>
+<p>Each behavior preset includes a differential type setting that affects how power is distributed between driven wheels:</p>
+<ul>
+<li><strong>Open</strong> -- Allows wheels to spin at different speeds. Most realistic for road cars.</li>
+<li><strong>Limited</strong> -- Partially locks the wheels together. Good balance of realism and stability.</li>
+<li><strong>FullLocked</strong> -- Both driven wheels always spin at the same speed. Maximum traction but less realistic cornering.</li>
+<li><strong>Direct</strong> -- Simplified power delivery. Good for arcade-style games.</li>
+</ul>
+<h3 id='section-10'>Per-Vehicle Suspension Multipliers (V2.31.1+)</h3>
+<p>Behavior presets in V2.31.1 carry two suspension multipliers that scale each vehicle's authored spring and damper rates, instead of overwriting them with absolute values. Each <code>RCCP_WheelCollider</code> captures its authored base spring and damper at <code>Awake()</code> (with a 50000 / 3500 fallback if the prefab values are zero) and scales those base values by the active behavior preset's multipliers.</p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>Suspension Spring Multiplier</td><td>0.25 – 3</td><td>1.0</td><td>Multiplies each wheel's authored base spring rate. 1× = vehicle default, &gt;1 stiffer (sport/race feel), &lt;1 softer (comfort/SUV feel).</td></tr>
+<tr><td>Suspension Damper Multiplier</td><td>0.25 – 3</td><td>1.0</td><td>Multiplies each wheel's authored base damper rate. 1× = vehicle default.</td></tr>
+</table>
+<p>All four shipped behavior presets ship at 1.0× / 1.0× — i.e. they do not modify suspension. Customize the multipliers per preset to give each driving mode a distinct ride feel. Because the multipliers scale the authored values rather than replacing them, the same preset works correctly across vehicles of very different masses and ride heights.</p>
+<h3 id='section-11'>Drift Mode Settings</h3>
+<p>Drift mode adds force-based drift assistance and reduces rear tire grip for controlled sliding. These settings only take effect when <strong>driftMode</strong> is enabled in the behavior preset.</p>
+<p><strong>Core drift settings:</strong></p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>Drift Mode</td><td>bool</td><td>Off</td><td>Master toggle for all drift physics.</td></tr>
+<tr><td>Drift Angle Limiter</td><td>bool</td><td>Off</td><td>When enabled, corrects angular velocity if the drift angle exceeds the limit. Prevents uncontrollable spins.</td></tr>
+<tr><td>Drift Angle Limit</td><td>0-90 degrees</td><td>35</td><td>Maximum allowed drift angle before correction forces kick in.</td></tr>
+<tr><td>Drift Angle Correction Factor</td><td>0-10</td><td>5</td><td>How aggressively the angle is corrected when exceeding the limit. Higher values mean faster correction. The per-preset <code>BehaviorType.driftAngleCorrectionFactor</code> field defaults to 3, but the shipped V2.37.1 Drift preset asset overrides it to 5.</td></tr>
+</table>
+<p><strong>Drift forces:</strong></p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>Yaw Torque Multiplier</td><td>0-3</td><td>0.7</td><td>How fast the car rotates into a drift. Higher values make the car rotate more aggressively.</td></tr>
+<tr><td>Forward Force Multiplier</td><td>0-5000</td><td>2000</td><td>Forward push during drift to maintain speed. Higher values reduce speed loss while sliding.</td></tr>
+<tr><td>Sideways Force Multiplier</td><td>0-4000</td><td>1500</td><td>Lateral push during drift. Higher values push the car further sideways for wider drifts.</td></tr>
+<tr><td>Min Speed</td><td>0-60 km/h</td><td>20</td><td>Minimum speed for drift forces to activate. Below this speed, no drift assistance is applied.</td></tr>
+<tr><td>Full Force Speed</td><td>20-150 km/h</td><td>80</td><td>Speed at which drift forces reach full strength. Forces scale linearly between min speed and this value.</td></tr>
+<tr><td>Throttle Yaw Factor</td><td>0-1</td><td>0.3</td><td>How much throttle alone contributes to yaw rotation. Higher values let you initiate drifts with throttle, without needing to steer.</td></tr>
+</table>
+<p><strong>Drift friction:</strong></p>
+<p>These settings control how much tire grip is lost during drifting. Each value represents a multiplier where 1.0 means no grip reduction.</p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>Rear Sideways Stiffness Min</td><td>0.1-1.0</td><td>0.45</td><td>Minimum rear tire sideways grip during full drift. Lower values allow more lateral sliding.</td></tr>
+<tr><td>Rear Forward Stiffness Min</td><td>0.5-1.0</td><td>0.8</td><td>Minimum rear tire forward grip during full drift. Lower values cause more speed loss.</td></tr>
+<tr><td>Front Sideways Stiffness Min</td><td>0.5-1.2</td><td>0.9</td><td>Minimum front tire sideways grip during drift. Higher values keep the front end responsive for steering.</td></tr>
+<tr><td>Friction Response Speed</td><td>1-20</td><td>8</td><td>How quickly grip reduces when entering a drift.</td></tr>
+<tr><td>Friction Recovery Speed</td><td>1-20</td><td>4</td><td>How quickly grip recovers when exiting a drift.</td></tr>
+</table>
+<p><strong>Drift recovery:</strong></p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>Max Angular Velocity</td><td>0-360 deg/s</td><td>120</td><td>Maximum rotation speed during drift. Prevents uncontrollable spins. 0 disables the limit.</td></tr>
+<tr><td>Counter Steer Recovery Boost</td><td>1-5</td><td>2</td><td>Multiplier for recovery force when counter-steering during drift. Higher values make recovery easier.</td></tr>
+<tr><td>Momentum Maintenance Force</td><td>0-3000</td><td>800</td><td>Constant forward force during drift to prevent speed loss.</td></tr>
+<tr><td>Force Smoothing</td><td>1-20</td><td>8</td><td>Smoothing speed for drift force transitions. Higher values mean faster response, lower values mean smoother transitions.</td></tr>
+</table>
+<h4>V2.37.1 Drift preset retune</h4>
+<p>The shipped Drift behavior preset received targeted tuning in V2.37.1 to make β arrest cleanly at <code>driftAngleLimit</code> and to keep behavior consistent across vehicles of different masses:</p>
+<ul>
+<li><strong>All three driver-aid helpers are disabled</strong> on the Drift preset — <code>steeringHelper</code>, <code>tractionHelper</code>, and <code>angularDragHelper</code> are all off. Leaving any of them on creates a sustain limit cycle that fights the drift-angle limiter; β oscillates instead of settling.</li>
+<li><strong><code>driftAngleCorrectionFactor</code> was raised from 2 → 5</strong> in the Drift preset asset so yaw consistently arrests at <code>driftAngleLimit</code>. β no longer drifts past 100° on sustained slides.</li>
+<li><strong>Drift force/torque targets are mass-scaled at runtime</strong> so the same preset feels equivalent on a 1100 kg compact and a 2000 kg muscle car, rather than overpowering the lighter vehicle.</li>
+<li><strong>The drift angle cap is inverse-mass-scaled</strong> — heavier vehicles get a tighter angular cap, which keeps recovery predictable when momentum is high.</li>
+<li><strong><code>LimitDriftAngle</code> and <code>TractionHelper</code> were patched in V2.37.1 for correct reverse-driving behavior.</strong> Earlier builds applied a forward-driving sign convention even when the vehicle was reversing, which caused the helpers to fight the driver instead of assisting.</li>
+</ul>
+<h3 id='section-12'>Gear Shifting</h3>
+<p>Each behavior preset controls automatic transmission timing:</p>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>Gear Shifting Threshold</td><td>0.1-0.9</td><td>0.8</td><td>Normalized RPM threshold (0 to 1) at which automatic gear shifts occur.</td></tr>
+<tr><td>Gear Shifting Delay Min</td><td>0-1 sec</td><td>0.15</td><td>Minimum delay between automatic gear shifts.</td></tr>
+<tr><td>Gear Shifting Delay Max</td><td>0-1 sec</td><td>0.5</td><td>Maximum delay between automatic gear shifts.</td></tr>
+</table>
+<h3 id='section-13'>Anti-Roll Bar</h3>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+<tr><td>Anti Roll Minimum</td><td>500</td><td>Minimum anti-roll bar force to reduce body roll in corners. Higher values keep the car flatter through turns.</td></tr>
+</table>
+<h3 id='section-14'>Wheel Friction</h3>
+<p>Each behavior preset defines friction curves for front and rear wheels separately. These values map directly to Unity's <code>WheelFrictionCurve</code> and control how much grip the tires have.</p>
+<p>There are four friction groups, each with four parameters:</p>
+<table>
+<tr><th>Group</th><th>Affects</th></tr>
+<tr><td>Forward Front</td><td>Acceleration and braking grip for front wheels</td></tr>
+<tr><td>Forward Rear</td><td>Acceleration and braking grip for rear wheels</td></tr>
+<tr><td>Sideways Front</td><td>Cornering grip for front wheels</td></tr>
+<tr><td>Sideways Rear</td><td>Cornering grip for rear wheels</td></tr>
+</table>
+<p>Each group has these four values:</p>
+<table>
+<tr><th>Parameter</th><th>Description</th></tr>
+<tr><td>Extremum Slip</td><td>The slip value at which maximum friction force is generated.</td></tr>
+<tr><td>Extremum Value</td><td>The maximum friction force at the extremum slip point.</td></tr>
+<tr><td>Asymptote Slip</td><td>The slip value beyond which friction force stabilizes at a lower level.</td></tr>
+<tr><td>Asymptote Value</td><td>The friction force at and beyond the asymptote slip point.</td></tr>
+</table>
+<p><strong>In plain terms:</strong> Higher extremum and asymptote values mean more grip. Lower values mean the tires slide more easily. The front-vs-rear balance determines whether the car tends to understeer (front slides first) or oversteer (rear slides first).</p>
+<p><strong>Default front forward friction:</strong> Extremum Slip 0.4, Extremum Value 1.0, Asymptote Slip 0.8, Asymptote Value 0.5</p>
+<p><strong>Default rear forward friction:</strong> Extremum Slip 0.4, Extremum Value 0.95, Asymptote Slip 0.75, Asymptote Value 0.5</p>
+<p><strong>Default front sideways friction:</strong> Extremum Slip 0.4, Extremum Value 1.0, Asymptote Slip 0.5, Asymptote Value 0.75</p>
+<p><strong>Default rear sideways friction:</strong> Extremum Slip 0.4, Extremum Value 1.05, Asymptote Slip 0.5, Asymptote Value 0.8</p>
+<h4>V2.37.1 Race preset retune</h4>
+<p>The shipped Race behavior preset received a small front-grip bump in V2.37.1 to fix understeer that developed during sustained high-g cornering: <code>sidewaysExtremumValue_F</code> 1.0 → 1.2 and <code>sidewaysAsymptoteValue_F</code> 0.75 → 0.9. Front lateral grip now holds at the load the rear is producing during sustained ≥ 0.85 g cornering, so the front does not wash out before the rear breaks loose. Skidpad sustains ≥ 0.85 g for 3 s after this change (was 0.32 s before retune).</p>
+<hr>
+<h2 id='section-15'>Wheel Physics</h2>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+<tr><td>Use Fixed Wheel Colliders</td><td>On</td><td>Uses heavier-mass wheel colliders for more stability. Recommended for most projects. Disabling this uses lighter colliders that may bounce or jitter on uneven terrain.</td></tr>
+<tr><td>Auto Reset</td><td>On</td><td>Automatically resets the vehicle to an upright position if it is flipped upside down for too long. Useful for gameplay; disable for simulation or crash-focused games.</td></tr>
+</table>
+<hr>
+<h2 id='section-16'>Units and Display</h2>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+<tr><td>Use MPH</td><td>Off</td><td>Switches the speed display from kilometers per hour (km/h) to miles per hour (mph). This affects UI elements and telemetry readouts.</td></tr>
+<tr><td>Use Telemetry</td><td>Off</td><td>Shows a real-time vehicle data overlay during play mode, including speed, RPM, gear, slip values, and more. See <a href='17_telemetry_debug.html'>Telemetry and Debug</a>.</td></tr>
+<tr><td>Use Input Debugger</td><td>Off</td><td>Shows a real-time overlay of current input values (throttle, brake, steering) during play mode. Helpful for diagnosing control issues.</td></tr>
+</table>
+<hr>
+<h2 id='section-17'>Input Rebinding</h2>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+<tr><td>Auto Save/Load Input Rebind</td><td>On</td><td>Automatically saves custom key bindings to PlayerPrefs when the player changes them, and loads them back on the next session. Disable this if you want to manage input persistence yourself.</td></tr>
+</table>
+<p>For full details on the input system and how to set up custom key bindings, see <a href='05_inputs.html'>Inputs</a>.</p>
+<hr>
+<h2 id='section-18'>Mobile Settings</h2>
+<p>These settings control the on-screen touch controls for mobile platforms (iOS, Android).</p>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+<tr><td>Mobile Controller Enabled</td><td>Off</td><td>Shows or hides the mobile UI controls. Enable this for mobile builds.</td></tr>
+</table>
+<h3 id='section-19'>Controller Types</h3>
+<p>When mobile controls are enabled, you can choose from four input methods:</p>
+<table>
+<tr><th>Type</th><th>How It Works</th></tr>
+<tr><td>TouchScreen</td><td>On-screen left/right buttons for steering, plus throttle and brake buttons. Simple and reliable.</td></tr>
+<tr><td>Gyro</td><td>Tilt the device to steer. The gyro sensitivity setting (default 2.5) controls how much tilt is needed.</td></tr>
+<tr><td>SteeringWheel</td><td>An on-screen rotatable steering wheel that the player drags to steer. Feels more immersive.</td></tr>
+<tr><td>Joystick</td><td>An analog joystick for steering input. Good for players who want proportional control without gyro.</td></tr>
+</table>
+<p>For detailed mobile setup instructions, see <a href='07_mobile.html'>Mobile</a>.</p>
+<hr>
+<h2 id='section-20'>Layer Configuration</h2>
+<p>RCCP uses dedicated physics layers to manage collision detection between vehicles, wheels, and world objects. Proper layer setup is essential for the damage system, detachable parts, and prop interactions to work correctly.</p>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+<tr><td>Set Layers</td><td>On</td><td>When enabled, RCCP automatically creates and assigns layers during setup.</td></tr>
+</table>
+<h3 id='section-21'>Layer Purposes</h3>
+<table>
+<tr><th>Layer Name</th><th>Purpose</th></tr>
+<tr><td>RCCP_Vehicle</td><td>Assigned to all vehicle GameObjects. Used for collision detection between vehicles and the environment.</td></tr>
+<tr><td>RCCP_WheelCollider</td><td>Assigned to wheel physics objects. Separated from the vehicle layer so wheels can have independent collision behavior.</td></tr>
+<tr><td>RCCP_DetachablePart</td><td>Assigned to breakable body panels (doors, bumpers, hoods). Separated so detached parts do not collide with the parent vehicle.</td></tr>
+<tr><td>RCCP_Prop</td><td>Assigned to interactive props like traffic cones and barriers that react to vehicle contact.</td></tr>
+<tr><td>RCCP_Obstacle</td><td>Assigned to static obstacles in the environment.</td></tr>
+</table>
+<p>The collision matrix is automatically configured so that vehicles do not collide with their own detachable parts while those parts are still attached. Once a part detaches, it re-enters normal collision.</p>
+<p>If you see vehicles passing through objects or detachable parts jittering, the first thing to check is whether layers are set up correctly. Go to Edit &gt; Project Settings &gt; Physics (or Physics 3D in Unity 6) and verify the collision matrix.</p>
+<hr>
+<h2 id='section-22'>Light Rendering</h2>
+<p>RCCP lets you choose between vertex lights and pixel lights for each light type on the vehicle. This is a performance-vs-quality tradeoff.</p>
+<table>
+<tr><th>Light Type</th><th>Default Mode</th><th>Description</th></tr>
+<tr><td>Headlights</td><td>Pixel</td><td>Full-quality lighting with shadows and accurate falloff. Most visible, so pixel is recommended.</td></tr>
+<tr><td>Brake Lights</td><td>Vertex</td><td>Cheaper rendering. Acceptable because brake lights are usually small and behind the vehicle.</td></tr>
+<tr><td>Reverse Lights</td><td>Vertex</td><td>Same reasoning as brake lights -- small and rarely the focus of attention.</td></tr>
+<tr><td>Indicator Lights</td><td>Vertex</td><td>Blink on and off, so the quality difference is less noticeable.</td></tr>
+<tr><td>Other Lights</td><td>Vertex</td><td>Any additional lights on the vehicle (fog lights, auxiliary lights).</td></tr>
+</table>
+<p><strong>When to change these:</strong> If you are targeting high-end platforms (PC, consoles) and want the best visuals, switch everything to pixel lights. If you are targeting mobile or need to optimize performance, keep most lights as vertex and only use pixel for headlights.</p>
+<hr>
+<h2 id='section-23'>Prefab References</h2>
+<p>RCCP Settings holds references to prefabs that are instantiated automatically when needed. You generally do not need to change these unless you want to replace the default camera system or UI.</p>
+<h3 id='section-24'>Camera Prefabs</h3>
+<table>
+<tr><th>Prefab</th><th>Purpose</th></tr>
+<tr><td>RCCP Main Camera</td><td>The primary chase camera that follows the player vehicle.</td></tr>
+<tr><td>RCCP Hood Camera</td><td>A camera mounted on the vehicle hood for a first-person driving view.</td></tr>
+<tr><td>RCCP Wheel Camera</td><td>A camera that focuses on a specific wheel, useful for replays or inspection.</td></tr>
+<tr><td>RCCP Cinematic Camera</td><td>Provides dynamic camera angles for dramatic moments or cutscenes.</td></tr>
+<tr><td>RCCP Fixed Camera</td><td>A static camera placed at a fixed position in the scene.</td></tr>
+</table>
+<h3 id='section-25'>UI Prefabs</h3>
+<table>
+<tr><th>Prefab</th><th>Purpose</th></tr>
+<tr><td>RCCP Canvas</td><td>The main UI canvas containing dashboard elements, speedometer, and mobile controls.</td></tr>
+<tr><td>RCCP Telemetry</td><td>The telemetry overlay that displays real-time vehicle data when Use Telemetry is enabled.</td></tr>
+</table>
+<h3 id='section-26'>Particle Prefabs</h3>
+<table>
+<tr><th>Prefab</th><th>Purpose</th></tr>
+<tr><td>Contact Particles</td><td>General surface contact effects (dust, debris).</td></tr>
+<tr><td>Scratch Particles</td><td>Metal scratching sparks on collision.</td></tr>
+<tr><td>Wheel Sparkle Particles</td><td>Sparks from wheels on hard surfaces (like driving on rims).</td></tr>
+<tr><td>Exhaust Gas</td><td>Exhaust smoke effect.</td></tr>
+<tr><td>Wheel Blur</td><td>Visual blur effect for high-speed wheel rotation.</td></tr>
+</table>
+<h3 id='section-27'>Other Prefabs</h3>
+<table>
+<tr><th>Prefab</th><th>Purpose</th></tr>
+<tr><td>Skidmarks Manager</td><td>Handles tire mark rendering on surfaces. One shared instance for all vehicles.</td></tr>
+<tr><td>Light Box</td><td>Visual mesh for light-emitting elements on the vehicle.</td></tr>
+<tr><td>Flare Prefab</td><td>Lens flare effect attached to vehicle lights.</td></tr>
+</table>
+<hr>
+<h2 id='section-28'>Audio Settings</h2>
+<p>RCCP Settings contains default audio clips that are used when a vehicle does not have custom audio assigned. You can replace any of these with your own clips.</p>
+<h3 id='section-29'>Engine Sounds</h3>
+<p>Engine audio uses a layered system with four RPM ranges, each having an &quot;on&quot; (throttle pressed) and &quot;off&quot; (throttle released) variant:</p>
+<table>
+<tr><th>Clip</th><th>When It Plays</th></tr>
+<tr><td>Engine Idle On / Off</td><td>Engine at idle RPM.</td></tr>
+<tr><td>Engine Low On / Off</td><td>Engine at low RPM range.</td></tr>
+<tr><td>Engine Medium On / Off</td><td>Engine at medium RPM range.</td></tr>
+<tr><td>Engine High On / Off</td><td>Engine at high RPM range.</td></tr>
+<tr><td>Engine Start</td><td>Played once when the engine is started (cranking sound).</td></tr>
+</table>
+<p>The system crossfades between these layers based on current RPM, creating a smooth and realistic engine sound that changes with throttle and speed.</p>
+<h3 id='section-30'>Effect Sounds</h3>
+<table>
+<tr><th>Clip</th><th>When It Plays</th></tr>
+<tr><td>Brake</td><td>Brake squeal at low speeds under braking.</td></tr>
+<tr><td>Wind</td><td>Wind noise that increases with vehicle speed.</td></tr>
+<tr><td>Reversing</td><td>Reversing beep or whine when driving backward.</td></tr>
+<tr><td>Indicator</td><td>Click sound when turn indicators are active.</td></tr>
+<tr><td>NOS</td><td>Nitrous oxide activation burst.</td></tr>
+<tr><td>Turbo</td><td>Turbocharger spool and blow-off valve sound.</td></tr>
+<tr><td>Bump</td><td>Suspension impact on bumps and road irregularities.</td></tr>
+<tr><td>Gear Shift (array)</td><td>One clip per gear change. Multiple clips can be assigned for variety.</td></tr>
+<tr><td>Crash (array)</td><td>Collision impact sounds, randomly selected on crash.</td></tr>
+<tr><td>Blowout (array)</td><td>Tire blowout sounds.</td></tr>
+<tr><td>Exhaust Flame (array)</td><td>Exhaust backfire sounds.</td></tr>
+<tr><td>Wheel Deflate</td><td>Sound when a tire loses air.</td></tr>
+<tr><td>Wheel Inflate</td><td>Sound when a tire is reinflated.</td></tr>
+<tr><td>Wheel Flat</td><td>Continuous sound of driving on a flat tire.</td></tr>
+</table>
+<h3 id='section-31'>Audio Mixer</h3>
+<p>An optional Audio Mixer Group can be assigned in settings. When set, all RCCP vehicle audio routes through this mixer, giving you centralized volume control and the ability to apply audio effects (reverb, EQ) to all vehicle sounds at once.</p>
+<hr>
+<h2 id='section-32'>Rendering Settings</h2>
+<p>These settings control visual effects related to the render pipeline.</p>
+<table>
+<tr><th>Setting</th><th>Purpose</th></tr>
+<tr><td>Lens Flare Data</td><td>Lens flare asset for Scriptable Render Pipeline (URP/HDRP).</td></tr>
+<tr><td>Flare (Legacy)</td><td>Lens flare for the Built-in Render Pipeline.</td></tr>
+<tr><td>HDRP Volume Profile Prefab</td><td>Volume profile prefab used when running in HDRP.</td></tr>
+<tr><td>Default Decal Material</td><td>Material applied to vehicle decal projectors.</td></tr>
+<tr><td>Default Neon Material</td><td>Material applied to vehicle neon underglow lights.</td></tr>
+<tr><td>Vehicle Collider Material</td><td>Physics material applied to vehicle body colliders, controlling friction and bounce on contact.</td></tr>
+</table>
+<hr>
+<h2 id='section-33'>Recommended Settings for Common Scenarios</h2>
+<p>Here are some starting points depending on the type of game you are building:</p>
+<h3 id='section-34'>Realistic Driving Simulation</h3>
+<ul>
+<li>Override Behavior: On</li>
+<li>ABS, ESP, TCS: On</li>
+<li>ESP Intensity: 0.3 – 0.5; ESP Mode: Normal; Preserve Speed Factor: 0</li>
+<li>Steering Helper: On, low strength (0.1-0.3)</li>
+<li>Traction Helper: On, low strength (0.1-0.3)</li>
+<li>Drift Mode: Off</li>
+<li>Differential: Open or Limited</li>
+<li>Fixed Timestep: 0.01 (for more accurate physics)</li>
+</ul>
+<h3 id='section-35'>Arcade Racing</h3>
+<ul>
+<li>Override Behavior: On</li>
+<li>ABS, ESP, TCS: On</li>
+<li>ESP Intensity: 0.7 – 1.0; ESP Mode: Normal; Preserve Speed Factor: 0.5 – 1.0 (keeps speed through corners while ESP still corrects yaw)</li>
+<li>Steering Helper: On, high strength (0.6-1.0)</li>
+<li>Angular Drag Helper: On</li>
+<li>Drift Mode: Off</li>
+<li>Differential: FullLocked or Direct</li>
+<li>Fixed Timestep: 0.02</li>
+</ul>
+<h3 id='section-36'>Drift Game</h3>
+<ul>
+<li>Override Behavior: On</li>
+<li>ABS: On, ESP: Off, TCS: Off</li>
+<li>Steering Helper, Traction Helper, Angular Drag Helper: <strong>all Off</strong> (any of them on creates a sustain limit cycle that fights the drift-angle limiter)</li>
+<li>Drift Mode: On</li>
+<li>Drift Angle Limiter: On (30-45 degrees)</li>
+<li><code>driftAngleCorrectionFactor</code>: 5</li>
+<li>Counter Steering: On</li>
+<li>Differential: Limited or FullLocked</li>
+<li>Lower rear sideways friction values</li>
+</ul>
+<hr>
+<h2 id='section-37'>Next Steps</h2>
+<ul>
+<li><a href='03_vehicle_setup.html'>Vehicle Setup</a> -- Set up vehicles that use the settings and behaviors you configured here</li>
+<li><a href='05_inputs.html'>Inputs</a> -- Configure controls and key bindings</li>
+<li><a href='02_architecture.html'>Architecture Overview</a> -- Understand how behaviors flow through the drivetrain chain</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

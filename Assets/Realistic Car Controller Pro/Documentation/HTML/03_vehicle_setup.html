@@ -1,0 +1,431 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>03_vehicle_setup</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Vehicle Setup</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Vehicle Setup</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Overview</a></li>
+<li style='margin-left:40px'><a href='#section-2'>Opening the Setup Wizard</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Preparing Your 3D Model</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Model Requirements</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Quick Checklist</a></li>
+<li style='margin-left:20px'><a href='#section-6'>Setup Wizard Walkthrough</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Step 1: Basic Settings</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Step 2: Wheel Assignment</a></li>
+<li style='margin-left:40px'><a href='#section-9'>Step 3: Suspension Settings</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Step 4: Engine and Drivetrain</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Step 5: Addon Components</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Step 6: Body Colliders</a></li>
+<li style='margin-left:40px'><a href='#section-13'>Step 7: Finalize</a></li>
+<li style='margin-left:20px'><a href='#section-14'>Manual Vehicle Setup (Without Wizard)</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Step-by-Step Manual Setup</a></li>
+<li style='margin-left:20px'><a href='#section-16'>Configuring Axles</a></li>
+<li style='margin-left:40px'><a href='#section-17'>Key Axle Settings</a></li>
+<li style='margin-left:40px'><a href='#section-18'>Typical Axle Configurations</a></li>
+<li style='margin-left:20px'><a href='#section-19'>Drive Types Explained</a></li>
+<li style='margin-left:40px'><a href='#section-20'>FWD (Front Wheel Drive)</a></li>
+<li style='margin-left:40px'><a href='#section-21'>RWD (Rear Wheel Drive)</a></li>
+<li style='margin-left:40px'><a href='#section-22'>AWD (All Wheel Drive)</a></li>
+<li style='margin-left:20px'><a href='#section-23'>Common Setup Issues</a></li>
+<li style='margin-left:40px'><a href='#section-24'>Vehicle flips or bounces on start</a></li>
+<li style='margin-left:40px'><a href='#section-25'>Wheels spinning in the wrong direction</a></li>
+<li style='margin-left:40px'><a href='#section-26'>Vehicle slides sideways</a></li>
+<li style='margin-left:40px'><a href='#section-27'>Vehicle is too slow</a></li>
+<li style='margin-left:40px'><a href='#section-28'>No engine sound</a></li>
+<li style='margin-left:40px'><a href='#section-29'>Vehicle falls through the ground</a></li>
+<li style='margin-left:40px'><a href='#section-30'>Meshes not readable warning</a></li>
+<li style='margin-left:40px'><a href='#section-31'>Vehicle already has RCCP_CarController</a></li>
+<li style='margin-left:20px'><a href='#section-32'>Next Steps</a></li>
+</ul></div>
+<p>This guide walks you through setting up a vehicle with Realistic Car Controller Pro (RCCP). Whether you prefer a guided wizard or hands-on manual setup, this page covers both approaches in detail.</p>
+<h2 id='section-1'>Overview</h2>
+<p>There are two ways to set up a vehicle in RCCP:</p>
+<ul>
+<li><strong>Setup Wizard</strong> (recommended for beginners) -- A 7-step editor window that walks you through every decision, from wheel assignment to engine tuning. This is the fastest way to get a drivable vehicle.</li>
+<li><strong>Manual setup</strong> -- Add individual RCCP components yourself for full control over every detail. Better suited for experienced users or unusual vehicle configurations.</li>
+</ul>
+<h3 id='section-2'>Opening the Setup Wizard</h3>
+<p>You can open the wizard from two menu paths:</p>
+<ul>
+<li><strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Vehicle Setup &gt; Setup Wizard</strong></li>
+<li><strong>GameObject &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Vehicle Setup &gt; Setup Wizard</strong></li>
+</ul>
+<p>The wizard window appears with a progress bar at the top and Back/Next buttons at the bottom. You can move freely between steps before clicking Finish.</p>
+<h2 id='section-3'>Preparing Your 3D Model</h2>
+<p>Before running the wizard (or setting up manually), your vehicle model needs to meet a few requirements. Getting these right saves a lot of troubleshooting later.</p>
+<h3 id='section-4'>Model Requirements</h3>
+<table>
+<tr><th>Requirement</th><th>Why It Matters</th></tr>
+<tr><td>Wheel meshes must be <strong>separate GameObjects</strong></td><td>RCCP needs to spin, steer, and suspend each wheel independently. Wheels baked into the body mesh cannot move.</td></tr>
+<tr><td>Each wheel should be its own child object (e.g., <code>Wheel_FL</code>, <code>Wheel_FR</code>, <code>Wheel_RL</code>, <code>Wheel_RR</code>)</td><td>The wizard and auto-detection rely on finding individual wheel objects in the hierarchy.</td></tr>
+<tr><td>The vehicle model should face <strong>forward along the Z axis</strong></td><td>Unity's forward direction is +Z. If your model faces a different direction, the vehicle will drive sideways.</td></tr>
+<tr><td>Scale should be <strong>realistic</strong> (a typical car is roughly 4-5 meters long in Unity units)</td><td>Physics behaves unpredictably with very small or very large objects. One Unity unit equals one meter.</td></tr>
+<tr><td>The <strong>pivot point of each wheel</strong> should be at the center of the wheel</td><td>WheelColliders are placed at the wheel pivot. If the pivot is offset, the wheel will appear to float or sink.</td></tr>
+<tr><td>The body mesh should <strong>not include wheel geometry</strong></td><td>If wheels are part of the body, you will see duplicate wheels (the body's static wheels plus RCCP's moving wheels).</td></tr>
+</table>
+<h3 id='section-5'>Quick Checklist</h3>
+<ul>
+<li>Open your model in the Hierarchy and confirm each wheel is a separate child object</li>
+<li>Check that the model faces +Z in the Scene view (the blue arrow)</li>
+<li>Verify the scale: select the root object and look at the Transform -- the model should be around 4m long</li>
+<li>If your model is a prefab, the wizard can unpack it for you during setup</li>
+</ul>
+<h2 id='section-6'>Setup Wizard Walkthrough</h2>
+<p>The wizard has 7 steps (labeled Step 1 through Step 7 in the window). Each step focuses on one aspect of the vehicle.</p>
+<h3 id='section-7'>Step 1: Basic Settings</h3>
+<p>This is where you select your vehicle and set its core properties.</p>
+<p><strong>What to do:</strong></p>
+<ol>
+<li>Select your vehicle GameObject in the Hierarchy panel (click on it)</li>
+<li>Open the Setup Wizard -- it automatically detects your selection</li>
+<li>The wizard cleans up the name (removes common suffixes like &quot;(Prototype)&quot; or &quot;by Author&quot;)</li>
+<li>Set the following fields:</li>
+</ol>
+<table>
+<tr><th>Field</th><th>Default</th><th>Description</th></tr>
+<tr><td>Vehicle Name</td><td>Auto-detected from GameObject name</td><td>The display name for your vehicle. Also becomes the GameObject name after setup.</td></tr>
+<tr><td>Mass (kg)</td><td>1350</td><td>The total weight of the vehicle. This affects acceleration, braking distance, and suspension behavior.</td></tr>
+<tr><td>Handling Type</td><td>Balanced</td><td>Controls how assist systems (steering helper, traction helper, angular drag) are configured.</td></tr>
+</table>
+<p><strong>Handling Type presets explained:</strong></p>
+<table>
+<tr><th>Preset</th><th>Steer Helper</th><th>Traction Helper</th><th>Angular Drag</th><th>Best For</th></tr>
+<tr><td>Balanced</td><td>0.1</td><td>0.125</td><td>0.15</td><td>Good all-around default</td></tr>
+<tr><td>Stable</td><td>0.2</td><td>0.3</td><td>0.3</td><td>Casual or mobile players who want easier control</td></tr>
+<tr><td>Realistic</td><td>0.025</td><td>0.05</td><td>0.075</td><td>Simulation players who want minimal assists</td></tr>
+</table>
+<p><strong>Typical mass values by vehicle type:</strong></p>
+<table>
+<tr><th>Vehicle Type</th><th>Mass Range (kg)</th></tr>
+<tr><td>Small car / hatchback</td><td>1000 - 1200</td></tr>
+<tr><td>Sedan</td><td>1300 - 1500</td></tr>
+<tr><td>SUV / crossover</td><td>1800 - 2200</td></tr>
+<tr><td>Truck / heavy vehicle</td><td>3000+</td></tr>
+</table>
+<p><strong>Model Preparation options:</strong> If the wizard detects that your model is a prefab, has existing Rigidbodies, or has existing WheelColliders, it shows additional toggles:</p>
+<ul>
+<li><strong>Unpack prefab</strong> (recommended) -- Unpacks the prefab instance so you can freely edit children</li>
+<li><strong>Remove existing Rigidbodies</strong> (recommended) -- Removes any Rigidbodies already on the model that would conflict with RCCP's Rigidbody</li>
+<li><strong>Remove existing WheelColliders</strong> (recommended) -- Removes any WheelColliders already present that would conflict with RCCP's wheel system</li>
+<li><strong>Fix pivot position</strong> -- Centers the vehicle origin based on the model's render bounds. Enable this if your model's pivot is not at the bottom center.</li>
+</ul>
+<p><strong>Scene readiness:</strong> The wizard also checks if your scene has an RCCP Camera and a ground collider. If either is missing, you will see a warning with instructions on how to add them.</p>
+<h3 id='section-8'>Step 2: Wheel Assignment</h3>
+<p>This step identifies which child objects are your vehicle's wheels and assigns them to front and rear axles.</p>
+<p><strong>Auto-detection:</strong> When you enter this step, the wizard automatically runs wheel detection. It analyzes the model hierarchy looking for objects with names like &quot;wheel&quot;, &quot;tire&quot;, &quot;rim&quot;, or position patterns like &quot;FL&quot;, &quot;FR&quot;, &quot;RL&quot;, &quot;RR&quot;. Detected wheels are highlighted in the Scene view:</p>
+<ul>
+<li><strong>Green circles</strong> with labels (FL, FR, RL, RR) = assigned wheels</li>
+<li><strong>Yellow circles</strong> with &quot;?&quot; = detected candidates that were not assigned</li>
+</ul>
+<p><strong>What to do:</strong></p>
+<ol>
+<li>Check if auto-detection found all 4 wheels correctly</li>
+<li>If a wheel is in the wrong slot, use the <strong>Swap L/R</strong> button to swap left and right</li>
+<li>If auto-detection missed a wheel, drag and drop the correct GameObject from the Hierarchy into the field</li>
+<li>If auto-detection found nothing, manually assign all four wheels using the object fields</li>
+</ol>
+<table>
+<tr><th>Field</th><th>Description</th></tr>
+<tr><td>Front Left</td><td>The front-left wheel mesh GameObject</td></tr>
+<tr><td>Front Right</td><td>The front-right wheel mesh GameObject</td></tr>
+<tr><td>Rear Left</td><td>The rear-left wheel mesh GameObject</td></tr>
+<tr><td>Rear Right</td><td>The rear-right wheel mesh GameObject</td></tr>
+</table>
+<p><strong>Wheel Type preset:</strong> At the bottom of this step, choose a wheel friction preset:</p>
+<table>
+<tr><th>Preset</th><th>Description</th><th>Use Case</th></tr>
+<tr><td>Balanced</td><td>Good all-around grip with moderate slip</td><td>Default choice for most games</td></tr>
+<tr><td>Stable</td><td>More grip, less slip</td><td>Easier to control, good for beginners or arcade feel</td></tr>
+<tr><td>Realistic</td><td>Closer to real-world tire behavior with more pronounced slip</td><td>Simulation-style driving</td></tr>
+<tr><td>Slippy</td><td>Low grip, high sideways slip</td><td>Drift games or ice/mud surfaces</td></tr>
+</table>
+<p>The wheel type controls the forward and sideways friction curves applied to every WheelCollider on the vehicle. You can fine-tune these curves later in <a href='04_settings.html'>Settings</a>.</p>
+<blockquote>
+<p><strong>Note:</strong> You must assign at least 2 front wheels and 2 rear wheels before the Next button becomes available. For vehicles with more than 4 wheels (6-wheelers, 8-wheelers), you can add extra axles manually after the wizard finishes.</p>
+</blockquote>
+<h3 id='section-9'>Step 3: Suspension Settings</h3>
+<p>This step configures how the wheels connect to the vehicle body -- how they bounce, compress, and absorb impacts.</p>
+<p><strong>Auto-calculation:</strong> Suspension values are automatically computed from the vehicle mass you entered in Step 1:</p>
+<ul>
+<li>Spring Force = Mass x 30</li>
+<li>Damper Force = Spring Force x 0.1</li>
+</ul>
+<p>For a 1350 kg vehicle, that gives Spring = 40,500 N and Damper = 4,050 N.</p>
+<table>
+<tr><th>Field</th><th>Default</th><th>Range</th><th>Description</th></tr>
+<tr><td>Suspension Distance (m)</td><td>0.2</td><td>0.05 - 0.5</td><td>How far the wheel can travel up and down from its rest position. Increase for off-road vehicles (0.3 - 0.5), decrease for low sports cars (0.1 - 0.15).</td></tr>
+<tr><td>Spring Force (N)</td><td>Auto from mass</td><td>1000+</td><td>How stiff the suspension is. Higher values make the ride stiffer and reduce body roll. Too low and the vehicle bottoms out.</td></tr>
+<tr><td>Damper Force (N s/m)</td><td>Auto from mass</td><td>100+</td><td>How quickly the spring stops bouncing. Higher values reduce oscillation. Too high and the suspension feels rigid.</td></tr>
+</table>
+<p><strong>Recalculate from Mass</strong> button: If you changed the mass in Step 1 and want to recalculate spring and damper values, click this button.</p>
+<p><strong>Tips:</strong></p>
+<ul>
+<li>For sports cars: lower suspension distance (0.1 - 0.15), higher spring force</li>
+<li>For SUVs and off-road: higher suspension distance (0.25 - 0.4), moderate spring force</li>
+<li>For trucks: higher spring force to support the weight, moderate suspension distance</li>
+<li>These values apply to all wheels initially. After setup, you can fine-tune each axle independently on its RCCP_Axle component.</li>
+</ul>
+<h3 id='section-10'>Step 4: Engine and Drivetrain</h3>
+<p>This step configures the engine power and how it reaches the wheels.</p>
+<p><strong>Auto-calculation:</strong> Max Engine Torque is automatically computed as Mass x 0.2. For a 1350 kg vehicle, that gives 270 Nm.</p>
+<table>
+<tr><th>Field</th><th>Default</th><th>Description</th></tr>
+<tr><td>Drive Type</td><td>RWD</td><td>Which wheels receive engine power (see table below)</td></tr>
+<tr><td>Max Engine Torque (Nm)</td><td>Auto from mass</td><td>Peak torque the engine produces. Higher = faster acceleration.</td></tr>
+<tr><td>Min Engine RPM</td><td>800</td><td>Idle RPM. The engine stays at or above this speed.</td></tr>
+<tr><td>Max Engine RPM</td><td>7000</td><td>Redline RPM. The engine cannot exceed this speed.</td></tr>
+<tr><td>Max Speed (km/h)</td><td>240</td><td>Top speed limiter. The gearbox ratios are adjusted to match.</td></tr>
+</table>
+<p><strong>Drive Type options:</strong></p>
+<table>
+<tr><th>Type</th><th>Full Name</th><th>Power Goes To</th><th>Best For</th></tr>
+<tr><td>FWD</td><td>Front Wheel Drive</td><td>Front wheels only</td><td>Everyday cars, less oversteer, good traction in rain</td></tr>
+<tr><td>RWD</td><td>Rear Wheel Drive</td><td>Rear wheels only</td><td>Sports cars, drifting, most common for fun driving games</td></tr>
+<tr><td>AWD</td><td>All Wheel Drive</td><td>All wheels</td><td>Off-road, rally, SUVs, best traction on all surfaces</td></tr>
+</table>
+<p>When you select AWD, the wizard creates two Differential components -- one for the front axle and one for the rear axle. FWD and RWD use a single Differential.</p>
+<p><strong>Recalculate Torque from Mass</strong> button: Recomputes the recommended torque if you changed the mass.</p>
+<p><strong>Validation:</strong> The wizard warns you if:</p>
+<ul>
+<li>Max Torque is below 100 Nm (too low for most vehicles)</li>
+<li>Min RPM is below 600 (engine would stall unrealistically)</li>
+<li>Max RPM is above 10,000 (unusually high for most engines)</li>
+</ul>
+<h3 id='section-11'>Step 5: Addon Components</h3>
+<p>This step lets you choose which optional vehicle systems to include. All addons are enabled by default -- you deselect any you do not need.</p>
+<table>
+<tr><th>Component</th><th>What It Does</th></tr>
+<tr><td><strong>Inputs</strong></td><td>Keyboard, gamepad, and mobile touch controls. You almost always want this unless you are building AI-only vehicles.</td></tr>
+<tr><td><strong>Dynamics</strong></td><td>Aerodynamic drag, downforce, engine inertia, and weight transfer simulation. Adds realism at higher speeds.</td></tr>
+<tr><td><strong>Stability</strong></td><td>Electronic driving aids: ABS (anti-lock brakes), ESP (electronic stability), TCS (traction control), and steering helpers.</td></tr>
+<tr><td><strong>Customizer</strong></td><td>Runtime paint changes, wheel swaps, and performance upgrades. Useful for garage/customization menus.</td></tr>
+<tr><td><strong>Lights</strong></td><td>Headlights, brake lights, reverse lights, and turn indicators.</td></tr>
+<tr><td><strong>Damage</strong></td><td>Mesh deformation on impact and detachable parts (bumpers, doors, hoods). Requires Read/Write enabled meshes.</td></tr>
+<tr><td><strong>Particles</strong></td><td>Tire smoke, exhaust fumes, dust trails, and sparks.</td></tr>
+<tr><td><strong>LOD</strong></td><td>Level-of-detail system that reduces mesh complexity for distant vehicles. Important for performance with many vehicles.</td></tr>
+<tr><td><strong>Audio</strong></td><td>Engine sounds, tire skid sounds, crash sounds, and wind noise.</td></tr>
+<tr><td><strong>Other Addons</strong></td><td>Networking integrations and other external systems.</td></tr>
+</table>
+<p>Use <strong>Select All</strong> and <strong>Select None</strong> buttons to quickly toggle everything.</p>
+<blockquote>
+<p><strong>Tip about Damage:</strong> If you enable Damage, the wizard checks whether your mesh assets have Read/Write enabled. Mesh deformation requires writable meshes. If any meshes are not readable, the wizard offers to fix them automatically by enabling Read/Write on the mesh import settings and re-importing.</p>
+</blockquote>
+<h3 id='section-12'>Step 6: Body Colliders</h3>
+<p>This step ensures your vehicle has physics colliders so it can interact with the environment (hit walls, land on the ground, etc.).</p>
+<p><strong>What happens:</strong></p>
+<ol>
+<li>The wizard scans all MeshFilters in your vehicle hierarchy (excluding wheels)</li>
+<li>It sorts them by volume (largest first) and displays them as a checklist</li>
+<li>Meshes larger than 10% of the biggest mesh are auto-selected</li>
+<li>You check or uncheck which parts should receive MeshColliders</li>
+</ol>
+<table>
+<tr><th>Option</th><th>Default</th><th>Description</th></tr>
+<tr><td>Convex MeshColliders</td><td>On</td><td>Makes the colliders convex, which is required for Rigidbody physics. Non-convex MeshColliders only work on static objects.</td></tr>
+</table>
+<p>Use <strong>Select All</strong> and <strong>Select None</strong> to quickly adjust the selection.</p>
+<p><strong>If no body meshes are found:</strong> You can skip this step and add colliders manually later (for example, using a simple Box Collider on the body).</p>
+<blockquote>
+<p><strong>Important:</strong> Without at least one body collider, your vehicle will not collide with anything. Wheels have their own WheelColliders, but the body of the car needs a separate collider for wall hits, rollovers, and stacking.</p>
+</blockquote>
+<h3 id='section-13'>Step 7: Finalize</h3>
+<p>This is the review and confirmation step. It displays a summary of everything you configured across all previous steps.</p>
+<p><strong>Summary sections (clickable):</strong> Each section header is clickable -- clicking it jumps you back to that step for editing.</p>
+<ul>
+<li><strong>Vehicle</strong> -- Name and mass</li>
+<li><strong>Wheels</strong> -- Names of all four assigned wheel objects</li>
+<li><strong>Suspension</strong> -- Distance, spring, and damper values</li>
+<li><strong>Engine</strong> -- Torque, RPM range, drive type, and max speed</li>
+<li><strong>Components</strong> -- Count of enabled addons (e.g., &quot;8 / 10 enabled&quot;)</li>
+</ul>
+<p><strong>Scene Setup:</strong> The wizard checks for:</p>
+<ul>
+<li><strong>RCCP Camera</strong> -- If missing, an &quot;Add&quot; button lets you place one instantly</li>
+<li><strong>Ground Collider</strong> -- If missing, an &quot;Add&quot; button creates a ground plane</li>
+</ul>
+<p><strong>UI Canvas toggle:</strong> If no RCCP UI Canvas is in the scene, you can opt to add one. The UI Canvas provides a ready-made dashboard with speedometer, RPM gauge, and control buttons.</p>
+<p><strong>Finishing:</strong></p>
+<ol>
+<li>Review all settings in the summary</li>
+<li>Click <strong>Finish Setup</strong></li>
+<li>The wizard runs final validation (wheels, suspension, engine, body colliders, mesh readability)</li>
+<li>If the scene is missing a camera or ground, you get a non-blocking warning with the option to continue anyway</li>
+<li>Body colliders are applied to selected mesh parts</li>
+<li>The vehicle is created with all chosen components</li>
+<li>If UI Canvas was selected, it is added to the scene</li>
+<li>A confirmation dialog appears: &quot;Vehicle setup successfully completed!&quot;</li>
+</ol>
+<p>Your vehicle is now ready to drive. Press Play and test it.</p>
+<h2 id='section-14'>Manual Vehicle Setup (Without Wizard)</h2>
+<p>If you prefer full control or have an unusual vehicle configuration, you can set everything up by hand. This is also useful for understanding what the wizard does behind the scenes.</p>
+<h3 id='section-15'>Step-by-Step Manual Setup</h3>
+<ol>
+<li><strong>Drag your vehicle model</strong> into the scene from the Project panel</li>
+</ol>
+<ol>
+<li><strong>Add RCCP_CarController</strong> to the vehicle root GameObject:</li>
+</ol>
+<ul>
+<li>Select the vehicle root</li>
+<li>Click Add Component &gt; search for &quot;RCCP Car Controller&quot;</li>
+<li>This automatically adds a Rigidbody component</li>
+<li>Set the Rigidbody mass (default 1350 kg), drag (0.0025), angular drag (0.35), and interpolation to Interpolate</li>
+</ul>
+<ol>
+<li><strong>Add the drivetrain components</strong> as child GameObjects. Each one is its own GameObject under the vehicle root:</li>
+</ol>
+<table>
+<tr><th>Component</th><th>GameObject Name</th><th>Purpose</th></tr>
+<tr><td>RCCP_Engine</td><td>RCCP_Engine</td><td>Produces torque based on RPM and throttle input</td></tr>
+<tr><td>RCCP_Clutch</td><td>RCCP_Clutch</td><td>Connects/disconnects engine from gearbox</td></tr>
+<tr><td>RCCP_Gearbox</td><td>RCCP_Gearbox</td><td>Multiplies torque through gear ratios</td></tr>
+<tr><td>RCCP_Differential</td><td>RCCP_Differential</td><td>Splits power between left and right wheels on an axle</td></tr>
+<tr><td>RCCP_Axles</td><td>RCCP_Axles</td><td>Manager that references all axle components</td></tr>
+</table>
+<ol>
+<li><strong>Create axles</strong> as child GameObjects under the vehicle root and add RCCP_Axle to each:</li>
+</ol>
+<ul>
+<li>Create &quot;RCCP_Axle_Front&quot; -- set <code>isSteer = true</code>, <code>isBrake = true</code></li>
+<li>Create &quot;RCCP_Axle_Rear&quot; -- set <code>isBrake = true</code>, <code>isHandbrake = true</code></li>
+<li>Assign wheel model transforms to <code>leftWheelModel</code> and <code>rightWheelModel</code> on each axle</li>
+</ul>
+<ol>
+<li><strong>Connect the differential</strong> to the correct axle:</li>
+</ol>
+<ul>
+<li>Select the RCCP_Differential component</li>
+<li>Set <code>connectedAxle</code> to the axle that should receive power (rear axle for RWD, front for FWD)</li>
+<li>For AWD, create a second Differential and connect each to a different axle</li>
+</ul>
+<ol>
+<li><strong>Wire up drivetrain events</strong> (the engine-to-clutch-to-gearbox-to-differential chain):</li>
+</ol>
+<ul>
+<li>Engine's output event connects to Clutch</li>
+<li>Clutch's output event connects to Gearbox</li>
+<li>Gearbox's output event connects to Differential</li>
+<li>The wizard sets these up automatically; manually, you can use the Inspector to connect them</li>
+</ul>
+<ol>
+<li><strong>Add optional components</strong> as needed:</li>
+</ol>
+<p>   ```</p>
+<p>   RCCP_Input          -- player input handling</p>
+<p>   RCCP_AeroDynamics   -- drag and downforce</p>
+<p>   RCCP_Stability      -- ABS, ESP, TCS</p>
+<p>   RCCP_Audio          -- engine and wheel sounds</p>
+<p>   RCCP_Customizer     -- paint, wheels, upgrades</p>
+<p>   RCCP_Lights         -- headlights, brake lights, indicators</p>
+<p>   RCCP_Damage         -- mesh deformation, detachable parts</p>
+<p>   RCCP_Particles      -- smoke, dust, sparks</p>
+<p>   RCCP_LOD            -- level of detail</p>
+<p>   ```</p>
+<blockquote>
+<p><strong>Important:</strong> All RCCP components auto-register with the RCCP_CarController through the <code>RCCP_Component.Register()</code> method. You do not need to manually wire component references -- the car controller discovers them automatically.</p>
+</blockquote>
+<h2 id='section-16'>Configuring Axles</h2>
+<p>After setup (wizard or manual), you can fine-tune each axle individually. Select any RCCP_Axle GameObject in the Hierarchy and use the Inspector.</p>
+<h3 id='section-17'>Key Axle Settings</h3>
+<table>
+<tr><th>Setting</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td>leftWheelModel</td><td>Transform</td><td>--</td><td>The visual mesh transform for the left wheel</td></tr>
+<tr><td>rightWheelModel</td><td>Transform</td><td>--</td><td>The visual mesh transform for the right wheel</td></tr>
+<tr><td>isPower</td><td>bool</td><td>false</td><td>Whether this axle receives engine torque. Set automatically by the Differential's drive type -- do not set this manually.</td></tr>
+<tr><td>isSteer</td><td>bool</td><td>false</td><td>Whether this axle turns with steering input</td></tr>
+<tr><td>isBrake</td><td>bool</td><td>false</td><td>Whether this axle responds to brake input</td></tr>
+<tr><td>isHandbrake</td><td>bool</td><td>false</td><td>Whether this axle responds to handbrake input</td></tr>
+<tr><td>antirollForce</td><td>float</td><td>500</td><td>Anti-roll bar stiffness. Higher values reduce body roll in turns.</td></tr>
+<tr><td>powerMultiplier</td><td>float</td><td>1.0</td><td>Scales engine torque for this axle (-1 to 1). Negative inverts direction.</td></tr>
+<tr><td>steerMultiplier</td><td>float</td><td>1.0</td><td>Scales steering angle for this axle (-1 to 1). Use negative values for rear-wheel steering.</td></tr>
+<tr><td>brakeMultiplier</td><td>float</td><td>1.0</td><td>Scales brake force for this axle (0 to 1).</td></tr>
+<tr><td>handbrakeMultiplier</td><td>float</td><td>1.0</td><td>Scales handbrake force for this axle (0 to 1).</td></tr>
+</table>
+<h3 id='section-18'>Typical Axle Configurations</h3>
+<p><strong>Standard 4-wheel car:</strong></p>
+<table>
+<tr><th>Axle</th><th>isSteer</th><th>isBrake</th><th>isHandbrake</th><th>Notes</th></tr>
+<tr><td>Front</td><td>Yes</td><td>Yes</td><td>No</td><td>Steering + front brakes</td></tr>
+<tr><td>Rear</td><td>No</td><td>Yes</td><td>Yes</td><td>Rear brakes + handbrake</td></tr>
+</table>
+<p><strong>Rear-wheel steering (forklift, some sports cars):</strong></p>
+<table>
+<tr><th>Axle</th><th>isSteer</th><th>steerMultiplier</th><th>Notes</th></tr>
+<tr><td>Front</td><td>Yes</td><td>1.0</td><td>Normal front steering</td></tr>
+<tr><td>Rear</td><td>Yes</td><td>-0.15</td><td>Slight counter-steer at rear for stability</td></tr>
+</table>
+<h2 id='section-19'>Drive Types Explained</h2>
+<p>The drive type determines which wheels receive engine power. It is configured on the RCCP_Differential component, which automatically sets <code>isPower</code> on the correct axles.</p>
+<h3 id='section-20'>FWD (Front Wheel Drive)</h3>
+<p>Power goes to the front axle only. The front wheels both steer and drive.</p>
+<ul>
+<li><strong>Pros:</strong> Better traction in rain/snow, less oversteer, predictable handling</li>
+<li><strong>Cons:</strong> Can understeer under heavy throttle, front tires wear faster</li>
+<li><strong>Common vehicles:</strong> Economy cars, hatchbacks, most family sedans</li>
+</ul>
+<h3 id='section-21'>RWD (Rear Wheel Drive)</h3>
+<p>Power goes to the rear axle only. The rear wheels drive while the front wheels steer.</p>
+<ul>
+<li><strong>Pros:</strong> Better weight distribution, natural oversteer for drifting, more fun for driving games</li>
+<li><strong>Cons:</strong> Can oversteer (spin out) if too much throttle in corners, less traction on slippery surfaces</li>
+<li><strong>Common vehicles:</strong> Sports cars, muscle cars, most trucks</li>
+</ul>
+<h3 id='section-22'>AWD (All Wheel Drive)</h3>
+<p>Power goes to all axles. When you select AWD in the wizard, it creates two Differential components -- one connected to the front axle and one connected to the rear axle.</p>
+<ul>
+<li><strong>Pros:</strong> Best traction on all surfaces, great for off-road and rally, very stable</li>
+<li><strong>Cons:</strong> Heavier, harder to drift, slightly more complex setup</li>
+<li><strong>Common vehicles:</strong> SUVs, rally cars, off-road vehicles, supercars</li>
+</ul>
+<h2 id='section-23'>Common Setup Issues</h2>
+<p>If something goes wrong after setup, check these common problems first.</p>
+<h3 id='section-24'>Vehicle flips or bounces on start</h3>
+<p><strong>Cause:</strong> Wheel colliders are too close to or intersecting the ground at spawn time.</p>
+<p><strong>Fix:</strong> Increase the suspension distance or raise the vehicle slightly above the ground before pressing Play. Also check that the vehicle mass is reasonable for its size.</p>
+<h3 id='section-25'>Wheels spinning in the wrong direction</h3>
+<p><strong>Cause:</strong> Wheel model pivots are not centered or the model's local axis orientation is incorrect.</p>
+<p><strong>Fix:</strong> Check each wheel model in the Scene view. The pivot should be at the exact center of the wheel. If the model was exported with a different axis convention, you may need to re-export it or add a parent wrapper object.</p>
+<h3 id='section-26'>Vehicle slides sideways</h3>
+<p><strong>Cause:</strong> Wheel friction curves are set too low, or the wrong wheel type preset was selected.</p>
+<p><strong>Fix:</strong> Try changing the Wheel Type to &quot;Stable&quot; for more grip. You can also adjust wheel friction curves directly in <a href='04_settings.html'>Settings</a>.</p>
+<h3 id='section-27'>Vehicle is too slow</h3>
+<p><strong>Cause:</strong> Max torque is too low, or the wrong axle has power.</p>
+<p><strong>Fix:</strong> Increase <code>maxEngineTorque</code> on the RCCP_Engine component. Also verify that the Differential is connected to the correct axle and that the driven axle's <code>isPower</code> is true.</p>
+<h3 id='section-28'>No engine sound</h3>
+<p><strong>Cause:</strong> RCCP_Audio component was not added, or audio clips are not assigned.</p>
+<p><strong>Fix:</strong> Make sure the vehicle has an RCCP_Audio component. Check that engine audio clips are configured in RCCP_Settings (go to <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Settings</strong>).</p>
+<h3 id='section-29'>Vehicle falls through the ground</h3>
+<p><strong>Cause:</strong> The scene has no ground collider, or the ground object is set as a trigger.</p>
+<p><strong>Fix:</strong> Add a Plane or Terrain with a Collider component. Make sure <code>isTrigger</code> is unchecked on the ground collider.</p>
+<h3 id='section-30'>Meshes not readable warning</h3>
+<p><strong>Cause:</strong> You enabled the Damage component, but the vehicle's mesh assets do not have Read/Write enabled in their import settings.</p>
+<p><strong>Fix:</strong> Select the mesh asset in the Project panel, open the Import Settings in the Inspector, enable Read/Write, and click Apply. The wizard can also do this automatically during setup.</p>
+<h3 id='section-31'>Vehicle already has RCCP_CarController</h3>
+<p><strong>Cause:</strong> You are trying to run the wizard on a vehicle that was already set up.</p>
+<p><strong>Fix:</strong> The wizard only works on fresh models. If you need to reconfigure, remove the RCCP_CarController and its child components first, then run the wizard again.</p>
+<h2 id='section-32'>Next Steps</h2>
+<ul>
+<li><a href='04_settings.html'>Settings</a> -- Fine-tune physics, behavior presets, and global options</li>
+<li><a href='05_inputs.html'>Inputs</a> -- Configure keyboard, gamepad, and mobile controls</li>
+<li><a href='09_camera_system.html'>Camera System</a> -- Set up the vehicle-following camera</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a>  </p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

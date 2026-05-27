@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 4522b95f6fa08064bae95dd882592b57
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 12385, guid: 0000000000000000e000000000000000, type: 0}
+  disableValidation: 0
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178967
+  packageName: Realistic Car Controller Pro
+  packageVersion: 2.41.1
+  assetPath: Assets/Realistic Car Controller Pro/Editor/UI/WelcomeWindow/rccp_welcome_window.uss
+  uploadId: 912608

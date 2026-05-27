@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 31fc11f4a2064884ea285954756a7f16
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178967
+  packageName: Realistic Car Controller Pro
+  packageVersion: 2.41.1
+  assetPath: Assets/Realistic Car Controller Pro/Editor/SetupWizard/Steps/RCCP_SetupStep_BodyColliders.cs
+  uploadId: 912608

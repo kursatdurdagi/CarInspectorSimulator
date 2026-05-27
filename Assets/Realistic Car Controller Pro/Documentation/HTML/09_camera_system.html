@@ -1,0 +1,367 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>09_camera_system</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Camera System</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Camera System</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Camera Setup</a></li>
+<li style='margin-left:40px'><a href='#section-2'>Adding the Camera to Your Scene</a></li>
+<li style='margin-left:40px'><a href='#section-3'>How Targeting Works</a></li>
+<li style='margin-left:20px'><a href='#section-4'>Camera Modes</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Enabling and Disabling Modes</a></li>
+<li style='margin-left:20px'><a href='#section-6'>Third-Person Mode (TPS)</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Transform Settings</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Rotation Locking</a></li>
+<li style='margin-left:40px'><a href='#section-9'>Dynamic Camera</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Speed-Based FOV</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Auto Focus</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Auto Reverse</a></li>
+<li style='margin-left:40px'><a href='#section-13'>Camera Tilt</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Camera Shake</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Free Fall Behavior</a></li>
+<li style='margin-left:20px'><a href='#section-16'>Hood Camera (FPS Mode)</a></li>
+<li style='margin-left:40px'><a href='#section-17'>Setup</a></li>
+<li style='margin-left:40px'><a href='#section-18'>FOV</a></li>
+<li style='margin-left:40px'><a href='#section-19'>Orbit in Hood Mode</a></li>
+<li style='margin-left:20px'><a href='#section-20'>Wheel Camera</a></li>
+<li style='margin-left:40px'><a href='#section-21'>Setup</a></li>
+<li style='margin-left:40px'><a href='#section-22'>FOV</a></li>
+<li style='margin-left:20px'><a href='#section-23'>Fixed Camera</a></li>
+<li style='margin-left:40px'><a href='#section-24'>Setup</a></li>
+<li style='margin-left:20px'><a href='#section-25'>Cinematic Camera</a></li>
+<li style='margin-left:40px'><a href='#section-26'>Setup</a></li>
+<li style='margin-left:20px'><a href='#section-27'>Top-Down Camera</a></li>
+<li style='margin-left:20px'><a href='#section-28'>Truck-Trailer Camera</a></li>
+<li style='margin-left:20px'><a href='#section-29'>Orbit Controls</a></li>
+<li style='margin-left:40px'><a href='#section-30'>Settings</a></li>
+<li style='margin-left:40px'><a href='#section-31'>Mobile Orbit</a></li>
+<li style='margin-left:40px'><a href='#section-32'>Look-Back</a></li>
+<li style='margin-left:20px'><a href='#section-33'>Zoom</a></li>
+<li style='margin-left:20px'><a href='#section-34'>Occlusion / Collision Detection</a></li>
+<li style='margin-left:20px'><a href='#section-35'>Auto-Change Camera</a></li>
+<li style='margin-left:20px'><a href='#section-36'>Switching Camera at Runtime</a></li>
+<li style='margin-left:40px'><a href='#section-37'>Cycle to Next Mode</a></li>
+<li style='margin-left:40px'><a href='#section-38'>Switch to a Specific Mode</a></li>
+<li style='margin-left:40px'><a href='#section-39'>Toggle Camera On/Off</a></li>
+<li style='margin-left:20px'><a href='#section-40'>Showroom Cameras</a></li>
+<li style='margin-left:40px'><a href='#section-41'>RCCP_ShowroomCamera</a></li>
+<li style='margin-left:40px'><a href='#section-42'>RCCP_CameraCarSelection</a></li>
+<li style='margin-left:20px'><a href='#section-43'>Common Issues</a></li>
+<li style='margin-left:40px'><a href='#section-44'>Camera Does Not Follow the Vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-45'>Camera Clips Through Walls</a></li>
+<li style='margin-left:40px'><a href='#section-46'>Hood or Wheel Camera Is Skipped</a></li>
+<li style='margin-left:40px'><a href='#section-47'>Camera Shakes Excessively in Hood Mode</a></li>
+<li style='margin-left:40px'><a href='#section-48'>Truck-Trailer Mode Activates Unexpectedly</a></li>
+<li style='margin-left:20px'><a href='#section-49'>Related Topics</a></li>
+</ul></div>
+<p>RCCP uses a <strong>single camera</strong> that switches between modes rather than placing multiple camera GameObjects in your scene. The main <code>RCCP_Camera</code> component parents itself to different positions depending on the active mode. This keeps your hierarchy clean and avoids the overhead of maintaining multiple cameras.</p>
+<p>For general project setup, see <a href='01_installation.html'>Installation</a>. For vehicle configuration, see <a href='03_vehicle_setup.html'>Vehicle Setup</a>.</p>
+<hr>
+<h2 id='section-1'>Camera Setup</h2>
+<h3 id='section-2'>Adding the Camera to Your Scene</h3>
+<p>Use the Unity menu:</p>
+<p><strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Create &gt; Scene &gt; Add RCCP Camera</strong></p>
+<p>This instantiates the RCCP Camera prefab referenced in <code>RCCP_Settings</code>. The prefab contains:</p>
+<ul>
+<li>The <code>RCCP_Camera</code> component (the main controller)</li>
+<li>A child <strong>Pivot</strong> GameObject used for collision offsets</li>
+<li>A child <strong>Camera</strong> (the actual Unity Camera component)</li>
+</ul>
+<h3 id='section-3'>How Targeting Works</h3>
+<p><code>RCCP_Camera</code> uses a <code>CameraTarget</code> class that holds:</p>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>playerVehicle</code></td><td><code>RCCP_CarController</code></td><td>The vehicle the camera follows</td></tr>
+<tr><td><code>HoodCamera</code></td><td><code>RCCP_HoodCamera</code></td><td>Auto-found on the vehicle via <code>GetComponentInChildren</code></td></tr>
+<tr><td><code>WheelCamera</code></td><td><code>RCCP_WheelCamera</code></td><td>Auto-found on the vehicle via <code>GetComponentInChildren</code></td></tr>
+</table>
+<p>When a vehicle is registered as the player vehicle through <code>RCCP_SceneManager</code>, the camera's <code>SetTarget()</code> method is called automatically. If <code>TPSAutoFocus</code> is enabled (the default), the camera smoothly adjusts its distance and height to fit the vehicle's bounds.</p>
+<hr>
+<h2 id='section-4'>Camera Modes</h2>
+<p>The <code>CameraMode</code> enum defines all available modes:</p>
+<table>
+<tr><th>Mode</th><th>Enum Value</th><th>Description</th></tr>
+<tr><td>Third-Person</td><td><code>TPS</code></td><td>Default follow camera behind the vehicle</td></tr>
+<tr><td>First-Person / Hood</td><td><code>FPS</code></td><td>View from inside the vehicle (dashboard area)</td></tr>
+<tr><td>Wheel</td><td><code>WHEEL</code></td><td>Close-up view near a wheel</td></tr>
+<tr><td>Fixed</td><td><code>FIXED</code></td><td>Scene-placed camera that watches the vehicle pass by</td></tr>
+<tr><td>Cinematic</td><td><code>CINEMATIC</code></td><td>Auto-tracking camera with animation support</td></tr>
+<tr><td>Top-Down</td><td><code>TOP</code></td><td>Overhead view, optionally orthographic</td></tr>
+<tr><td>Truck-Trailer</td><td><code>TRUCKTRAILER</code></td><td>Specialized TPS mode for vehicles towing trailers</td></tr>
+</table>
+<h3 id='section-5'>Enabling and Disabling Modes</h3>
+<p>Each mode (except TPS and TRUCKTRAILER) can be toggled on or off. When a mode is disabled, the camera skips it when cycling:</p>
+<table>
+<tr><th>Property</th><th>Default</th><th>Controls</th></tr>
+<tr><td><code>useHoodCameraMode</code></td><td><code>true</code></td><td>FPS mode availability</td></tr>
+<tr><td><code>useWheelCameraMode</code></td><td><code>true</code></td><td>WHEEL mode availability</td></tr>
+<tr><td><code>useFixedCameraMode</code></td><td><code>true</code></td><td>FIXED mode availability</td></tr>
+<tr><td><code>useCinematicCameraMode</code></td><td><code>true</code></td><td>CINEMATIC mode availability</td></tr>
+<tr><td><code>useTopCameraMode</code></td><td><code>false</code></td><td>TOP mode availability</td></tr>
+</table>
+<p>TPS mode is always available and is the fallback when other modes encounter issues (such as occlusion in Wheel mode).</p>
+<hr>
+<h2 id='section-6'>Third-Person Mode (TPS)</h2>
+<p>The TPS camera follows behind the vehicle at a configurable distance and height. RCCP provides two TPS sub-modes:</p>
+<table>
+<tr><th>Sub-Mode</th><th>Enum</th><th>Characteristics</th></tr>
+<tr><td>TPS1</td><td><code>TPSMode.TPS1</code></td><td>Original implementation using <code>SmoothDampAngle</code> per axis</td></tr>
+<tr><td>TPS2</td><td><code>TPSMode.TPS2</code></td><td>More stable approach using <code>Quaternion.Slerp</code>, includes drift support</td></tr>
+</table>
+<p>Select the sub-mode via the <code>tPSMode</code> property. TPS2 is the default and recommended choice.</p>
+<h3 id='section-7'>Transform Settings</h3>
+<table>
+<tr><th>Property</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>TPSDistance</code></td><td>0 - 20</td><td>6.5</td><td>Distance behind the vehicle</td></tr>
+<tr><td><code>TPSHeight</code></td><td>0 - 10</td><td>1.5</td><td>Height above the vehicle</td></tr>
+<tr><td><code>TPSOffset</code></td><td>Vector3</td><td>(0, 0, 0.2)</td><td>Local offset relative to the vehicle</td></tr>
+<tr><td><code>TPSRotationDamping</code></td><td>0 - 1</td><td>0.5</td><td>Smoothing factor for rotation tracking</td></tr>
+<tr><td><code>TPSPitch</code></td><td>-45 to 45</td><td>7.5</td><td>Downward pitch angle</td></tr>
+<tr><td><code>TPSYaw</code></td><td>-45 to 45</td><td>0</td><td>Lateral yaw offset</td></tr>
+</table>
+<h3 id='section-8'>Rotation Locking</h3>
+<p>These control which vehicle rotation axes the camera follows:</p>
+<table>
+<tr><th>Property</th><th>Default</th><th>Effect</th></tr>
+<tr><td><code>TPSLockX</code></td><td><code>true</code></td><td>Camera tracks vehicle pitch</td></tr>
+<tr><td><code>TPSLockY</code></td><td><code>true</code></td><td>Camera tracks vehicle yaw</td></tr>
+<tr><td><code>TPSLockZ</code></td><td><code>false</code></td><td>Camera tracks vehicle roll</td></tr>
+</table>
+<h3 id='section-9'>Dynamic Camera</h3>
+<p>When <code>TPSDynamic</code> is enabled, the camera distance, height, and pitch angle shift based on the vehicle's acceleration. This creates a more cinematic feel during rapid speed changes. The system uses a hidden <code>TPSAccelerationPoint</code> transform to smooth the acceleration offset.</p>
+<h3 id='section-10'>Speed-Based FOV</h3>
+<p>The field of view interpolates between <code>TPSMinimumFOV</code> and <code>TPSMaximumFOV</code> based on vehicle speed, creating a sense of velocity.</p>
+<table>
+<tr><th>Property</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>TPSMinimumFOV</code></td><td>10 - 90</td><td>40</td><td>FOV when stationary</td></tr>
+<tr><td><code>TPSMaximumFOV</code></td><td>10 - 160</td><td>60</td><td>FOV at high speed</td></tr>
+</table>
+<h3 id='section-11'>Auto Focus</h3>
+<p>When <code>TPSAutoFocus</code> is <code>true</code> (the default), <code>SetTarget()</code> triggers a coroutine that calculates the vehicle's bounding-box extent and smoothly adjusts <code>TPSDistance</code> and <code>TPSHeight</code> over 2 seconds. This ensures each vehicle is framed correctly regardless of its size.</p>
+<h3 id='section-12'>Auto Reverse</h3>
+<p>When <code>TPSAutoReverse</code> is <code>true</code> (the default), the camera automatically rotates 180 degrees to look forward when the vehicle reverses.</p>
+<h3 id='section-13'>Camera Tilt</h3>
+<p>The camera tilts along the Z axis based on lateral velocity, creating a leaning effect during turns:</p>
+<table>
+<tr><th>Property</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>TPSTiltMaximum</code></td><td>0 - 25</td><td>15</td><td>Maximum tilt angle in degrees</td></tr>
+<tr><td><code>TPSTiltMultiplier</code></td><td>0 - 1.5</td><td>1</td><td>Multiplier to fine-tune tilt intensity</td></tr>
+</table>
+<h3 id='section-14'>Camera Shake</h3>
+<p>When <code>TPSShake</code> is <code>true</code> (the default), the camera applies subtle Perlin noise-based positional and rotational shake that increases with vehicle speed. Maximum shake occurs around 260 km/h.</p>
+<h3 id='section-15'>Free Fall Behavior</h3>
+<p>When <code>TPSFreeFall</code> is <code>true</code> (the default), the camera rotation damping drops to near zero while the vehicle is airborne. This means the camera holds its orientation in the air rather than tracking the vehicle's tumbling.</p>
+<hr>
+<h2 id='section-16'>Hood Camera (FPS Mode)</h2>
+<p>The hood camera provides a first-person view from inside the vehicle, typically at dashboard level.</p>
+<h3 id='section-17'>Setup</h3>
+<ol>
+<li>Create an empty GameObject as a child of your vehicle.</li>
+<li>Position it where the driver's eyes would be (on or near the dashboard).</li>
+<li>Add the <code>RCCP_HoodCamera</code> component to it.</li>
+<li>(Optional) Add a <code>ConfigurableJoint</code> and <code>Rigidbody</code> to reduce camera shake. The component auto-connects the joint to the vehicle's Rigidbody on start.</li>
+</ol>
+<p>The <code>RCCP_Camera</code> finds the <code>RCCP_HoodCamera</code> on the target vehicle automatically via <code>GetComponentInChildren</code>.</p>
+<h3 id='section-18'>FOV</h3>
+<p>The hood camera uses <code>hoodCameraFOV</code> on the <code>RCCP_Camera</code> component (default 60, range 10-160 degrees).</p>
+<h3 id='section-19'>Orbit in Hood Mode</h3>
+<p>When <code>useOrbitInHoodCameraMode</code> is <code>true</code> (the default), the player can look around using mouse or touch input while in FPS mode.</p>
+<hr>
+<h2 id='section-20'>Wheel Camera</h2>
+<p>The wheel camera provides a low-angle close-up of a vehicle wheel.</p>
+<h3 id='section-21'>Setup</h3>
+<ol>
+<li>Create an empty GameObject as a child of your vehicle, near one of the wheels.</li>
+<li>Orient it to point at the wheel.</li>
+<li>Add the <code>RCCP_WheelCamera</code> component.</li>
+</ol>
+<p>The <code>RCCP_Camera</code> finds it automatically. If occlusion is detected (an obstacle between the camera and the vehicle), the camera automatically reverts to TPS mode.</p>
+<h3 id='section-22'>FOV</h3>
+<p>The wheel camera uses <code>wheelCameraFOV</code> on the <code>RCCP_Camera</code> component (default 60, range 10-160 degrees).</p>
+<hr>
+<h2 id='section-23'>Fixed Camera</h2>
+<p>The <code>RCCP_FixedCamera</code> is a singleton placed in the scene. When active, the RCCP Camera parents itself to the fixed camera's position. The fixed camera:</p>
+<ul>
+<li>Looks at the vehicle and adjusts FOV based on distance.</li>
+<li>Repositions itself when the vehicle moves beyond <code>maxDistance</code> (default 50 meters).</li>
+<li>Repositions using raycasts to find a valid viewpoint near the road.</li>
+</ul>
+<h3 id='section-24'>Setup</h3>
+<ol>
+<li>Add an <code>RCCP_FixedCamera</code> component to a GameObject in your scene.</li>
+<li>Set <code>maxDistance</code> to control how far the vehicle can travel before the camera relocates.</li>
+<li>Configure <code>minimumFOV</code> (default 20) and <code>maximumFOV</code> (default 60) for zoom behavior.</li>
+</ol>
+<p>Only one <code>RCCP_FixedCamera</code> should exist in a scene (it is a singleton).</p>
+<hr>
+<h2 id='section-25'>Cinematic Camera</h2>
+<p>The <code>RCCP_CinematicCamera</code> is a singleton that smoothly tracks the vehicle from a trailing position. It includes a <strong>Pivot</strong> child GameObject that can hold Unity animations for camera movement.</p>
+<h3 id='section-26'>Setup</h3>
+<ol>
+<li>Add an <code>RCCP_CinematicCamera</code> component to a GameObject in your scene.</li>
+<li>Optionally, add animations to its Pivot child for sweeping camera motions.</li>
+<li>Use <code>RCCP_FOVForCinematicCamera</code> on the Pivot to feed animated FOV values back to the cinematic camera.</li>
+</ol>
+<p>The cinematic camera rotates smoothly toward the vehicle's heading and maintains a following distance of about 10 meters.</p>
+<hr>
+<h2 id='section-27'>Top-Down Camera</h2>
+<p>The top-down camera provides an overhead view, useful for racing games with a top-down perspective.</p>
+<table>
+<tr><th>Property</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>topCameraAngle</code></td><td>(45, 45, 0)</td><td>Euler angle of the overhead view</td></tr>
+<tr><td><code>topCameraDistance</code></td><td>100</td><td>Distance from the vehicle</td></tr>
+<tr><td><code>maximumZDistanceOffset</code></td><td>10</td><td>Forward offset based on speed</td></tr>
+<tr><td><code>useOrthoForTopCamera</code></td><td><code>false</code></td><td>If true, switches to orthographic projection</td></tr>
+<tr><td><code>minimumOrtSize</code></td><td>10</td><td>Orthographic size when stationary</td></tr>
+<tr><td><code>maximumOrtSize</code></td><td>20</td><td>Orthographic size at speed</td></tr>
+</table>
+<p>The camera position lerps smoothly toward the vehicle and adjusts the forward offset based on vehicle speed.</p>
+<hr>
+<h2 id='section-28'>Truck-Trailer Camera</h2>
+<p>When a vehicle has a connected trailer (<code>RCCP_TrailerController</code>), the TPS mode automatically switches to <code>TRUCKTRAILER</code>. This mode:</p>
+<ul>
+<li>Centers the camera between the truck and the trailer (averaged position).</li>
+<li>Uses <code>AutoFocus</code> to calculate combined bounds of both objects for proper framing.</li>
+<li>Supports manual override via <code>RCCP_TrailerController.manualSetCameraDistanceAndHeight</code>, which lets you set <code>TPSDistance</code> and <code>TPSHeight</code> on the trailer component directly.</li>
+</ul>
+<p>When the trailer is disconnected, the camera automatically reverts to standard TPS mode.</p>
+<hr>
+<h2 id='section-29'>Orbit Controls</h2>
+<p>Orbit allows the player to rotate the camera around the vehicle using mouse or touch input in TPS and Hood modes.</p>
+<h3 id='section-30'>Settings</h3>
+<table>
+<tr><th>Property</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>useOrbitInTPSCameraMode</code></td><td><code>true</code></td><td>Enable orbit in TPS</td></tr>
+<tr><td><code>useOrbitInHoodCameraMode</code></td><td><code>true</code></td><td>Enable orbit in Hood/FPS</td></tr>
+<tr><td><code>useOrbitOnlyHolding</code></td><td><code>true</code></td><td>Orbit only while mouse button is held</td></tr>
+<tr><td><code>orbitXSpeed</code></td><td>100</td><td>Horizontal orbit speed</td></tr>
+<tr><td><code>orbitYSpeed</code></td><td>100</td><td>Vertical orbit speed</td></tr>
+<tr><td><code>orbitSmooth</code></td><td>25</td><td>Smoothing factor</td></tr>
+<tr><td><code>minOrbitY</code></td><td>-15</td><td>Minimum vertical angle</td></tr>
+<tr><td><code>maxOrbitY</code></td><td>70</td><td>Maximum vertical angle</td></tr>
+<tr><td><code>orbitReset</code></td><td><code>true</code></td><td>Auto-reset orbit when vehicle is moving</td></tr>
+</table>
+<h3 id='section-31'>Mobile Orbit</h3>
+<p>For mobile touch input, call <code>RCCP_Camera.OnDrag(PointerEventData)</code> from a UI drag panel. This feeds touch delta into the orbit system.</p>
+<h3 id='section-32'>Look-Back</h3>
+<p>The <code>lookBackNow</code> property rotates the camera 180 degrees to face behind the vehicle. This is triggered by the look-back input binding (see <a href='05_inputs.html'>Inputs</a>).</p>
+<hr>
+<h2 id='section-33'>Zoom</h2>
+<p>In TPS mode, mouse scroll input adjusts the camera distance:</p>
+<table>
+<tr><th>Property</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>zoomScrollMultiplier</code></td><td>0.5 - 10</td><td>5</td><td>Sensitivity of scroll zoom</td></tr>
+<tr><td><code>minimumScroll</code></td><td>0+</td><td>0</td><td>Minimum zoom offset</td></tr>
+<tr><td><code>maximumScroll</code></td><td>0+</td><td>5</td><td>Maximum zoom offset</td></tr>
+</table>
+<hr>
+<h2 id='section-34'>Occlusion / Collision Detection</h2>
+<p>When <code>useOcclusion</code> is <code>true</code> (the default), the camera performs a <code>SphereCast</code> from the vehicle toward the desired camera position. If the ray hits a collider (excluding vehicle layers and triggers), the camera repositions to the hit point plus a small normal offset. This prevents the camera from clipping through walls and terrain.</p>
+<p>The <code>occlusionLayerMask</code> controls which layers are checked. By default, it includes all layers except RCCP vehicle layers.</p>
+<hr>
+<h2 id='section-35'>Auto-Change Camera</h2>
+<p>When <code>useAutoChangeCamera</code> is enabled, the camera automatically cycles to the next available mode every 10 seconds. The <code>autoChangeCameraTimer</code> property tracks the current countdown. This is useful for demo scenes and attract modes.</p>
+<hr>
+<h2 id='section-36'>Switching Camera at Runtime</h2>
+<h3 id='section-37'>Cycle to Next Mode</h3>
+<pre><code>
+// Using the static API
+RCCP.ChangeCamera();
+
+// Or directly on the camera component
+RCCP_SceneManager.Instance.activePlayerCamera.ChangeCamera();
+</code></pre>
+<h3 id='section-38'>Switch to a Specific Mode</h3>
+<pre><code>
+RCCP_Camera cam = RCCP_SceneManager.Instance.activePlayerCamera;
+cam.ChangeCamera(RCCP_Camera.CameraMode.TOP);
+</code></pre>
+<h3 id='section-39'>Toggle Camera On/Off</h3>
+<pre><code>
+RCCP_Camera cam = RCCP_SceneManager.Instance.activePlayerCamera;
+cam.ToggleCamera(false); // Disables rendering
+cam.ToggleCamera(true);  // Re-enables rendering
+</code></pre>
+<hr>
+<h2 id='section-40'>Showroom Cameras</h2>
+<p>RCCP includes two additional camera components for menus and vehicle selection screens.</p>
+<h3 id='section-41'>RCCP_ShowroomCamera</h3>
+<p>An orbiting camera for main menus and vehicle showcases.</p>
+<table>
+<tr><th>Property</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>target</code></td><td>(none)</td><td>Transform to orbit around</td></tr>
+<tr><td><code>distance</code></td><td>8</td><td>Distance from target</td></tr>
+<tr><td><code>orbitingNow</code></td><td><code>true</code></td><td>Enable auto-rotation</td></tr>
+<tr><td><code>orbitSpeed</code></td><td>5</td><td>Auto-rotation speed</td></tr>
+<tr><td><code>smooth</code></td><td><code>true</code></td><td>Smooth position/rotation interpolation</td></tr>
+<tr><td><code>smoothingFactor</code></td><td>5</td><td>Interpolation speed</td></tr>
+<tr><td><code>minY</code> / <code>maxY</code></td><td>5 / 35</td><td>Vertical angle limits</td></tr>
+<tr><td><code>dragSpeed</code></td><td>10</td><td>Manual drag rotation speed</td></tr>
+</table>
+<p>Call <code>OnDrag(PointerEventData)</code> from a UI element to enable player-controlled rotation. Use <code>ToggleAutoRotation(bool)</code> to start or stop automatic orbiting.</p>
+<h3 id='section-42'>RCCP_CameraCarSelection</h3>
+<p>A simpler orbiting camera specifically for vehicle selection UIs. It automatically rotates around the target at a fixed angle and distance. No manual drag input by default.</p>
+<table>
+<tr><th>Property</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>target</code></td><td>(none)</td><td>Transform to orbit around</td></tr>
+<tr><td><code>distance</code></td><td>5</td><td>Distance from target</td></tr>
+<tr><td><code>speed</code></td><td>25</td><td>Rotation speed</td></tr>
+<tr><td><code>angle</code></td><td>10</td><td>Vertical viewing angle</td></tr>
+</table>
+<hr>
+<h2 id='section-43'>Common Issues</h2>
+<h3 id='section-44'>Camera Does Not Follow the Vehicle</h3>
+<ul>
+<li>Make sure a vehicle is registered as the player vehicle. Check that <code>RCCP_SceneManager.Instance.activePlayerCamera.cameraTarget.playerVehicle</code> is not null.</li>
+<li>Ensure the RCCP Camera prefab is in the scene. Use the menu command to add it if missing.</li>
+<li>If you are spawning vehicles via script, call <code>RCCP.RegisterPlayerVehicle()</code> or use <code>RCCP.SpawnRCC()</code> which handles registration automatically.</li>
+</ul>
+<h3 id='section-45'>Camera Clips Through Walls</h3>
+<ul>
+<li>Verify that <code>useOcclusion</code> is enabled on the <code>RCCP_Camera</code> component.</li>
+<li>Check the <code>occlusionLayerMask</code> to confirm it includes the layers of your environment colliders.</li>
+<li>Reduce the camera's near clip plane on the child Camera component if clipping occurs at very close range.</li>
+</ul>
+<h3 id='section-46'>Hood or Wheel Camera Is Skipped</h3>
+<ul>
+<li>The hood camera requires an <code>RCCP_HoodCamera</code> component on a child of the vehicle. If it is missing, the FPS mode is skipped when cycling.</li>
+<li>The same applies to <code>RCCP_WheelCamera</code> for wheel mode.</li>
+<li>Verify the component exists and is on an active GameObject.</li>
+</ul>
+<h3 id='section-47'>Camera Shakes Excessively in Hood Mode</h3>
+<ul>
+<li>Add a <code>ConfigurableJoint</code> and <code>Rigidbody</code> to the hood camera GameObject. <code>RCCP_HoodCamera</code> auto-connects the joint to the vehicle's Rigidbody.</li>
+<li>The <code>FixShake()</code> method is called automatically when switching to FPS mode.</li>
+</ul>
+<h3 id='section-48'>Truck-Trailer Mode Activates Unexpectedly</h3>
+<ul>
+<li>This is by design. When a trailer is connected, TPS automatically switches to TRUCKTRAILER mode to frame both objects. When the trailer is disconnected, it reverts to standard TPS.</li>
+</ul>
+<hr>
+<h2 id='section-49'>Related Topics</h2>
+<ul>
+<li><a href='03_vehicle_setup.html'>Vehicle Setup</a> -- adding hood and wheel cameras to your vehicle</li>
+<li><a href='04_settings.html'>Settings</a> -- configuring the camera prefab reference in RCCP_Settings</li>
+<li><a href='05_inputs.html'>Inputs</a> -- camera switch and look-back input bindings</li>
+<li><a href='07_mobile.html'>Mobile</a> -- touch-based orbit controls</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

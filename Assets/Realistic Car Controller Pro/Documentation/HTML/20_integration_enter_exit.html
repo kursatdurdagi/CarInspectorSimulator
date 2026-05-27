@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>20_integration_enter_exit</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Integration: Enter-Exit Vehicle (BCG Shared Assets)</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Integration: Enter-Exit Vehicle (BCG Shared Assets)</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Overview</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Prerequisites</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Installing</a></li>
+<li style='margin-left:20px'><a href='#section-4'>Scripting Symbol</a></li>
+<li style='margin-left:20px'><a href='#section-5'>Core Components</a></li>
+<li style='margin-left:40px'><a href='#section-6'>BCG_EnterExitManager</a></li>
+<li style='margin-left:40px'><a href='#section-7'>BCG_EnterExitVehicle</a></li>
+<li style='margin-left:40px'><a href='#section-8'>BCG_EnterExitPlayer</a></li>
+<li style='margin-left:40px'><a href='#section-9'>BCG_EnterExitSettings</a></li>
+<li style='margin-left:20px'><a href='#section-10'>Setup Guide</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Step 1: Import BCG Shared Assets</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Step 2: Add BCG_EnterExitVehicle to Each Vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-13'>Step 3: Add BCG_EnterExitPlayer to Your Character</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Step 4: Ensure BCG_EnterExitManager Exists</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Step 5: Configure Input</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Step 6: Configure UI (Optional)</a></li>
+<li style='margin-left:20px'><a href='#section-17'>Character Controllers</a></li>
+<li style='margin-left:40px'><a href='#section-18'>BCG_FPSCharacterController</a></li>
+<li style='margin-left:40px'><a href='#section-19'>BCG_TPSCharacterController</a></li>
+<li style='margin-left:40px'><a href='#section-20'>BCG_MobileCharacterController</a></li>
+<li style='margin-left:20px'><a href='#section-21'>Camera</a></li>
+<li style='margin-left:40px'><a href='#section-22'>BCG_TPSCameraController</a></li>
+<li style='margin-left:20px'><a href='#section-23'>Input System</a></li>
+<li style='margin-left:40px'><a href='#section-24'>BCG_InputManager</a></li>
+<li style='margin-left:20px'><a href='#section-25'>UI Components</a></li>
+<li style='margin-left:40px'><a href='#section-26'>BCG_EnterExitCharacterUICanvas</a></li>
+<li style='margin-left:40px'><a href='#section-27'>BCG_UIInteractionButton</a></li>
+<li style='margin-left:20px'><a href='#section-28'>Common Issues</a></li>
+<li style='margin-left:40px'><a href='#section-29'>Character does not enter the vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-30'>Camera does not switch when entering/exiting</a></li>
+<li style='margin-left:40px'><a href='#section-31'>Vehicle drives on its own after player exits</a></li>
+<li style='margin-left:40px'><a href='#section-32'>Player appears inside the vehicle mesh on exit</a></li>
+<li style='margin-left:40px'><a href='#section-33'>Enter/exit happens twice rapidly</a></li>
+<li style='margin-left:20px'><a href='#section-34'>Lifecycle Diagram</a></li>
+<li style='margin-left:20px'><a href='#section-35'>See Also</a></li>
+</ul></div>
+<p>BCG Shared Assets is a separate addon package that provides a character controller system, allowing a player character to walk around, approach RCCP vehicles, and enter or exit them at runtime. It includes first-person (FPS), third-person (TPS), and mobile character controllers, along with camera management, input handling, and UI for interaction prompts.</p>
+<p>This integration is not part of the core RCCP package. You must import it separately from the included installer.</p>
+<hr>
+<h2 id='section-1'>Overview</h2>
+<p>The enter-exit system is event-driven. When the player approaches a vehicle and presses the interaction key, the system disables the character controller, parents it to the vehicle, enables vehicle control, and switches cameras. When exiting, the reverse occurs: the character is re-enabled at the vehicle's get-out position, vehicle control is disabled, and the character camera is restored.</p>
+<p>Key design points:</p>
+<ul>
+<li>The system uses a <strong>singleton manager</strong> (<code>BCG_EnterExitManager</code>) that listens to spawn, enter, and exit events from all players and vehicles in the scene.</li>
+<li>Vehicle control is toggled via <code>SendMessage(&quot;SetCanControl&quot;, ...)</code>, which RCCP_CarController responds to.</li>
+<li>Camera switching is handled by enabling/disabling the vehicle's <code>correspondingCamera</code> and the character's camera.</li>
+<li>A <strong>1-second cooldown</strong> prevents instant re-entry or re-exit.</li>
+<li>The player cannot exit while the vehicle speed exceeds the configured <code>enterExitSpeedLimit</code> (default: 20 km/h).</li>
+</ul>
+<hr>
+<h2 id='section-2'>Prerequisites</h2>
+<ul>
+<li>Realistic Car Controller Pro installed and working.</li>
+<li>At least one RCCP vehicle set up in the scene.</li>
+</ul>
+<hr>
+<h2 id='section-3'>Installing</h2>
+<ol>
+<li>Open the RCCP Welcome Window: <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Welcome Window</strong>.</li>
+<li>Navigate to the <strong>Addons</strong> tab.</li>
+<li>Click <strong>Download and import BCG Shared Assets</strong>.</li>
+<li>Unity will import <code>BCG_SharedAssets.unitypackage</code> from <code>Addons/Installers/</code>.</li>
+<li>After import, the scripting symbol <code>BCG_ENTEREXIT</code> is added automatically by <code>RCCP_AddonDefineManager</code>.</li>
+<li>Wait for Unity to recompile.</li>
+</ol>
+<p>The installer package is located at:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/Addons/Installers/BCG_SharedAssets.unitypackage
+</code></pre>
+<p>After import, the BCG Shared Assets folder appears at:</p>
+<pre><code>
+Assets/BoneCracker Games Shared Assets/
+</code></pre>
+<hr>
+<h2 id='section-4'>Scripting Symbol</h2>
+<table>
+<tr><th>Symbol</th><th>Set When</th><th>Removed When</th></tr>
+<tr><td><code>BCG_ENTEREXIT</code></td><td><code>Assets/BoneCracker Games Shared Assets/</code> folder exists</td><td>Folder is deleted (auto-detected by <code>RCCP_AddonDefineManager</code>)</td></tr>
+</table>
+<p>If auto-detection fails, you can manually remove the symbol from <strong>Edit &gt; Project Settings &gt; Player &gt; Other Settings &gt; Scripting Define Symbols</strong>.</p>
+<hr>
+<h2 id='section-5'>Core Components</h2>
+<h3 id='section-6'>BCG_EnterExitManager</h3>
+<p><strong>Role:</strong> Scene-level singleton that orchestrates the entire enter-exit lifecycle.</p>
+<p><strong>Add Component:</strong> <code>BoneCracker Games &gt; BCG Shared Assets Pro &gt; BCG Enter Exit Manager</code></p>
+<p>The manager:</p>
+<ul>
+<li>Listens to player spawn/destroy events and caches all active <code>BCG_EnterExitPlayer</code> instances.</li>
+<li>Listens to vehicle spawn/destroy events and caches all active <code>BCG_EnterExitVehicle</code> instances along with their corresponding cameras.</li>
+<li>Handles the <code>Interact</code> input event to trigger enter or exit.</li>
+<li>On enter: disables the character, parents it to the vehicle, enables the vehicle camera, starts the engine (if configured), and registers the vehicle with <code>RCCP_SceneManager</code>.</li>
+<li>On exit: re-enables the character at the get-out position, disables the vehicle camera, stops the engine (if configured), and clears the active vehicle from <code>RCCP_SceneManager</code>.</li>
+</ul>
+<table>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>activePlayer</code></td><td><code>BCG_EnterExitPlayer</code></td><td>The currently active character controller.</td></tr>
+<tr><td><code>cachedMainCameras</code></td><td><code>List<GameObject></code></td><td>All vehicle cameras tracked by the manager.</td></tr>
+<tr><td><code>cachedPlayers</code></td><td><code>List<BCG_EnterExitPlayer></code></td><td>All spawned character controllers.</td></tr>
+<tr><td><code>cachedVehicles</code></td><td><code>List<BCG_EnterExitVehicle></code></td><td>All spawned vehicles with enter-exit support.</td></tr>
+<tr><td><code>cachedCanvas</code></td><td><code>BCG_EnterExitCharacterUICanvas</code></td><td>Reference to the UI canvas for mobile/touch interaction.</td></tr>
+</table>
+<h3 id='section-7'>BCG_EnterExitVehicle</h3>
+<p><strong>Role:</strong> Marks an RCCP vehicle as enterable/exitable and defines its exit point and camera.</p>
+<p><strong>Add Component:</strong> <code>BoneCracker Games &gt; BCG Shared Assets Pro &gt; BCG Enter Exit Vehicle</code></p>
+<table>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>correspondingCamera</code></td><td><code>GameObject</code></td><td>The camera to activate when the player enters this vehicle. Auto-detected from <code>RCCP_Camera</code> in the scene if not assigned.</td></tr>
+<tr><td><code>driver</code></td><td><code>BCG_EnterExitPlayer</code></td><td>The player currently driving this vehicle. <code>null</code> if empty.</td></tr>
+<tr><td><code>getOutPosition</code></td><td><code>Transform</code></td><td>The world position where the character spawns when exiting. If none is found, a child named &quot;Get Out Pos&quot; is created automatically at local position <code>(-1.5, 0, 0)</code>.</td></tr>
+</table>
+<p>When this component is enabled, it sends <code>SetCanControl(false)</code> to the vehicle, preventing it from driving until a player enters.</p>
+<p><strong>Events:</strong></p>
+<table>
+<tr><th>Event</th><th>Signature</th><th>Fired When</th></tr>
+<tr><td><code>OnBCGVehicleSpawned</code></td><td><code>(BCG_EnterExitVehicle)</code></td><td>Component is enabled.</td></tr>
+<tr><td><code>OnBCGVehicleDestroyed</code></td><td><code>(BCG_EnterExitVehicle)</code></td><td>Component is disabled.</td></tr>
+</table>
+<h3 id='section-8'>BCG_EnterExitPlayer</h3>
+<p><strong>Role:</strong> Marks a character controller as capable of entering vehicles.</p>
+<p><strong>Add Component:</strong> <code>BoneCracker Games &gt; BCG Shared Assets Pro &gt; BCG Enter Exit Player</code></p>
+<table>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>isTPSController</code></td><td><code>bool</code></td><td>Set to <code>true</code> if this character uses a TPS controller with its own camera.</td></tr>
+<tr><td><code>rayHeight</code></td><td><code>float</code></td><td>Height offset for the interaction raycast (TPS mode). Default: <code>1</code>.</td></tr>
+<tr><td><code>canControl</code></td><td><code>bool</code></td><td>Whether the character accepts input.</td></tr>
+<tr><td><code>showGui</code></td><td><code>bool</code></td><td>Whether the &quot;Press Interaction [TAB] Key To Get In&quot; prompt is visible.</td></tr>
+<tr><td><code>targetVehicle</code></td><td><code>BCG_EnterExitVehicle</code></td><td>The vehicle currently in front of the player (detected by raycast).</td></tr>
+<tr><td><code>playerStartsAsInVehicle</code></td><td><code>bool</code></td><td>If <code>true</code>, the player begins the scene already inside <code>inVehicle</code>.</td></tr>
+<tr><td><code>inVehicle</code></td><td><code>BCG_EnterExitVehicle</code></td><td>The vehicle the player is currently inside. <code>null</code> if on foot.</td></tr>
+<tr><td><code>characterCamera</code></td><td><code>Camera</code></td><td>The FPS camera (auto-detected from children) or the TPS camera reference.</td></tr>
+</table>
+<p><strong>Detection:</strong> The player casts a ray forward (from the camera for FPS, from <code>transform.position + Vector3.up * rayHeight</code> for TPS) with a range of <strong>1.5 meters</strong>. If the ray hits a collider whose parent has a <code>BCG_EnterExitVehicle</code> component, <code>targetVehicle</code> is set and the interaction prompt appears.</p>
+<p><strong>Events:</strong></p>
+<table>
+<tr><th>Event</th><th>Signature</th><th>Fired When</th></tr>
+<tr><td><code>OnBCGPlayerSpawned</code></td><td><code>(BCG_EnterExitPlayer)</code></td><td>Component is enabled.</td></tr>
+<tr><td><code>OnBCGPlayerDestroyed</code></td><td><code>(BCG_EnterExitPlayer)</code></td><td>Component is destroyed.</td></tr>
+<tr><td><code>OnBCGPlayerEnteredAVehicle</code></td><td><code>(BCG_EnterExitPlayer, BCG_EnterExitVehicle)</code></td><td>Player enters a vehicle.</td></tr>
+<tr><td><code>OnBCGPlayerExitedFromAVehicle</code></td><td><code>(BCG_EnterExitPlayer, BCG_EnterExitVehicle)</code></td><td>Player exits a vehicle.</td></tr>
+</table>
+<h3 id='section-9'>BCG_EnterExitSettings</h3>
+<p><strong>Role:</strong> Global settings ScriptableObject loaded from <code>Resources/BCG_EnterExitSettings</code>.</p>
+<table>
+<tr><th>Setting</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>keepEnginesAlive</code></td><td><code>bool</code></td><td><code>true</code></td><td>If <code>true</code>, the engine remains running after the player exits.</td></tr>
+<tr><td><code>startStopEngine</code></td><td><code>bool</code></td><td><code>true</code></td><td>If <code>true</code>, the engine starts on enter and stops (or remains per <code>keepEnginesAlive</code>) on exit.</td></tr>
+<tr><td><code>enterExitSpeedLimit</code></td><td><code>float</code></td><td><code>20</code></td><td>Maximum vehicle speed (km/h) at which the player can exit.</td></tr>
+<tr><td><code>mobileController</code></td><td><code>bool</code></td><td><code>false</code></td><td>If <code>true</code>, uses mobile joystick input instead of keyboard/mouse.</td></tr>
+<tr><td><code>autoLockMouseCursor</code></td><td><code>bool</code></td><td><code>true</code></td><td>If <code>true</code>, the cursor is locked when on foot and unlocked when in a vehicle.</td></tr>
+</table>
+<hr>
+<h2 id='section-10'>Setup Guide</h2>
+<h3 id='section-11'>Step 1: Import BCG Shared Assets</h3>
+<p>Follow the installation steps above.</p>
+<h3 id='section-12'>Step 2: Add BCG_EnterExitVehicle to Each Vehicle</h3>
+<ol>
+<li>Select your RCCP vehicle in the Hierarchy.</li>
+<li>Add Component: <code>BCG Enter Exit Vehicle</code>.</li>
+<li>A child object named <strong>&quot;Get Out Pos&quot;</strong> is created automatically. Reposition it to a suitable door-side location.</li>
+<li>The <code>correspondingCamera</code> field auto-fills with the scene's <code>RCCP_Camera</code>. You can override it with a different camera if needed.</li>
+</ol>
+<h3 id='section-13'>Step 3: Add BCG_EnterExitPlayer to Your Character</h3>
+<ol>
+<li>Select or create your player character (use one of the included prefabs, or your own).</li>
+<li>Add Component: <code>BCG Enter Exit Player</code>.</li>
+<li>If using a TPS controller, enable <code>isTPSController</code> and assign the <code>characterCamera</code>.</li>
+<li>If you want the player to start inside a vehicle, enable <code>playerStartsAsInVehicle</code> and assign the <code>inVehicle</code> reference.</li>
+</ol>
+<h3 id='section-14'>Step 4: Ensure BCG_EnterExitManager Exists</h3>
+<p>The manager auto-creates itself as a singleton if none exists in the scene. However, for explicit control you can add a GameObject named <code>_BCGEnterExitManager</code> and attach the <code>BCG_EnterExitManager</code> component.</p>
+<h3 id='section-15'>Step 5: Configure Input</h3>
+<p>The interaction input is handled by <code>BCG_InputManager</code>, which reads from Unity's Input System. The default interaction action is bound to the <strong>Tab</strong> key in the <code>Character</code> action map.</p>
+<h3 id='section-16'>Step 6: Configure UI (Optional)</h3>
+<p>For mobile or on-screen interaction buttons, add the <code>BCG_EnterExitCharacterUICanvas</code> prefab to the scene. It automatically switches between &quot;On Foot&quot; and &quot;In Vehicle&quot; UI groups.</p>
+<hr>
+<h2 id='section-17'>Character Controllers</h2>
+<p>BCG Shared Assets includes three character controller prefabs, all located in <code>Assets/BoneCracker Games Shared Assets/Prefabs/Character/</code>:</p>
+<h3 id='section-18'>BCG_FPSCharacterController</h3>
+<p>A first-person character controller using Unity's <code>CharacterController</code> component and the new Input System.</p>
+<table>
+<tr><th>Property</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>moveSpeed</code></td><td><code>5</code></td><td>Movement speed in units/second.</td></tr>
+<tr><td><code>gravity</code></td><td><code>-9.81</code></td><td>Gravity applied each frame.</td></tr>
+<tr><td><code>lookSensitivity</code></td><td><code>2</code></td><td>Mouse look sensitivity multiplier.</td></tr>
+<tr><td><code>maxLookAngle</code></td><td><code>90</code></td><td>Maximum up/down look angle in degrees.</td></tr>
+</table>
+<p><strong>Prefab:</strong> <code>BCG_FPSCharacterController.prefab</code></p>
+<h3 id='section-19'>BCG_TPSCharacterController</h3>
+<p>A third-person character controller that rotates the character with the mouse and moves relative to facing direction.</p>
+<table>
+<tr><th>Property</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>moveSpeed</code></td><td><code>5</code></td><td>Movement speed in units/second.</td></tr>
+<tr><td><code>gravity</code></td><td><code>-9.81</code></td><td>Gravity applied each frame.</td></tr>
+<tr><td><code>lookSensitivity</code></td><td><code>2</code></td><td>Mouse look sensitivity multiplier.</td></tr>
+<tr><td><code>rotationSpeed</code></td><td><code>180</code></td><td>Horizontal rotation speed in degrees/second.</td></tr>
+</table>
+<p><strong>Prefab:</strong> <code>BCG_TPSCharacterController.prefab</code></p>
+<h3 id='section-20'>BCG_MobileCharacterController</h3>
+<p>A mobile touch controller that reads from two on-screen joysticks (movement and camera) and provides static <code>move</code> and <code>mouse</code> vectors for other components to consume.</p>
+<p><strong>Prefab:</strong> <code>BCG_FPSTPS MobileController.prefab</code> (in <code>Prefabs/UI/</code>)</p>
+<p>To use mobile controls, set <code>BCG_EnterExitSettings.Instance.mobileController = true</code>.</p>
+<hr>
+<h2 id='section-21'>Camera</h2>
+<h3 id='section-22'>BCG_TPSCameraController</h3>
+<p>A third-person orbit camera for the character. Located at <code>Assets/BoneCracker Games Shared Assets/Prefabs/Character/BCG_TPSCamera.prefab</code>.</p>
+<table>
+<tr><th>Property</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>target</code></td><td>(auto-detected)</td><td>The transform to orbit around. Auto-finds <code>BCG_TPSCharacterController</code> if not assigned.</td></tr>
+<tr><td><code>offset</code></td><td><code>(0, 5, -10)</code></td><td>Camera offset from target in local space.</td></tr>
+<tr><td><code>distance</code></td><td><code>10</code></td><td>Orbit distance from target.</td></tr>
+<tr><td><code>rotationSpeed</code></td><td><code>5</code></td><td>Camera rotation speed.</td></tr>
+<tr><td><code>minYAngle</code> / <code>maxYAngle</code></td><td><code>-30</code> / <code>60</code></td><td>Vertical angle clamp to prevent camera flipping.</td></tr>
+<tr><td><code>smoothSpeed</code></td><td><code>0.125</code></td><td>Camera movement smoothing factor.</td></tr>
+</table>
+<p>This camera is only active when the player is on foot. When the player enters a vehicle, the manager disables it and enables the vehicle's <code>correspondingCamera</code> (typically <code>RCCP_Camera</code>).</p>
+<hr>
+<h2 id='section-23'>Input System</h2>
+<h3 id='section-24'>BCG_InputManager</h3>
+<p>A singleton (<code>RCCP_Singleton<BCG_InputManager></code>) that reads from Unity's Input System using the <code>Character</code> action map.</p>
+<p><strong>Input Actions (Character Map):</strong></p>
+<table>
+<tr><th>Action</th><th>Default Binding</th><th>Description</th></tr>
+<tr><td><code>Movement</code></td><td>WASD / Arrow Keys</td><td>Character movement (Vector2).</td></tr>
+<tr><td><code>Aim</code></td><td>Mouse Delta</td><td>Camera look (Vector2).</td></tr>
+<tr><td><code>Interact</code></td><td>Tab</td><td>Enter or exit the nearest vehicle.</td></tr>
+<tr><td><code>CursorLock</code></td><td>Right Mouse Button</td><td>Lock the cursor.</td></tr>
+<tr><td><code>CursorUnlock</code></td><td>Escape</td><td>Unlock the cursor.</td></tr>
+</table>
+<p><strong>Events:</strong></p>
+<table>
+<tr><th>Event</th><th>Fired When</th></tr>
+<tr><td><code>OnInteract</code></td><td>The Interact action is performed.</td></tr>
+<tr><td><code>OnCursorLock</code></td><td>The CursorLock action is performed.</td></tr>
+<tr><td><code>OnCursorUnlock</code></td><td>The CursorUnlock action is performed.</td></tr>
+</table>
+<p>The manager persists across scene loads via <code>DontDestroyOnLoad</code>. It automatically disables inputs on application pause/focus loss and re-enables them on resume.</p>
+<hr>
+<h2 id='section-25'>UI Components</h2>
+<h3 id='section-26'>BCG_EnterExitCharacterUICanvas</h3>
+<p>Manages two UI groups that switch based on whether the player is on foot or in a vehicle.</p>
+<table>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>displayType</code></td><td><code>DisplayType</code></td><td>Current mode: <code>OnFoot</code> or <code>InVehicle</code>. Managed by <code>BCG_EnterExitManager</code>.</td></tr>
+<tr><td><code>UisInVehicle</code></td><td><code>GameObject</code></td><td>UI group shown when inside a vehicle.</td></tr>
+<tr><td><code>UisOnFoot</code></td><td><code>GameObject</code></td><td>UI group shown when on foot.</td></tr>
+</table>
+<p>This canvas only activates itself if <code>BCG_EnterExitSettings.Instance.mobileController</code> is <code>true</code>. On desktop, the built-in <code>OnGUI</code> text prompt on <code>BCG_EnterExitPlayer</code> is used instead.</p>
+<h3 id='section-27'>BCG_UIInteractionButton</h3>
+<p>A simple button component that calls <code>BCG_EnterExitManager.Instance.Interact()</code> when tapped. Attach it to any UI Button for mobile enter/exit interaction.</p>
+<hr>
+<h2 id='section-28'>Common Issues</h2>
+<h3 id='section-29'>Character does not enter the vehicle</h3>
+<ul>
+<li><strong>Check interaction range.</strong> The raycast detection range is 1.5 meters. The player must be close to and facing the vehicle.</li>
+<li><strong>Check colliders.</strong> The raycast must hit a collider on the vehicle or a child of the vehicle that has <code>BCG_EnterExitVehicle</code> on its parent.</li>
+<li><strong>Check the scripting symbol.</strong> <code>BCG_ENTEREXIT</code> must be defined. Verify in <strong>Edit &gt; Project Settings &gt; Player &gt; Scripting Define Symbols</strong>.</li>
+<li><strong>Check <code>canControl</code>.</strong> The <code>BCG_EnterExitPlayer.canControl</code> flag must be <code>true</code>.</li>
+</ul>
+<h3 id='section-30'>Camera does not switch when entering/exiting</h3>
+<ul>
+<li><strong>Check <code>correspondingCamera</code>.</strong> On the <code>BCG_EnterExitVehicle</code>, ensure <code>correspondingCamera</code> is assigned. If left empty, it auto-detects <code>RCCP_Camera</code>, but only if one exists in the scene.</li>
+<li><strong>Check for multiple cameras.</strong> The manager disables all cached vehicle cameras except the entered vehicle's camera. If your camera is not cached (was not present at spawn time), it will not be toggled.</li>
+</ul>
+<h3 id='section-31'>Vehicle drives on its own after player exits</h3>
+<ul>
+<li>This should not happen. <code>BCG_EnterExitVehicle.OnEnable()</code> sends <code>SetCanControl(false)</code> to the vehicle, and <code>BCG_EnterExitManager</code> sends <code>SetCanControl(false)</code> on exit. If it occurs, verify that no other script is overriding <code>canControl</code> on the <code>RCCP_CarController</code>.</li>
+</ul>
+<h3 id='section-32'>Player appears inside the vehicle mesh on exit</h3>
+<ul>
+<li>Reposition the <strong>&quot;Get Out Pos&quot;</strong> child transform on the vehicle to a clear area beside the driver's door.</li>
+</ul>
+<h3 id='section-33'>Enter/exit happens twice rapidly</h3>
+<ul>
+<li>The system has a built-in 1-second cooldown. If this still occurs, check that <code>BCG_EnterExitManager</code> is not duplicated in the scene.</li>
+</ul>
+<hr>
+<h2 id='section-34'>Lifecycle Diagram</h2>
+<pre><code>
+Player on Foot                          Player in Vehicle
+     |                                       |
+     |-- Raycast hits vehicle               |
+     |   targetVehicle = vehicle             |
+     |   showGui = true                      |
+     |                                       |
+     |-- Press Interact (Tab)               |
+     |   GetIn(targetVehicle)                |
+     |   OnBCGPlayerEnteredAVehicle fires    |
+     |                                       |
+     |   Manager:                            |
+     |     player.inVehicle = vehicle        |
+     |     player.gameObject.SetActive(false)|
+     |     Vehicle camera ON                 |
+     |     SetCanControl(true)               |
+     |     SetEngine(true)                   |
+     |     RCCP_SceneManager.activeVehicle   |
+     |                                       |
+     |                             Press Interact (Tab)
+     |                             GetOut()
+     |                             OnBCGPlayerExitedFromAVehicle fires
+     |                                       |
+     |                             Manager:  |
+     |                               player at getOutPosition
+     |                               player.gameObject.SetActive(true)
+     |                               All vehicle cameras OFF
+     |                               SetCanControl(false)
+     |                               SetEngine(keepEnginesAlive)
+     |                               RCCP_SceneManager.activeVehicle = null
+</code></pre>
+<hr>
+<h2 id='section-35'>See Also</h2>
+<ul>
+<li><a href='04_settings.html'>Settings</a> -- RCCP global settings including camera configuration.</li>
+<li><a href='09_camera_system.html'>Camera System</a> -- RCCP_Camera setup and behavior.</li>
+<li><a href='15_scene_manager.html'>Scene Manager</a> -- How RCCP tracks the active player vehicle.</li>
+<li><a href='16_api_reference.html'>API Reference</a> -- <code>RCCP.RegisterPlayerVehicle()</code>, <code>RCCP.SetControl()</code>.</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

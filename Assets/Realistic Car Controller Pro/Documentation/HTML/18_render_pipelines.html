@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>18_render_pipelines</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Render Pipelines</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Render Pipelines</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Shader Packages</a></li>
+<li style='margin-left:40px'><a href='#section-2'>Available Packages</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Pipeline Converter Window</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Opening the Converter</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Converter Steps</a></li>
+<li style='margin-left:20px'><a href='#section-6'>Converting to URP</a></li>
+<li style='margin-left:20px'><a href='#section-7'>Converting to HDRP</a></li>
+<li style='margin-left:20px'><a href='#section-8'>Using the Built-in Pipeline</a></li>
+<li style='margin-left:20px'><a href='#section-9'>Scripting Define Symbols</a></li>
+<li style='margin-left:20px'><a href='#section-10'>Pipeline-Specific Features</a></li>
+<li style='margin-left:20px'><a href='#section-11'>Troubleshooting</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Pink or Magenta Materials</a></li>
+<li style='margin-left:40px'><a href='#section-13'>&quot;Shader not found&quot; Errors in Console</a></li>
+<li style='margin-left:40px'><a href='#section-14'>BCG_URP or BCG_HDRP Symbol Not Set</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Decals or Neons Not Visible</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Lens Flares Not Showing</a></li>
+<li style='margin-left:40px'><a href='#section-17'>Demo Scenes Look Wrong After Pipeline Switch</a></li>
+</ul></div>
+<p>RCCP supports all three Unity render pipelines: <strong>Built-in</strong>, <strong>URP</strong> (Universal Render Pipeline), and <strong>HDRP</strong> (High Definition Render Pipeline). By default, RCCP ships with materials authored for the Built-in pipeline. If your project uses URP or HDRP, you need to import the matching shader package and run the pipeline converter.</p>
+<p>This page walks you through identifying your pipeline, importing the correct shaders, and converting materials so everything renders properly.</p>
+<hr>
+<h2 id='section-1'>Shader Packages</h2>
+<p>RCCP provides pre-built shader packages for every supported pipeline and Unity version. All packages are located in:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/Addons/Installers/
+</code></pre>
+<h3 id='section-2'>Available Packages</h3>
+<table>
+<tr><th>Unity Version</th><th>URP Package</th><th>HDRP Package</th></tr>
+<tr><td>2021</td><td><code>Shaders/2021/RCCP_URPShaders_2021.unitypackage</code></td><td>--</td></tr>
+<tr><td>2022</td><td><code>Shaders/2022/RCCP_URPShaders_2022.unitypackage</code></td><td><code>Shaders/2022/RCCP_HDRPShaders_2022.unitypackage</code></td></tr>
+<tr><td>2023</td><td><code>Shaders/2023/RCCP_URPShaders_2023.unitypackage</code></td><td><code>Shaders/2023/RCCP_HDRPShaders_2023.unitypackage</code></td></tr>
+<tr><td>Unity 6</td><td><code>Shaders/6/RCCP_URPShaders_6.unitypackage</code></td><td><code>Shaders/6/RCCP_HDRPShaders_6.unitypackage</code></td></tr>
+<tr><td>Built-in</td><td><code>RCCP_BuiltinShaders.unitypackage</code> (top-level)</td><td>--</td></tr>
+</table>
+<p>An additional package, <code>BCG_HDRPVolumeProfile.unitypackage</code>, provides a pre-configured HDRP post-processing Volume Profile for the demo scenes.</p>
+<p><strong>Important:</strong> Always import the package that matches <strong>both</strong> your render pipeline <strong>and</strong> your Unity version. For example, a Unity 6 project using URP needs <code>RCCP_URPShaders_6.unitypackage</code>.</p>
+<hr>
+<h2 id='section-3'>Pipeline Converter Window</h2>
+<p>RCCP includes a built-in helper that guides you through the full conversion process step by step.</p>
+<h3 id='section-4'>Opening the Converter</h3>
+<ul>
+<li><strong>Menu:</strong> Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Render Pipeline Converter</li>
+<li><strong>Alternative:</strong> GameObject &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Render Pipeline Converter</li>
+<li><strong>Automatic:</strong> The window opens automatically when RCCP detects a pipeline change (for example, switching from Built-in to URP).</li>
+</ul>
+<h3 id='section-5'>Converter Steps</h3>
+<p>When you open the converter in a URP or HDRP project, it presents numbered steps:</p>
+<ol>
+<li><strong>Material Conversion</strong> -- Opens Unity's built-in Render Pipeline Converter. Check &quot;Material Upgrade&quot;, click &quot;Initialize Converters&quot;, then &quot;Convert Assets&quot;.</li>
+<li><strong>Lens Flare Conversion</strong> -- Scans all RCCP vehicle prefabs and replaces legacy <code>LensFlare</code> components with SRP-compatible <code>LensFlareComponentSRP</code> components.</li>
+<li><strong>Custom Shader Import</strong> -- Imports the correct RCCP shader package for your detected pipeline (URP or HDRP).</li>
+<li><strong>Custom Shader Conversion</strong> -- Scans all RCCP prefabs and swaps materials using base shaders (for example, <code>RCCP_Shader_Body</code>) with their pipeline-specific variants (for example, <code>RCCP_Shader_Body_URP</code> or <code>RCCP_Shader_Body_HDRP</code>).</li>
+<li><strong>Remove Old Shaders</strong> -- Removes shader files from other pipelines that are no longer needed.</li>
+</ol>
+<p>For <strong>URP</strong> projects, an additional step enables post-processing on all RCCP demo cameras. For <strong>HDRP</strong> projects, an additional step converts demo scene directional lights and adds the HDRP Volume Profile prefab.</p>
+<hr>
+<h2 id='section-6'>Converting to URP</h2>
+<p>Follow these steps to set up RCCP in a Universal Render Pipeline project:</p>
+<ol>
+<li>Open <strong>Window &gt; Package Manager</strong> and install the <strong>Universal RP</strong> package if it is not already installed.</li>
+<li>Create a <strong>URP Renderer Asset</strong> (or use an existing one) via <strong>Assets &gt; Create &gt; Rendering &gt; URP Asset (with Universal Renderer)</strong>.</li>
+<li>Assign the URP asset in <strong>Edit &gt; Project Settings &gt; Graphics &gt; Scriptable Render Pipeline Settings</strong>.</li>
+<li>RCCP detects the pipeline change automatically and opens the <strong>Pipeline Converter Window</strong>. Follow each numbered step in order.</li>
+<li>If the converter does not open automatically, open it from the menu: <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Render Pipeline Converter</strong>.</li>
+<li>Verify that the scripting symbol <code>BCG_URP</code> has been added. RCCP sets this automatically, but you can confirm in <strong>Edit &gt; Project Settings &gt; Player &gt; Other Settings &gt; Scripting Define Symbols</strong>.</li>
+<li>Materials should now render correctly. If any still appear pink, re-run steps 3 and 4 in the converter.</li>
+</ol>
+<hr>
+<h2 id='section-7'>Converting to HDRP</h2>
+<p>Follow these steps to set up RCCP in a High Definition Render Pipeline project:</p>
+<ol>
+<li>Open <strong>Window &gt; Package Manager</strong> and install the <strong>High Definition RP</strong> package if it is not already installed.</li>
+<li>Create an <strong>HDRP Pipeline Asset</strong> (or use an existing one) via <strong>Assets &gt; Create &gt; Rendering &gt; HD Render Pipeline Asset</strong>.</li>
+<li>Assign the HDRP asset in <strong>Edit &gt; Project Settings &gt; Graphics &gt; Scriptable Render Pipeline Settings</strong>.</li>
+<li>RCCP detects the pipeline change automatically and opens the <strong>Pipeline Converter Window</strong>. Follow each numbered step in order.</li>
+<li>When prompted, also import <code>BCG_HDRPVolumeProfile.unitypackage</code> from <code>Addons/Installers/</code> to get pre-configured post-processing settings for the demo scenes.</li>
+<li>Verify that the scripting symbol <code>BCG_HDRP</code> has been added. RCCP sets this automatically, but you can confirm in <strong>Edit &gt; Project Settings &gt; Player &gt; Other Settings &gt; Scripting Define Symbols</strong>.</li>
+<li>Materials should now render correctly.</li>
+</ol>
+<hr>
+<h2 id='section-8'>Using the Built-in Pipeline</h2>
+<p>The Built-in pipeline is the default for RCCP. No scripting symbols or special setup is required.</p>
+<p>If your materials appear pink (magenta) in a Built-in project -- for example, after accidentally importing URP or HDRP shaders -- import <code>RCCP_BuiltinShaders.unitypackage</code> from <code>Addons/Installers/</code> to restore the correct shaders.</p>
+<hr>
+<h2 id='section-9'>Scripting Define Symbols</h2>
+<p>RCCP uses scripting symbols to conditionally compile pipeline-specific code. These are managed automatically by <code>RCCP_InitLoad</code> at editor startup and <code>RCCP_SetScriptingSymbol</code> when the pipeline changes.</p>
+<table>
+<tr><th>Symbol</th><th>Pipeline</th><th>When It Is Set</th></tr>
+<tr><td><code>BCG_URP</code></td><td>Universal RP</td><td>Automatically when a URP Pipeline Asset is detected in Graphics settings</td></tr>
+<tr><td><code>BCG_HDRP</code></td><td>High Definition RP</td><td>Automatically when an HDRP Pipeline Asset is detected in Graphics settings</td></tr>
+<tr><td><em>(none)</em></td><td>Built-in</td><td>Both symbols are removed when no SRP asset is assigned</td></tr>
+</table>
+<p>If automatic detection fails, you can add or remove these symbols manually in <strong>Edit &gt; Project Settings &gt; Player &gt; Other Settings &gt; Scripting Define Symbols</strong>.</p>
+<hr>
+<h2 id='section-10'>Pipeline-Specific Features</h2>
+<p>Not all RCCP features are available in every pipeline. The table below summarizes the differences:</p>
+<table>
+<tr><th>Feature</th><th>Built-in</th><th>URP</th><th>HDRP</th></tr>
+<tr><td>Vehicle materials</td><td>Standard shader</td><td>URP Lit shader</td><td>HDRP Lit shader</td></tr>
+<tr><td>Lens flares</td><td>Legacy <code>LensFlare</code> component</td><td><code>LensFlareComponentSRP</code></td><td><code>LensFlareComponentSRP</code></td></tr>
+<tr><td>Decals (customization)</td><td>Not supported</td><td><code>DecalProjector</code></td><td><code>DecalProjector</code></td></tr>
+<tr><td>Neons (customization)</td><td>Not supported</td><td><code>DecalProjector</code></td><td><code>DecalProjector</code></td></tr>
+<tr><td>Post-processing</td><td>Legacy Post Processing Stack</td><td>Volume components</td><td>Volume components</td></tr>
+</table>
+<p><strong>Important:</strong> Decals and neons in the <a href='12_customization.html'>Customization</a> system require URP or HDRP. They are not available in the Built-in pipeline because they rely on the <code>DecalProjector</code> component, which is an SRP-only feature.</p>
+<hr>
+<h2 id='section-11'>Troubleshooting</h2>
+<h3 id='section-12'>Pink or Magenta Materials</h3>
+<p>This means materials are using shaders that do not exist in your current pipeline. The most common causes:</p>
+<ul>
+<li>No shader package has been imported. Open the Pipeline Converter Window and follow the steps.</li>
+<li>The wrong shader package was imported (for example, URP shaders in an HDRP project). Remove the incorrect shaders and import the correct package.</li>
+<li>You switched pipelines but did not re-run the converter. Open it from the menu and follow all steps again.</li>
+</ul>
+<h3 id='section-13'>&quot;Shader not found&quot; Errors in Console</h3>
+<p>Import the correct shader package for your Unity version from <code>Addons/Installers/Shaders/</code>. Make sure the Unity version folder matches your project (2021, 2022, 2023, or 6).</p>
+<h3 id='section-14'>BCG_URP or BCG_HDRP Symbol Not Set</h3>
+<p>RCCP sets these automatically at editor startup. If the symbol is missing:</p>
+<ol>
+<li>Confirm that your render pipeline asset is assigned in <strong>Edit &gt; Project Settings &gt; Graphics</strong>.</li>
+<li>Try reimporting <code>RCCP_InitLoad.cs</code> (right-click &gt; Reimport) to trigger the detection again.</li>
+<li>As a last resort, add the symbol manually in <strong>Edit &gt; Project Settings &gt; Player &gt; Other Settings &gt; Scripting Define Symbols</strong>.</li>
+</ol>
+<h3 id='section-15'>Decals or Neons Not Visible</h3>
+<p>You are most likely using the Built-in pipeline. Decals and neons require URP or HDRP. See <a href='12_customization.html'>Customization</a> for details.</p>
+<h3 id='section-16'>Lens Flares Not Showing</h3>
+<ul>
+<li><strong>Built-in pipeline:</strong> Ensure the vehicle lights have a legacy <code>LensFlare</code> component and that a Flare asset is assigned.</li>
+<li><strong>URP / HDRP:</strong> Ensure the lights have a <code>LensFlareComponentSRP</code> component. Run step 2 (Lens Flare Conversion) in the Pipeline Converter Window if they are still using legacy flares.</li>
+</ul>
+<h3 id='section-17'>Demo Scenes Look Wrong After Pipeline Switch</h3>
+<p>After converting to URP or HDRP, use the Pipeline Converter Window to run the demo scene conversion step. For URP this enables post-processing on cameras; for HDRP this updates directional lights and adds the Volume Profile.</p>
+<hr>
+<p><strong>See also:</strong> <a href='04_settings.html'>Settings</a> | <a href='12_customization.html'>Customization</a> | <a href='01_installation.html'>Installation</a></p>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

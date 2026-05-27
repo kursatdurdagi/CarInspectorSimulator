@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>23_integration_proflares</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Integration: ProFlares</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Integration: ProFlares</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Overview</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Prerequisites</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Installing</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Step 1: Import ProFlares</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Step 2: Import the RCCP Integration Package</a></li>
+<li style='margin-left:20px'><a href='#section-6'>How It Works</a></li>
+<li style='margin-left:20px'><a href='#section-7'>Configuration</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Flare Intensity</a></li>
+<li style='margin-left:40px'><a href='#section-9'>Flare Color</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Flare Elements</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Occlusion</a></li>
+<li style='margin-left:20px'><a href='#section-12'>Benefits Over Built-in Lens Flares</a></li>
+<li style='margin-left:20px'><a href='#section-13'>Common Issues</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Flares not showing</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Flares appear on wrong lights</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Performance issues with many vehicles</a></li>
+<li style='margin-left:40px'><a href='#section-17'>Flares persist when lights are off</a></li>
+<li style='margin-left:20px'><a href='#section-18'>Removing the Integration</a></li>
+<li style='margin-left:20px'><a href='#section-19'>See Also</a></li>
+</ul></div>
+<p>ProFlares (Ultimate Lens Flares for Unity3D) is a third-party asset that provides high-quality, GPU-accelerated lens flare effects. The RCCP ProFlares integration replaces Unity's built-in lens flares on vehicle lights with ProFlares components, producing more realistic and performant headlight and taillight flare effects.</p>
+<hr>
+<h2 id='section-1'>Overview</h2>
+<p>RCCP vehicles use <code>RCCP_Light</code> components for headlights, taillights, brake lights, reverse lights, and indicators. By default, these lights can use Unity's built-in lens flare system. The ProFlares integration package adds ProFlares-compatible flare components to these lights, giving you access to ProFlares' advanced features:</p>
+<ul>
+<li>Multi-element lens flare compositions (ghost, halo, streak, starburst).</li>
+<li>GPU-accelerated rendering with minimal CPU overhead.</li>
+<li>Per-element color, intensity, and animation controls.</li>
+<li>Occlusion testing with smooth fade in/out.</li>
+<li>Compatible with all render pipelines (Built-in, URP, HDRP).</li>
+</ul>
+<hr>
+<h2 id='section-2'>Prerequisites</h2>
+<ol>
+<li><strong>ProFlares</strong> installed in your project. Purchase and import from the <a href='https://assetstore.unity.com/packages/tools/particles-effects/proflares-ultimate-lens-flares-for-unity3d-12845'>Unity Asset Store</a>.</li>
+<li>Realistic Car Controller Pro installed and working with at least one vehicle that has <code>RCCP_Light</code> components.</li>
+</ol>
+<hr>
+<h2 id='section-3'>Installing</h2>
+<h3 id='section-4'>Step 1: Import ProFlares</h3>
+<p>If ProFlares is not already in your project, purchase and import it from the Asset Store.</p>
+<h3 id='section-5'>Step 2: Import the RCCP Integration Package</h3>
+<ol>
+<li>Open the RCCP Welcome Window: <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Welcome Window</strong>.</li>
+<li>Navigate to the <strong>Addons</strong> tab.</li>
+<li>Under <strong>ProFlares</strong>, you will see two buttons:</li>
+</ol>
+<ul>
+<li><strong>Download and import ProFlares</strong> -- Opens the ProFlares Asset Store page.</li>
+<li><strong>Import ProFlares Integration</strong> -- Imports the RCCP integration package.</li>
+</ul>
+<ol>
+<li>Click <strong>Import ProFlares Integration</strong>.</li>
+<li>Unity imports <code>RCCP_ProFlareIntegration.unitypackage</code> from <code>Addons/Installers/</code>.</li>
+<li>Wait for Unity to recompile.</li>
+</ol>
+<p>The installer package is located at:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/Addons/Installers/RCCP_ProFlareIntegration.unitypackage
+</code></pre>
+<hr>
+<h2 id='section-6'>How It Works</h2>
+<p>The integration package adds ProFlares lens flare components to RCCP vehicle light setups. When ProFlares is installed and the integration is imported:</p>
+<ul>
+<li>Vehicle headlights and taillights gain ProFlares flare elements instead of (or in addition to) Unity's built-in <code>LensFlare</code> component.</li>
+<li>Flare intensity is driven by the <code>RCCP_Light</code> component's state (on/off, brightness level).</li>
+<li>ProFlares handles its own occlusion testing, so flares fade correctly when obscured by geometry.</li>
+</ul>
+<hr>
+<h2 id='section-7'>Configuration</h2>
+<p>After importing the integration, you can configure ProFlares settings on each vehicle light:</p>
+<h3 id='section-8'>Flare Intensity</h3>
+<p>ProFlares flare elements have their own intensity controls. These should be tuned per-light to match the visual style of your project. Brighter headlights typically use higher flare intensity, while indicators and brake lights use lower values.</p>
+<h3 id='section-9'>Flare Color</h3>
+<p>ProFlares supports per-element color. Match the flare color to the light color:</p>
+<table>
+<tr><th>Light Type</th><th>Typical Flare Color</th></tr>
+<tr><td>Headlights (low beam)</td><td>Warm white / light yellow</td></tr>
+<tr><td>Headlights (high beam)</td><td>Bright white</td></tr>
+<tr><td>Taillights</td><td>Red</td></tr>
+<tr><td>Brake lights</td><td>Bright red</td></tr>
+<tr><td>Reverse lights</td><td>White</td></tr>
+<tr><td>Indicators</td><td>Orange / amber</td></tr>
+</table>
+<h3 id='section-10'>Flare Elements</h3>
+<p>ProFlares compositions can include multiple elements (ghosts, halos, streaks). For vehicle lights, a simple configuration with 1-3 elements (primary flare + subtle ghost) usually looks best. Overly complex flare setups can look unrealistic for automotive lighting.</p>
+<h3 id='section-11'>Occlusion</h3>
+<p>ProFlares performs its own occlusion checks. Ensure that:</p>
+<ul>
+<li>The flare source position matches the light source position.</li>
+<li>Occlusion layers are configured to include scene geometry but exclude the vehicle's own mesh (to prevent the vehicle body from occluding its own headlights at certain camera angles).</li>
+</ul>
+<hr>
+<h2 id='section-12'>Benefits Over Built-in Lens Flares</h2>
+<table>
+<tr><th>Feature</th><th>Unity Built-in</th><th>ProFlares</th></tr>
+<tr><td><strong>Performance</strong></td><td>CPU-based, can be expensive with many lights</td><td>GPU-accelerated, scales better</td></tr>
+<tr><td><strong>Visual quality</strong></td><td>Basic single-element flares</td><td>Multi-element compositions with animations</td></tr>
+<tr><td><strong>Customization</strong></td><td>Limited (brightness, color, flare texture)</td><td>Full per-element control (color, size, offset, rotation, animation)</td></tr>
+<tr><td><strong>Occlusion</strong></td><td>Basic raycast</td><td>Smooth fade with configurable speed</td></tr>
+<tr><td><strong>Render pipeline</strong></td><td>Built-in only (deprecated in URP/HDRP)</td><td>All pipelines supported</td></tr>
+</table>
+<hr>
+<h2 id='section-13'>Common Issues</h2>
+<h3 id='section-14'>Flares not showing</h3>
+<ul>
+<li><strong>Check that ProFlares is imported.</strong> The integration package requires the ProFlares asset to be present in the project.</li>
+<li><strong>Check the camera.</strong> ProFlares requires a <code>ProFlareManager</code> component on the camera (or in the scene). Ensure one exists.</li>
+<li><strong>Check flare intensity.</strong> If intensity is set to 0, flares will not be visible.</li>
+<li><strong>Check layers.</strong> ProFlares uses layer-based occlusion. Ensure the flare source is on a visible layer.</li>
+</ul>
+<h3 id='section-15'>Flares appear on wrong lights</h3>
+<ul>
+<li>Verify that each <code>RCCP_Light</code> component's ProFlares reference points to the correct flare element.</li>
+<li>Check that low beam and high beam flares are assigned to their respective light groups.</li>
+</ul>
+<h3 id='section-16'>Performance issues with many vehicles</h3>
+<ul>
+<li>ProFlares is GPU-accelerated, so it scales better than Unity's built-in system. However, many simultaneous flare sources can still affect performance.</li>
+<li>Reduce the number of flare elements per light.</li>
+<li>Disable flares on distant vehicles (ProFlares supports distance-based culling).</li>
+</ul>
+<h3 id='section-17'>Flares persist when lights are off</h3>
+<ul>
+<li>The RCCP integration should drive flare intensity based on light state. If flares remain visible when lights are off, check that the integration script is properly connected to the <code>RCCP_Light</code> component's on/off state.</li>
+</ul>
+<hr>
+<h2 id='section-18'>Removing the Integration</h2>
+<p>Since the ProFlares integration does not use an automatically managed scripting symbol like the Photon or Mirror integrations, removal is straightforward:</p>
+<ol>
+<li>Delete the ProFlares integration files from the <code>Addons/Installed/</code> folder (if any were installed there).</li>
+<li>If the integration added any components to your vehicle prefabs, remove those components manually.</li>
+<li>The vehicle lights will revert to using Unity's built-in lens flare system (or no flares if none are configured).</li>
+</ol>
+<hr>
+<h2 id='section-19'>See Also</h2>
+<ul>
+<li><a href='03_vehicle_setup.html'>Vehicle Setup</a> -- Creating and configuring RCCP vehicles.</li>
+<li><a href='04_settings.html'>Settings</a> -- Global RCCP settings including light configuration.</li>
+<li><a href='20_integration_enter_exit.html'>Integration: Enter-Exit</a> -- Character enter-exit system.</li>
+<li><a href='21_integration_photon.html'>Integration: Photon PUN 2</a> -- Multiplayer with Photon (light states are synced).</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

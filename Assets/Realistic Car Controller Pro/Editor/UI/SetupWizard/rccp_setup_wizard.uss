@@ -1,0 +1,295 @@
+/* ──── RCCP Setup Wizard ──────────────────────────────── */
+/* Component styles for the Setup Wizard EditorWindow.
+   Theme variables come from rccp_orange_theme.uss.
+   Shared component classes come from rccp_welcome_window.uss. */
+
+/* ──── Root & Layout ────────────────────────────────────── */
+
+.rccp-wizard-root {
+    flex-grow: 1;
+    background-color: var(--color-bg);
+}
+
+.rccp-wizard-body {
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+/* ──── Sidebar ──────────────────────────────────────────── */
+
+.rccp-wizard-sidebar {
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 220px;
+    padding: var(--space-sm) 0;
+    border-right-width: 1px;
+    border-right-color: var(--color-border);
+    background-color: var(--color-surface);
+}
+
+.rccp-wizard-sidebar-banner {
+    height: 100px;
+    margin: var(--space-sm) var(--space-sm) var(--space-md) var(--space-sm);
+    border-radius: var(--radius-md);
+    -unity-background-scale-mode: scale-and-crop;
+    flex-shrink: 0;
+}
+
+.rccp-wizard-step-indicator {
+    flex-direction: row;
+    align-items: center;
+    height: 34px;
+    margin: 2px var(--space-sm);
+    padding: 0 var(--space-md);
+    border-radius: var(--radius-md);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.rccp-wizard-step-indicator__badge {
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-surface-alt);
+    color: var(--color-text-secondary);
+    font-size: var(--font-xs);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    margin-right: var(--space-md);
+    flex-shrink: 0;
+}
+
+.rccp-wizard-step-indicator__label {
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+    -unity-text-align: middle-left;
+    flex-grow: 1;
+}
+
+.rccp-wizard-step-indicator--current {
+    background-color: rgba(219, 125, 61, 0.85);
+}
+
+.rccp-wizard-step-indicator--current .rccp-wizard-step-indicator__badge {
+    background-color: #ffffff;
+    color: #db7d3d;
+}
+
+.rccp-wizard-step-indicator--current .rccp-wizard-step-indicator__label {
+    color: #ffffff;
+    -unity-font-style: bold;
+}
+
+.rccp-wizard-step-indicator--done .rccp-wizard-step-indicator__badge {
+    background-color: var(--color-success);
+    color: #ffffff;
+}
+
+.rccp-wizard-step-indicator--done .rccp-wizard-step-indicator__label {
+    color: var(--color-text);
+}
+
+/* ──── Main column (header + content + footer) ──────────── */
+
+.rccp-wizard-main {
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.rccp-wizard-header {
+    flex-shrink: 0;
+    padding: var(--space-lg);
+    -unity-text-align: middle-center;
+    background-color: var(--color-surface);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--color-border);
+}
+
+.rccp-wizard-header__title {
+    font-size: var(--font-xl);
+    -unity-font-style: bold;
+    color: var(--color-text);
+    -unity-text-align: middle-center;
+}
+
+.rccp-wizard-header__subtitle {
+    font-size: var(--font-xs);
+    color: var(--color-text-secondary);
+    -unity-text-align: middle-center;
+}
+
+/* ──── Progress Bar ─────────────────────────────────────── */
+
+.rccp-wizard-progress {
+    height: 6px;
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-full);
+    margin-left: var(--space-lg);
+    margin-right: var(--space-lg);
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-xs);
+}
+
+.rccp-wizard-progress__fill {
+    height: 100%;
+    background-color: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-normal) ease-out;
+}
+
+/* ──── Content Area ─────────────────────────────────────── */
+
+.rccp-wizard-content {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ──── Footer ───────────────────────────────────────────── */
+
+.rccp-wizard-footer {
+    flex-shrink: 0;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-lg);
+    background-color: var(--color-surface);
+    border-top-width: 1px;
+    border-top-color: var(--color-separator);
+}
+
+/* ──── Field Row ────────────────────────────────────────── */
+
+.rccp-wizard-field-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: var(--space-xs);
+}
+
+.rccp-wizard-field-row__label {
+    width: 140px;
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+}
+
+.rccp-wizard-field-row__field {
+    flex-grow: 1;
+}
+
+/* Slider paired with an explicit numeric FloatField (not Unity's
+   built-in showInputField, which renders too small inside a tight row). */
+.rccp-wizard-slider-with-field {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.rccp-wizard-slider-with-field__slider {
+    flex-grow: 1;
+    min-height: 18px;
+}
+
+.rccp-wizard-slider-with-field__field {
+    width: 64px;
+    min-height: 18px;
+    margin-left: var(--space-sm);
+    flex-shrink: 0;
+}
+
+/* ──── Wheel Slot ───────────────────────────────────────── */
+
+.rccp-wizard-wheel-slot {
+    flex-direction: row;
+    align-items: center;
+    padding: var(--space-sm);
+    margin-bottom: var(--space-xs);
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-sm);
+    border-width: 1px;
+    border-color: var(--color-border);
+}
+
+.rccp-wizard-wheel-slot__label {
+    width: 30px;
+    font-size: var(--font-sm);
+    -unity-font-style: bold;
+    color: var(--color-primary);
+}
+
+.rccp-wizard-wheel-slot__field {
+    flex-grow: 1;
+}
+
+/* ──── Toggle Row ───────────────────────────────────────── */
+
+.rccp-wizard-toggle-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: var(--space-xs);
+}
+
+.rccp-wizard-toggle-row__label {
+    width: 110px;
+    font-size: var(--font-sm);
+    color: var(--color-text);
+}
+
+.rccp-wizard-toggle-row__description {
+    flex-grow: 1;
+    font-size: var(--font-xs);
+    color: var(--color-text-disabled);
+}
+
+/* ──── Collider Row ─────────────────────────────────────── */
+
+.rccp-wizard-collider-row {
+    flex-direction: row;
+    align-items: center;
+    padding: var(--space-xs) var(--space-sm);
+    margin-bottom: 1px;
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-sm);
+}
+
+.rccp-wizard-collider-row__name {
+    flex-grow: 1;
+    font-size: var(--font-sm);
+    color: var(--color-text);
+}
+
+.rccp-wizard-collider-row__volume {
+    font-size: var(--font-xs);
+    color: var(--color-text-disabled);
+}
+
+/* ──── Summary Row ──────────────────────────────────────── */
+
+.rccp-wizard-summary-row {
+    flex-direction: row;
+    align-items: center;
+    padding: var(--space-sm);
+    margin-bottom: var(--space-xs);
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-sm);
+    cursor: link;
+}
+
+.rccp-wizard-summary-row:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.rccp-wizard-summary-row__label {
+    flex-grow: 1;
+    font-size: var(--font-sm);
+    -unity-font-style: bold;
+    color: var(--color-text);
+}
+
+.rccp-wizard-summary-row__value {
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+}
+
+.rccp-wizard-summary-row__arrow {
+    font-size: var(--font-sm);
+    color: var(--color-text-disabled);
+    margin-left: var(--space-sm);
+}

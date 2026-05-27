@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements"
+         xmlns:uie="UnityEditor.UIElements"
+         editor-extension-mode="False">
+    <Style src="rccp_scene_tools_shell.uss" />
+    <ui:VisualElement name="shell-root" class="rccp-scene-tools-shell">
+        <ui:VisualElement name="header-row" class="rccp-scene-tools-header">
+            <ui:Label name="header-title" text="RCCP Scene Tools" class="rccp-scene-tools-header__title" />
+            <ui:VisualElement name="header-buttons" class="rccp-scene-tools-header__buttons" />
+        </ui:VisualElement>
+        <ui:VisualElement name="search-container" class="rccp-scene-tools-search">
+            <ui:Label name="search-icon" text="🔍" class="rccp-scene-tools-search__icon" />
+            <ui:TextField name="search-field" class="rccp-scene-tools-search__field" />
+            <ui:Button name="clear-button" text="✕" class="rccp-scene-tools-search__clear" />
+        </ui:VisualElement>
+        <ui:VisualElement name="tab-slot" class="rccp-scene-tools-shell__tab-slot">
+            <ui:VisualElement name="tab-container" class="rccp-scene-tools-tabbar" />
+        </ui:VisualElement>
+        <ui:VisualElement name="content-container" class="rccp-scene-tools-content">
+            <ui:VisualElement name="content-placeholder" class="rccp-scene-tools-shell__content-placeholder">
+                <ui:Label text="Scene Tools content loads here." class="rccp-scene-tools-shell__placeholder-text" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="rccp-scene-tools-footer">
+            <ui:VisualElement class="rccp-scene-tools-footer__separator" />
+            <ui:VisualElement class="rccp-scene-tools-footer__content">
+                <ui:Label name="footer-label" text="RCCP Scene Tools" class="rccp-scene-tools-footer__label" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

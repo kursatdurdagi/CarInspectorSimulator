@@ -1,0 +1,321 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>13_ai_vehicles</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>AI Vehicles</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>AI Vehicles</a></li>
+<li style='margin-left:20px'><a href='#section-1'>How the AI System Works</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Behavior Modes</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Setting Up an AI Vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Step 1: Prepare the Vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Step 2: Add RCCP_OtherAddons</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Step 3: Add RCCP_AI</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Step 4: Bake a NavMesh</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Step 5: Assign a Waypoint Container</a></li>
+<li style='margin-left:20px'><a href='#section-9'>Key Properties</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Driving Settings</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Waypoint Settings</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Steering Look-ahead</a></li>
+<li style='margin-left:40px'><a href='#section-13'>PID Speed Control</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Target Following</a></li>
+<li style='margin-left:40px'><a href='#section-15'>State</a></li>
+<li style='margin-left:20px'><a href='#section-16'>Waypoint System</a></li>
+<li style='margin-left:40px'><a href='#section-17'>RCCP_AIWaypointsContainer</a></li>
+<li style='margin-left:40px'><a href='#section-18'>RCCP_Waypoint</a></li>
+<li style='margin-left:40px'><a href='#section-19'>Waypoint Container Properties</a></li>
+<li style='margin-left:40px'><a href='#section-20'>Waypoint Container Context Menu Tools</a></li>
+<li style='margin-left:40px'><a href='#section-21'>Tips for Good Waypoint Placement</a></li>
+<li style='margin-left:20px'><a href='#section-22'>Brake Zones</a></li>
+<li style='margin-left:40px'><a href='#section-23'>RCCP_AIBrakeZone</a></li>
+<li style='margin-left:40px'><a href='#section-24'>RCCP_AIBrakeZonesContainer</a></li>
+<li style='margin-left:40px'><a href='#section-25'>Placing Brake Zones</a></li>
+<li style='margin-left:20px'><a href='#section-26'>Obstacle Avoidance</a></li>
+<li style='margin-left:40px'><a href='#section-27'>RCCP_AIDynamicObstacleAvoidance</a></li>
+<li style='margin-left:20px'><a href='#section-28'>Spawning AI Vehicles from Code</a></li>
+<li style='margin-left:40px'><a href='#section-29'>Changing AI Behavior at Runtime</a></li>
+<li style='margin-left:20px'><a href='#section-30'>Events</a></li>
+<li style='margin-left:20px'><a href='#section-31'>Stuck Detection and Recovery</a></li>
+<li style='margin-left:20px'><a href='#section-32'>Scene View Gizmos</a></li>
+<li style='margin-left:20px'><a href='#section-33'>Common Issues</a></li>
+</ul></div>
+<p>RCCP includes a waypoint-based AI driving system built on Unity's NavMesh pathfinding. AI vehicles follow predefined waypoint paths, avoid obstacles dynamically, and respect brake zones for speed reduction at corners and intersections. The system supports four distinct behavior modes and requires no player input to operate.</p>
+<p><strong>Prerequisites:</strong> Before setting up AI vehicles, you should have a working vehicle with all core components as described in <a href='03_vehicle_setup.html'>Vehicle Setup</a>. You also need a baked NavMesh in your scene (Window &gt; AI &gt; Navigation).</p>
+<h2 id='section-1'>How the AI System Works</h2>
+<p>The AI system uses three main components working together:</p>
+<table>
+<tr><th>Component</th><th>Purpose</th><th>Location</th></tr>
+<tr><td><code>RCCP_AI</code></td><td>Main AI driver that computes steering, throttle, and braking</td><td>Attached to the vehicle</td></tr>
+<tr><td><code>RCCP_AIWaypointsContainer</code></td><td>Holds the ordered list of waypoints that define a driving path</td><td>Scene object</td></tr>
+<tr><td><code>RCCP_AIBrakeZone</code></td><td>Trigger volume that tells AI vehicles to slow to a target speed</td><td>Scene object</td></tr>
+</table>
+<p>The AI driver relies on a <code>NavMeshAgent</code> for pathfinding. When the <code>RCCP_AI</code> component is added or enabled, it automatically creates a child <code>NavMeshAgent</code> if one does not already exist. The agent does not move the vehicle directly. Instead, it calculates a path that the AI uses to compute steering and speed inputs.</p>
+<p>Every <code>FixedUpdate</code>, the AI:</p>
+<ol>
+<li>Updates its NavMesh destination based on the current behavior mode</li>
+<li>Computes steering using a look-ahead point along the path</li>
+<li>Calculates a safe cornering speed from the tightest turn radius ahead</li>
+<li>Applies PID speed control for smooth throttle and braking</li>
+<li>Checks for stuck conditions and recovers automatically</li>
+<li>Applies obstacle avoidance adjustments from <code>RCCP_AIDynamicObstacleAvoidance</code></li>
+</ol>
+<h2 id='section-2'>Behavior Modes</h2>
+<p>The <code>RCCP_AI</code> component supports four behavior modes, set via the <code>behaviour</code> field in the Inspector:</p>
+<table>
+<tr><th>Mode</th><th>Description</th></tr>
+<tr><td><strong>FollowWaypoints</strong></td><td>Loops through waypoints at moderate speed. Good for traffic or patrol vehicles.</td></tr>
+<tr><td><strong>RaceWaypoints</strong></td><td>Races through waypoints more aggressively with an extended look-ahead distance for smoother cornering at speed.</td></tr>
+<tr><td><strong>FollowTarget</strong></td><td>Follows a target Transform at a set distance. Stops when within range. Requires the <code>target</code> field to be assigned.</td></tr>
+<tr><td><strong>ChaseTarget</strong></td><td>Chases and intercepts a target using velocity prediction. More aggressive than FollowTarget. Requires the <code>target</code> field to be assigned.</td></tr>
+</table>
+<h2 id='section-3'>Setting Up an AI Vehicle</h2>
+<h3 id='section-4'>Step 1: Prepare the Vehicle</h3>
+<p>Start with a fully configured RCCP vehicle that has <code>RCCP_CarController</code> and all required drivetrain components (engine, gearbox, differential, axles, wheel colliders). See <a href='03_vehicle_setup.html'>Vehicle Setup</a> for details.</p>
+<h3 id='section-5'>Step 2: Add RCCP_OtherAddons</h3>
+<p>If the vehicle does not already have the <code>RCCP_OtherAddons</code> component, add it. The AI component is managed through this addons system. You can add it via:</p>
+<ul>
+<li>Inspector: <strong>Add Component &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Other Addons &gt; RCCP Other Addons</strong></li>
+</ul>
+<h3 id='section-6'>Step 3: Add RCCP_AI</h3>
+<p>Add the AI component to the vehicle:</p>
+<ul>
+<li>Inspector: <strong>Add Component &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; AI &gt; RCCP AI</strong></li>
+</ul>
+<p>When the component is added, it automatically creates a child <code>NavMeshAgent</code> GameObject. When the AI enables at runtime, it sets <code>CarController.externalControl = true</code>, which overrides player input so the AI has full control of the vehicle.</p>
+<h3 id='section-7'>Step 4: Bake a NavMesh</h3>
+<p>The AI uses Unity's NavMesh for pathfinding. Open <strong>Window &gt; AI &gt; Navigation</strong> and bake a NavMesh for your scene. Make sure the NavMesh covers the roads and areas where AI vehicles will drive.</p>
+<h3 id='section-8'>Step 5: Assign a Waypoint Container</h3>
+<p>Drag a <code>RCCP_AIWaypointsContainer</code> from your scene into the <code>waypointsContainer</code> field on the <code>RCCP_AI</code> component. If you do not assign one, the AI will attempt to find one in the scene automatically at runtime.</p>
+<h2 id='section-9'>Key Properties</h2>
+<h3 id='section-10'>Driving Settings</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>behaviour</code></td><td>BehaviourType</td><td>RaceWaypoints</td><td>AI behavior mode (see table above)</td></tr>
+<tr><td><code>waypointsContainer</code></td><td>RCCP_AIWaypointsContainer</td><td>null</td><td>Reference to the waypoint path</td></tr>
+<tr><td><code>target</code></td><td>Transform</td><td>null</td><td>Target for FollowTarget and ChaseTarget modes</td></tr>
+<tr><td><code>maxThrottle</code></td><td>float (0-1)</td><td>1.0</td><td>Maximum throttle input</td></tr>
+<tr><td><code>maxBrake</code></td><td>float (0-1)</td><td>1.0</td><td>Maximum brake input</td></tr>
+<tr><td><code>agressiveness</code></td><td>float (0-3)</td><td>2.0</td><td>Driving aggressiveness factor; higher values allow later braking</td></tr>
+<tr><td><code>steerSensitivity</code></td><td>float (0-5)</td><td>3.0</td><td>Steering sensitivity multiplier</td></tr>
+<tr><td><code>roadGrip</code></td><td>float</td><td>1.1</td><td>Friction coefficient used to calculate safe cornering speed</td></tr>
+</table>
+<h3 id='section-11'>Waypoint Settings</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>waypointReachThreshold</code></td><td>float</td><td>25</td><td>Distance in meters at which a waypoint is considered reached</td></tr>
+<tr><td><code>raceLookAhead</code></td><td>float</td><td>36</td><td>Additional look-ahead distance in meters for RaceWaypoints mode</td></tr>
+</table>
+<h3 id='section-12'>Steering Look-ahead</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>minLookAhead</code></td><td>float</td><td>5</td><td>Minimum look-ahead distance in meters when stationary</td></tr>
+<tr><td><code>lookAheadPerKph</code></td><td>float</td><td>0.25</td><td>Additional look-ahead meters per km/h of current speed</td></tr>
+</table>
+<h3 id='section-13'>PID Speed Control</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>kp</code></td><td>float</td><td>0.2</td><td>Proportional gain for speed control</td></tr>
+<tr><td><code>ki</code></td><td>float</td><td>0.01</td><td>Integral gain for speed control</td></tr>
+<tr><td><code>kd</code></td><td>float</td><td>0.02</td><td>Derivative gain for speed control</td></tr>
+</table>
+<h3 id='section-14'>Target Following</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>followTargetDistance</code></td><td>float</td><td>5</td><td>Distance to maintain behind target in FollowTarget mode</td></tr>
+<tr><td><code>chasePredictionTime</code></td><td>float</td><td>1</td><td>Prediction time in seconds for intercepting targets in ChaseTarget mode</td></tr>
+</table>
+<h3 id='section-15'>State</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>stopNow</code></td><td>bool</td><td>false</td><td>Forces the AI to stop immediately</td></tr>
+<tr><td><code>reverseNow</code></td><td>bool</td><td>false</td><td>Forces the AI to reverse</td></tr>
+<tr><td><code>checkStuck</code></td><td>bool</td><td>true</td><td>Enables stuck detection and automatic recovery</td></tr>
+</table>
+<h2 id='section-16'>Waypoint System</h2>
+<h3 id='section-17'>RCCP_AIWaypointsContainer</h3>
+<p>This component holds an ordered list of <code>RCCP_Waypoint</code> child objects that define the AI driving path. The AI follows waypoints sequentially and loops back to the first waypoint after reaching the last one.</p>
+<p><strong>Creating a waypoint container:</strong></p>
+<p>Use the menu: <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Create &gt; Scene &gt; Add AI Waypoints Container</strong></p>
+<p>This creates a new GameObject with the <code>RCCP_AIWaypointsContainer</code> component.</p>
+<h3 id='section-18'>RCCP_Waypoint</h3>
+<p>Each waypoint is a child GameObject of the container with the <code>RCCP_Waypoint</code> component. Waypoints define the positions the AI will drive through. Position them along the road where you want the AI to drive.</p>
+<h3 id='section-19'>Waypoint Container Properties</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>smoothingSubdivisions</code></td><td>int</td><td>5</td><td>Number of subdivisions per segment when smoothing the path</td></tr>
+<tr><td><code>groundOffset</code></td><td>float</td><td>1.0</td><td>Height above ground to place each waypoint during ground snapping</td></tr>
+<tr><td><code>groundLayerMask</code></td><td>LayerMask</td><td>Everything</td><td>Layers to include when raycasting for ground</td></tr>
+</table>
+<h3 id='section-20'>Waypoint Container Context Menu Tools</h3>
+<p>Right-click the <code>RCCP_AIWaypointsContainer</code> component in the Inspector to access these tools:</p>
+<ul>
+<li><strong>Smooth Waypoints</strong> -- Applies Catmull-Rom spline interpolation to create a smoother curve through the waypoints. Replaces existing waypoints with new interpolated positions.</li>
+<li><strong>Place Waypoints Above Ground</strong> -- Raycasts downward from each waypoint and repositions them at a uniform height above the ground surface.</li>
+</ul>
+<h3 id='section-21'>Tips for Good Waypoint Placement</h3>
+<ul>
+<li>Place waypoints at regular intervals along your road</li>
+<li>Add extra waypoints at corners for smoother turns</li>
+<li>Keep waypoints centered on the road</li>
+<li>Use the <strong>Smooth Waypoints</strong> context menu for a more natural driving line</li>
+<li>Use <strong>Place Waypoints Above Ground</strong> after adjusting terrain</li>
+</ul>
+<h2 id='section-22'>Brake Zones</h2>
+<h3 id='section-23'>RCCP_AIBrakeZone</h3>
+<p>A brake zone is a trigger volume that tells AI vehicles to reduce speed. When an AI vehicle enters a brake zone, it limits its target speed to the zone's <code>targetSpeed</code> value. When the vehicle exits, normal speed calculation resumes.</p>
+<table>
+<tr><th>Property</th><th>Type</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>targetSpeed</code></td><td>float</td><td>5 - 360</td><td>50</td><td>Target speed in km/h that AI vehicles should not exceed inside this zone</td></tr>
+</table>
+<p><strong>Creating brake zones:</strong></p>
+<p>Use the menu: <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Create &gt; Scene &gt; Add AI Brake Zones Container</strong></p>
+<p>This creates a <code>RCCP_AIBrakeZonesContainer</code> with a <code>BoxCollider</code> (set as trigger). Each child brake zone also requires a <code>BoxCollider</code> marked as trigger.</p>
+<h3 id='section-24'>RCCP_AIBrakeZonesContainer</h3>
+<p>This is a parent container that holds multiple <code>RCCP_AIBrakeZone</code> children. It draws red gizmos in the Scene view to visualize each brake zone's bounds. At runtime it automatically sets brake zone GameObjects to the &quot;Ignore Raycast&quot; layer.</p>
+<h3 id='section-25'>Placing Brake Zones</h3>
+<ul>
+<li>Place brake zones before sharp turns where the AI should slow down</li>
+<li>Place brake zones at intersections or narrow passages</li>
+<li>Scale the <code>BoxCollider</code> to cover the area where braking should begin</li>
+<li>Set the <code>targetSpeed</code> low enough for the AI to safely navigate the turn</li>
+</ul>
+<h2 id='section-26'>Obstacle Avoidance</h2>
+<h3 id='section-27'>RCCP_AIDynamicObstacleAvoidance</h3>
+<p>This optional component provides dynamic obstacle detection and avoidance. It works alongside <code>RCCP_AI</code> by contributing additional steering input when obstacles are detected.</p>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>Detects obstacles within a configurable radius using <code>Physics.OverlapSphere</code></li>
+<li>Samples obstacle bounds with raycasts to find actual threat points</li>
+<li>Assesses collision risk using trajectory prediction</li>
+<li>Calculates a safe avoidance direction (left or right) based on clearance</li>
+<li>Applies steering and braking inputs proportional to threat urgency</li>
+</ol>
+<p><strong>Key properties:</strong></p>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>autoDetectObstacles</code></td><td>bool</td><td>true</td><td>Automatically detect obstacles from scene colliders</td></tr>
+<tr><td><code>dynamicObstacleLayers</code></td><td>LayerMask</td><td>--</td><td>Layers considered for automatic detection</td></tr>
+<tr><td><code>detectionRadius</code></td><td>float</td><td>10</td><td>Maximum detection radius in meters</td></tr>
+<tr><td><code>predictionTime</code></td><td>float</td><td>1</td><td>Seconds to look ahead when predicting positions</td></tr>
+<tr><td><code>riskThreshold</code></td><td>float</td><td>0.3</td><td>Minimum risk level (0-1) to trigger avoidance</td></tr>
+<tr><td><code>vehicleWidth</code></td><td>float</td><td>2</td><td>Vehicle width for collision prediction</td></tr>
+<tr><td><code>vehicleLength</code></td><td>float</td><td>4</td><td>Vehicle length for collision prediction</td></tr>
+<tr><td><code>safetyMargin</code></td><td>float</td><td>0.5</td><td>Safety margin added to vehicle dimensions</td></tr>
+<tr><td><code>emergencyBrakeDistance</code></td><td>float</td><td>2</td><td>Distance at which maximum braking is applied</td></tr>
+</table>
+<p><strong>Adding and removing obstacles manually:</strong></p>
+<pre><code>
+RCCP_AIDynamicObstacleAvoidance avoidance = vehicle.GetComponent&lt;RCCP_AIDynamicObstacleAvoidance&gt;();
+
+// Add a specific obstacle to track
+avoidance.AddObstacle(obstacleTransform);
+
+// Remove an obstacle from tracking
+avoidance.RemoveObstacle(obstacleTransform);
+</code></pre>
+<h2 id='section-28'>Spawning AI Vehicles from Code</h2>
+<p>Use the <code>RCCP.SpawnRCC</code> static method to instantiate AI vehicles at runtime. For AI vehicles, set <code>registerAsPlayerVehicle</code> to <code>false</code> and <code>isControllable</code> to <code>false</code>:</p>
+<pre><code>
+// Spawn an AI vehicle
+RCCP_CarController aiVehicle = RCCP.SpawnRCC(
+    aiPrefab,        // Vehicle prefab with RCCP_AI component
+    spawnPos,        // World position
+    spawnRot,        // World rotation
+    false,           // Do not register as player vehicle
+    false,           // Not controllable by player
+    true             // Start with engine running
+);
+</code></pre>
+<p>The vehicle must have the <code>RCCP_AI</code> component on the prefab. When it spawns and <code>OnEnable</code> runs, the AI detects the <code>RCCP_AI</code> component and fires <code>RCCP_Events.OnRCCPAISpawned</code> instead of the normal player spawn event.</p>
+<h3 id='section-29'>Changing AI Behavior at Runtime</h3>
+<pre><code>
+RCCP_AI ai = aiVehicle.OtherAddonsManager.AI;
+
+// Switch to follow a target
+ai.behaviour = RCCP_AI.BehaviourType.FollowTarget;
+ai.target = playerVehicle.transform;
+
+// Force stop
+ai.stopNow = true;
+
+// Reset the AI state
+ai.Reload();
+</code></pre>
+<h2 id='section-30'>Events</h2>
+<p>The RCCP event system provides two AI-specific events:</p>
+<table>
+<tr><th>Event</th><th>Signature</th><th>Fired When</th></tr>
+<tr><td><code>RCCP_Events.OnRCCPAISpawned</code></td><td><code>onRCCPAISpawned(RCCP_CarController)</code></td><td>An AI vehicle is enabled (has <code>RCCP_AI</code> component on <code>OtherAddonsManager</code>)</td></tr>
+<tr><td><code>RCCP_Events.OnRCCPAIDestroyed</code></td><td><code>onRCCPAIDestroyed(RCCP_CarController)</code></td><td>An AI vehicle is disabled or destroyed</td></tr>
+</table>
+<p><strong>Subscribing to AI events:</strong></p>
+<pre><code>
+void OnEnable() {
+    RCCP_Events.OnRCCPAISpawned += OnAISpawned;
+    RCCP_Events.OnRCCPAIDestroyed += OnAIDestroyed;
+}
+
+void OnDisable() {
+    RCCP_Events.OnRCCPAISpawned -= OnAISpawned;
+    RCCP_Events.OnRCCPAIDestroyed -= OnAIDestroyed;
+}
+
+void OnAISpawned(RCCP_CarController aiVehicle) {
+    Debug.Log(&quot;AI vehicle spawned: &quot; + aiVehicle.name);
+}
+
+void OnAIDestroyed(RCCP_CarController aiVehicle) {
+    Debug.Log(&quot;AI vehicle destroyed: &quot; + aiVehicle.name);
+}
+</code></pre>
+<p>The distinction between player and AI spawn events is automatic. If the vehicle has an <code>RCCP_AI</code> component registered through <code>OtherAddonsManager</code>, it fires the AI events. Otherwise, it fires the standard player events. See <a href='16_api_reference.html'>API Reference</a> for the full event reference.</p>
+<h2 id='section-31'>Stuck Detection and Recovery</h2>
+<p>When <code>checkStuck</code> is enabled (the default), the AI monitors whether the vehicle is stuck. If the vehicle has been applying throttle but moving below 2 km/h for more than 2 seconds, it triggers a recovery routine that:</p>
+<ol>
+<li>Temporarily enables <code>autoReverse</code> on the input component</li>
+<li>Reverses for 1.5 seconds</li>
+<li>Restores normal settings and shifts back to first gear</li>
+</ol>
+<h2 id='section-32'>Scene View Gizmos</h2>
+<p>When the game is playing, <code>RCCP_AI</code> draws helpful gizmos in the Scene view:</p>
+<ul>
+<li><strong>Green line</strong> -- From the vehicle to its current NavMesh destination</li>
+<li><strong>Cyan sphere</strong> -- The current target waypoint</li>
+<li><strong>Cyan path</strong> -- The NavMesh path corners</li>
+<li><strong>Magenta sphere</strong> -- The steering look-ahead point</li>
+<li><strong>Text label</strong> -- Shows current behavior mode and speed in km/h</li>
+</ul>
+<p>Brake zone containers draw semi-transparent <strong>red boxes</strong> showing each brake zone's bounds.</p>
+<h2 id='section-33'>Common Issues</h2>
+<table>
+<tr><th>Problem</th><th>Possible Cause</th><th>Solution</th></tr>
+<tr><td>AI not moving</td><td>No waypoint container assigned</td><td>Assign a <code>RCCP_AIWaypointsContainer</code> to the <code>waypointsContainer</code> field</td></tr>
+<tr><td>AI not moving</td><td>NavMesh not baked</td><td>Bake a NavMesh covering the driving area (Window &gt; AI &gt; Navigation)</td></tr>
+<tr><td>AI not moving</td><td>Missing drivetrain components</td><td>Verify the vehicle has engine, gearbox, differential, and axles</td></tr>
+<tr><td>AI driving off the road</td><td>Not enough waypoints</td><td>Add more waypoints along the road, especially at curves</td></tr>
+<tr><td>AI not braking at turns</td><td>No brake zones placed</td><td>Add <code>RCCP_AIBrakeZone</code> triggers before sharp turns</td></tr>
+<tr><td>AI jittering at waypoints</td><td><code>waypointReachThreshold</code> too small</td><td>Increase the threshold so the AI transitions smoothly between waypoints</td></tr>
+<tr><td>AI cutting corners</td><td><code>raceLookAhead</code> too high</td><td>Reduce the look-ahead value or switch to FollowWaypoints mode</td></tr>
+<tr><td>AI colliding with obstacles</td><td>No obstacle avoidance component</td><td>Add <code>RCCP_AIDynamicObstacleAvoidance</code> and configure its <code>dynamicObstacleLayers</code></td></tr>
+<tr><td>AI stuck at an obstacle</td><td>Stuck detection disabled</td><td>Enable <code>checkStuck</code> on the <code>RCCP_AI</code> component</td></tr>
+</table>
+<hr>
+<p><strong>Related topics:</strong> <a href='03_vehicle_setup.html'>Vehicle Setup</a> | <a href='04_settings.html'>Settings</a> | <a href='05_inputs.html'>Inputs</a> | <a href='14_recording_playback.html'>Recording and Playback</a></p>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: fe76b4c4e20800340af5cc72e7b99576
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178967
+  packageName: Realistic Car Controller Pro
+  packageVersion: 2.41.1
+  assetPath: Assets/Realistic Car Controller Pro/Scripts/Shaders/BCG_TextureArrayShader.shader
+  uploadId: 912608

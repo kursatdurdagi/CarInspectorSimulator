@@ -1,0 +1,290 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>21_integration_photon</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Integration: Photon PUN 2</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Integration: Photon PUN 2</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Overview</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Prerequisites</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Installing</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Step 1: Import Photon PUN 2</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Step 2: Import the RCCP Integration Package</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Step 3: Verify Scripting Symbols</a></li>
+<li style='margin-left:20px'><a href='#section-7'>Scripting Symbols</a></li>
+<li style='margin-left:20px'><a href='#section-8'>Core Components</a></li>
+<li style='margin-left:40px'><a href='#section-9'>RCCP_PhotonSync</a></li>
+<li style='margin-left:40px'><a href='#section-10'>RCCP_PhotonManager</a></li>
+<li style='margin-left:40px'><a href='#section-11'>RCCP_DemoVehicles_Photon</a></li>
+<li style='margin-left:40px'><a href='#section-12'>RCCP_DemoScenes_Photon</a></li>
+<li style='margin-left:20px'><a href='#section-13'>Setting Up a Networked Vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Step 1: Start with a Working RCCP Vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Step 2: Add PhotonView</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Step 3: Add RCCP_PhotonSync</a></li>
+<li style='margin-left:40px'><a href='#section-17'>Step 4: Place the Prefab in a Resources Folder</a></li>
+<li style='margin-left:40px'><a href='#section-18'>Step 5: Register After Spawning</a></li>
+<li style='margin-left:20px'><a href='#section-19'>Ownership and Authority</a></li>
+<li style='margin-left:20px'><a href='#section-20'>Demo Scenes</a></li>
+<li style='margin-left:20px'><a href='#section-21'>Tuning Network Performance</a></li>
+<li style='margin-left:40px'><a href='#section-22'>Reducing Jitter on Remote Vehicles</a></li>
+<li style='margin-left:40px'><a href='#section-23'>Reducing Bandwidth</a></li>
+<li style='margin-left:20px'><a href='#section-24'>Common Issues</a></li>
+<li style='margin-left:40px'><a href='#section-25'>Remote vehicles jitter or teleport frequently</a></li>
+<li style='margin-left:40px'><a href='#section-26'>Inputs not syncing on remote vehicles</a></li>
+<li style='margin-left:40px'><a href='#section-27'>Vehicle spawns but does not move</a></li>
+<li style='margin-left:40px'><a href='#section-28'>Cannot connect to Photon</a></li>
+<li style='margin-left:40px'><a href='#section-29'>Wheels spin at wrong speed on remote vehicles</a></li>
+<li style='margin-left:20px'><a href='#section-30'>Removing the Integration</a></li>
+<li style='margin-left:20px'><a href='#section-31'>See Also</a></li>
+</ul></div>
+<p>Photon PUN 2 (Photon Unity Networking) enables multiplayer vehicle synchronization for RCCP vehicles. This integration package synchronizes vehicle position, rotation, velocity, all driver inputs, engine state, gear state, differential outputs, lights, and wheel RPMs across the network using Photon's serialization system.</p>
+<hr>
+<h2 id='section-1'>Overview</h2>
+<p>The RCCP Photon integration uses an <strong>owner-sends, others-receive</strong> model. The vehicle owner sends its full state to all other players every network tick. Remote players apply that state using enhanced interpolation with lag compensation, velocity smoothing, and optional extrapolation to minimize visual jitter.</p>
+<p>Key features:</p>
+<ul>
+<li>Full drivetrain state synchronization (engine RPM, gear, clutch, differential outputs).</li>
+<li>Light state synchronization (low beam, high beam, indicators).</li>
+<li>Wheel RPM correction for accurate visual wheel spin on remote vehicles.</li>
+<li>Configurable lag compensation, interpolation speed, and extrapolation.</li>
+<li>Teleport threshold to handle large position discrepancies.</li>
+<li>State buffering (10-frame ring buffer) for smoother interpolation.</li>
+<li>Built-in lobby manager with room browsing, chat, and player statistics.</li>
+</ul>
+<hr>
+<h2 id='section-2'>Prerequisites</h2>
+<ol>
+<li><strong>Photon PUN 2</strong> installed in your project. Download it from the <a href='https://assetstore.unity.com/packages/tools/network/pun-2-free-119922'>Unity Asset Store</a> (free version available).</li>
+<li><strong>Photon App ID</strong> configured in Photon's <code>PhotonServerSettings</code> asset. You can get an App ID from the <a href='https://dashboard.photonengine.com/'>Photon Dashboard</a>.</li>
+<li>Realistic Car Controller Pro installed and working with at least one vehicle.</li>
+</ol>
+<hr>
+<h2 id='section-3'>Installing</h2>
+<h3 id='section-4'>Step 1: Import Photon PUN 2</h3>
+<p>If you have not already installed Photon PUN 2, import it from the Asset Store. After import, Photon will prompt you to enter your App ID.</p>
+<h3 id='section-5'>Step 2: Import the RCCP Integration Package</h3>
+<ol>
+<li>Open the RCCP Welcome Window: <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Welcome Window</strong>.</li>
+<li>Navigate to the <strong>Addons</strong> tab.</li>
+<li>Under <strong>Photon PUN2</strong>, click <strong>Import Photon PUN2 Integration</strong>.</li>
+<li>Unity imports <code>RCCP_PhotonIntegration.unitypackage</code> from <code>Addons/Installers/</code>.</li>
+<li>Wait for Unity to recompile.</li>
+</ol>
+<p>The integration files are installed to:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/Addons/Installed/Photon PUN 2/
+</code></pre>
+<h3 id='section-6'>Step 3: Verify Scripting Symbols</h3>
+<p>After import, the <code>RCCP_PhotonInitLoad</code> editor script automatically adds the <code>RCCP_PHOTON</code> scripting symbol. Photon itself provides <code>PHOTON_UNITY_NETWORKING</code>. Both must be present for the integration scripts to compile.</p>
+<hr>
+<h2 id='section-7'>Scripting Symbols</h2>
+<table>
+<tr><th>Symbol</th><th>Source</th><th>Required</th></tr>
+<tr><td><code>PHOTON_UNITY_NETWORKING</code></td><td>Photon PUN 2 package (automatic)</td><td>Yes</td></tr>
+<tr><td><code>RCCP_PHOTON</code></td><td>RCCP Photon integration (automatic via <code>RCCP_PhotonInitLoad</code>)</td><td>Yes</td></tr>
+</table>
+<p>If you remove the integration, delete the <code>Photon PUN 2</code> folder from <code>Addons/Installed/</code>, then remove <code>RCCP_PHOTON</code> from <strong>Edit &gt; Project Settings &gt; Player &gt; Scripting Define Symbols</strong>. The <code>RCCP_AddonDefineManager</code> will also attempt to remove it automatically when it detects the folder deletion.</p>
+<hr>
+<h2 id='section-8'>Core Components</h2>
+<h3 id='section-9'>RCCP_PhotonSync</h3>
+<p>The main synchronization component. Inherits from <code>MonoBehaviourPunCallbacks</code> and implements <code>IPunObservable</code>.</p>
+<p><strong>Add to:</strong> Each networked RCCP vehicle prefab (alongside <code>PhotonView</code>).</p>
+<p><strong>Requirement:</strong> <code>[RequireComponent(typeof(PhotonView))]</code></p>
+<h4>Inspector Settings</h4>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>teleportDistanceThreshold</code></td><td><code>float</code></td><td><code>4</code></td><td>If the remote vehicle is farther than this from its target position, it teleports instead of interpolating.</td></tr>
+<tr><td><code>lagCompensationTime</code></td><td><code>float</code></td><td><code>0.05</code></td><td>Lag compensation time in seconds. Higher values add smoothness but increase perceived latency.</td></tr>
+<tr><td><code>positionInterpolationSpeed</code></td><td><code>float</code></td><td><code>10</code></td><td>Speed multiplier for position interpolation of remote vehicles.</td></tr>
+<tr><td><code>rotationInterpolationSpeed</code></td><td><code>float</code></td><td><code>10</code></td><td>Speed multiplier for rotation interpolation of remote vehicles.</td></tr>
+<tr><td><code>useExtrapolation</code></td><td><code>bool</code></td><td><code>true</code></td><td>Enable extrapolation to predict where the vehicle will be during network gaps.</td></tr>
+<tr><td><code>maxExtrapolationTime</code></td><td><code>float</code></td><td><code>0.1</code></td><td>Maximum total prediction time (lag compensation + extrapolation) in seconds.</td></tr>
+<tr><td><code>useVelocitySmoothing</code></td><td><code>bool</code></td><td><code>true</code></td><td>Enable velocity-based Rigidbody smoothing for more accurate physics on remote vehicles.</td></tr>
+<tr><td><code>velocityDampening</code></td><td><code>float</code></td><td><code>0.8</code></td><td>Damping factor for velocity interpolation.</td></tr>
+<tr><td><code>photonSendRate</code></td><td><code>int</code></td><td><code>30</code></td><td>Photon network send rate (packets/second).</td></tr>
+<tr><td><code>photonSerializationRate</code></td><td><code>int</code></td><td><code>30</code></td><td>Photon serialization rate (serializations/second).</td></tr>
+</table>
+<h4>Synchronized Data</h4>
+<p>The following data is sent every serialization tick from the owner to all remote clients:</p>
+<table>
+<tr><th>Category</th><th>Fields</th></tr>
+<tr><td><strong>Inputs</strong></td><td>throttle, brake, steer, handbrake, NOS boost, clutch</td></tr>
+<tr><td><strong>Engine</strong></td><td>RPM, starting flag, running flag</td></tr>
+<tr><td><strong>Gearbox</strong></td><td>current gear index, gear input, gear state (Forward/Reverse/Neutral/Park), shifting flag</td></tr>
+<tr><td><strong>Differential</strong></td><td>left and right output for each differential</td></tr>
+<tr><td><strong>Lights</strong></td><td>low beam, high beam, left indicator, right indicator, hazards</td></tr>
+<tr><td><strong>Wheels</strong></td><td>RPM for each wheel collider</td></tr>
+<tr><td><strong>Transform</strong></td><td>position, rotation, linear velocity, angular velocity, timestamp</td></tr>
+</table>
+<h4>How It Works</h4>
+<p><strong>Owner (local player):</strong></p>
+<ul>
+<li><code>FixedUpdate</code> runs normally. No input overrides are applied.</li>
+<li><code>OnPhotonSerializeView</code> writes all vehicle state to the Photon stream.</li>
+</ul>
+<p><strong>Remote (other players):</strong></p>
+<ul>
+<li><code>OnPhotonSerializeView</code> receives the state and buffers it in a 10-frame ring buffer.</li>
+<li>Lag compensation predicts a target position based on received velocity and network lag.</li>
+<li><code>FixedUpdate</code> calls <code>ApplyRemoteMovement()</code> which interpolates the Rigidbody toward the predicted position using <code>MovePosition</code>/<code>MoveRotation</code>.</li>
+<li><code>ApplyRemoteInputsAndState()</code> overrides all input and drivetrain modules on the remote vehicle to match the owner's state.</li>
+<li><code>RCCP_WheelRPMCorrection</code> components (auto-added to each wheel on remote vehicles) correct visual wheel spin to match synced RPMs.</li>
+</ul>
+<h3 id='section-10'>RCCP_PhotonManager</h3>
+<p>A lobby and room management UI controller. Inherits from <code>MonoBehaviourPunCallbacks</code>.</p>
+<p><strong>Role:</strong> Handles the full Photon lifecycle: connect to server, join lobby, browse/create rooms, join rooms, chat, and load gameplay scenes.</p>
+<table>
+<tr><th>Feature</th><th>Description</th></tr>
+<tr><td><strong>Connection</strong></td><td>Connects using <code>PhotonNetwork.ConnectUsingSettings()</code> with a player nickname.</td></tr>
+<tr><td><strong>Lobby</strong></td><td>Joins the default typed lobby. Displays online player count, room count, and region.</td></tr>
+<tr><td><strong>Room Browser</strong></td><td>Lists available rooms with player counts. Rooms that close or become invisible are removed.</td></tr>
+<tr><td><strong>Room Creation</strong></td><td>Creates rooms with 4 max players, open and visible.</td></tr>
+<tr><td><strong>Chat</strong></td><td>Buffered RPC-based chat system. Displays last 7 messages.</td></tr>
+<tr><td><strong>Scene Loading</strong></td><td>Loads the gameplay scene via <code>PhotonNetwork.LoadLevel()</code> when a room is joined.</td></tr>
+</table>
+<h3 id='section-11'>RCCP_DemoVehicles_Photon</h3>
+<p>A <code>ScriptableObject</code> singleton (loaded from <code>Resources/RCCP_DemoVehicles_Photon</code>) that holds an array of <code>RCCP_CarController</code> prefab references for spawning in Photon demos.</p>
+<h3 id='section-12'>RCCP_DemoScenes_Photon</h3>
+<p>A <code>ScriptableObject</code> singleton (loaded from <code>Resources/RCCP_DemoScenes_Photon</code>) that holds references to the Photon demo scenes (City and Lobby).</p>
+<hr>
+<h2 id='section-13'>Setting Up a Networked Vehicle</h2>
+<h3 id='section-14'>Step 1: Start with a Working RCCP Vehicle</h3>
+<p>Ensure your vehicle works correctly in single-player before adding networking.</p>
+<h3 id='section-15'>Step 2: Add PhotonView</h3>
+<ol>
+<li>Select your vehicle prefab.</li>
+<li>Add Component: <code>PhotonView</code>.</li>
+<li>Set <code>Ownership Transfer</code> to <code>Fixed</code>.</li>
+<li>Set <code>Synchronization</code> to <code>Unreliable</code>.</li>
+<li>Set <code>Observable Search</code> to <code>Auto Find All</code>.</li>
+</ol>
+<h3 id='section-16'>Step 3: Add RCCP_PhotonSync</h3>
+<ol>
+<li>Add Component: <code>RCCP_PhotonSync</code>.</li>
+<li>The component automatically adds itself to the PhotonView's observed list on <code>Start()</code>.</li>
+<li>Adjust interpolation settings if needed (defaults work well for most cases).</li>
+</ol>
+<h3 id='section-17'>Step 4: Place the Prefab in a Resources Folder</h3>
+<p>Photon requires spawnable prefabs to be in a <code>Resources/</code> folder (or a subfolder).</p>
+<p>For the demo system, place vehicle prefabs in:</p>
+<pre><code>
+Resources/Photon Vehicles/
+</code></pre>
+<p>The <code>RCCP_PhotonDemo.Spawn()</code> method uses this path:</p>
+<pre><code>
+PhotonNetwork.Instantiate(&quot;Photon Vehicles/&quot; + vehicleName, position, rotation, 0);
+</code></pre>
+<h3 id='section-18'>Step 5: Register After Spawning</h3>
+<p>After <code>PhotonNetwork.Instantiate()</code>, register the vehicle with RCCP:</p>
+<pre><code>
+RCCP_CarController vehicle = PhotonNetwork.Instantiate(prefabPath, pos, rot, 0)
+    .GetComponent&lt;RCCP_CarController&gt;();
+
+RCCP.RegisterPlayerVehicle(vehicle);
+RCCP.SetControl(vehicle, true);
+
+if (RCCP_SceneManager.Instance.activePlayerCamera)
+    RCCP_SceneManager.Instance.activePlayerCamera.SetTarget(vehicle);
+</code></pre>
+<hr>
+<h2 id='section-19'>Ownership and Authority</h2>
+<ul>
+<li><strong>Owner:</strong> Only the PhotonView owner sends vehicle state. The owner's inputs are processed locally by the RCCP drivetrain as normal.</li>
+<li><strong>Remote clients:</strong> Inputs and drivetrain modules are overridden with the received network state. The vehicle's <code>RCCP_Input.overrideExternalInputs</code> is set to <code>true</code>.</li>
+<li><strong>Ownership transfer:</strong> The <code>RCCP_PhotonSync.Reset()</code> method configures <code>OwnershipOption.Fixed</code> by default. For vehicle sharing (e.g., enter-exit with Photon), ownership must be transferred via <code>PhotonView.TransferOwnership()</code>.</li>
+</ul>
+<hr>
+<h2 id='section-20'>Demo Scenes</h2>
+<p>The integration includes two demo scenes:</p>
+<table>
+<tr><th>Scene</th><th>Description</th></tr>
+<tr><td><code>RCCP_Scene_Blank_Photon</code></td><td>Minimal Photon demo. Connects, joins a random room, and provides a vehicle selection menu.</td></tr>
+<tr><td><code>RCCP_Scene_PUN2Lobby</code></td><td>Full lobby UI with room browsing, creation, chat, and gameplay scene loading.</td></tr>
+</table>
+<p>To run the demo:</p>
+<ol>
+<li>Configure your Photon App ID in <code>PhotonServerSettings</code>.</li>
+<li>Add the Photon demo scenes to <strong>Build Settings &gt; Scenes In Build</strong>.</li>
+<li>Enter Play Mode. The demo auto-connects, joins a lobby, and creates/joins a room.</li>
+<li>Use the in-game menu to select and spawn a vehicle.</li>
+</ol>
+<hr>
+<h2 id='section-21'>Tuning Network Performance</h2>
+<h3 id='section-22'>Reducing Jitter on Remote Vehicles</h3>
+<table>
+<tr><th>Adjustment</th><th>Effect</th></tr>
+<tr><td>Increase <code>positionInterpolationSpeed</code></td><td>Faster catch-up to target position, but may overshoot.</td></tr>
+<tr><td>Increase <code>lagCompensationTime</code></td><td>More forward prediction, smoother but higher perceived latency.</td></tr>
+<tr><td>Enable <code>useVelocitySmoothing</code></td><td>Smooths Rigidbody velocity transitions.</td></tr>
+<tr><td>Decrease <code>teleportDistanceThreshold</code></td><td>Teleports sooner when position error is large.</td></tr>
+</table>
+<h3 id='section-23'>Reducing Bandwidth</h3>
+<table>
+<tr><th>Adjustment</th><th>Effect</th></tr>
+<tr><td>Decrease <code>photonSendRate</code></td><td>Fewer packets per second. May increase jitter.</td></tr>
+<tr><td>Decrease <code>photonSerializationRate</code></td><td>Fewer serializations per second.</td></tr>
+</table>
+<hr>
+<h2 id='section-24'>Common Issues</h2>
+<h3 id='section-25'>Remote vehicles jitter or teleport frequently</h3>
+<ul>
+<li>Check network latency. High-latency connections naturally produce more jitter.</li>
+<li>Increase <code>positionInterpolationSpeed</code> and <code>rotationInterpolationSpeed</code> for faster convergence.</li>
+<li>Ensure <code>useVelocitySmoothing</code> is enabled.</li>
+<li>If teleporting too often, increase <code>teleportDistanceThreshold</code>.</li>
+</ul>
+<h3 id='section-26'>Inputs not syncing on remote vehicles</h3>
+<ul>
+<li>Verify that <code>PhotonView</code> ownership is correct. Only the owner sends input data.</li>
+<li>Ensure <code>RCCP_PhotonSync</code> is in the PhotonView's <code>ObservedComponents</code> list (auto-added on <code>Start()</code>).</li>
+<li>Check that both <code>PHOTON_UNITY_NETWORKING</code> and <code>RCCP_PHOTON</code> scripting symbols are defined.</li>
+</ul>
+<h3 id='section-27'>Vehicle spawns but does not move</h3>
+<ul>
+<li>After spawning with <code>PhotonNetwork.Instantiate()</code>, call <code>RCCP.RegisterPlayerVehicle()</code> and <code>RCCP.SetControl(vehicle, true)</code>.</li>
+<li>Ensure the spawning player is the PhotonView owner.</li>
+</ul>
+<h3 id='section-28'>Cannot connect to Photon</h3>
+<ul>
+<li>Verify your App ID in <code>PhotonServerSettings</code>.</li>
+<li>Check your internet connection.</li>
+<li>Review the Photon console for error messages.</li>
+</ul>
+<h3 id='section-29'>Wheels spin at wrong speed on remote vehicles</h3>
+<ul>
+<li><code>RCCP_WheelRPMCorrection</code> components are auto-added to remote vehicle wheels on <code>Start()</code>. If wheels are added dynamically after start, this may not work.</li>
+</ul>
+<hr>
+<h2 id='section-30'>Removing the Integration</h2>
+<ol>
+<li>Delete the folder: <code>Assets/Realistic Car Controller Pro/Addons/Installed/Photon PUN 2/</code>.</li>
+<li>Remove the <code>RCCP_PHOTON</code> scripting symbol from <strong>Edit &gt; Project Settings &gt; Player &gt; Scripting Define Symbols</strong> (or let <code>RCCP_AddonDefineManager</code> handle it automatically).</li>
+<li>Wait for Unity to recompile.</li>
+</ol>
+<hr>
+<h2 id='section-31'>See Also</h2>
+<ul>
+<li><a href='03_vehicle_setup.html'>Vehicle Setup</a> -- Creating an RCCP vehicle from scratch.</li>
+<li><a href='16_api_reference.html'>API Reference</a> -- <code>RCCP.RegisterPlayerVehicle()</code>, <code>RCCP.SetControl()</code>.</li>
+<li><a href='22_integration_mirror.html'>Integration: Mirror</a> -- Alternative networking with Mirror.</li>
+<li><a href='20_integration_enter_exit.html'>Integration: Enter-Exit</a> -- Character enter-exit system (compatible with Photon via ownership transfer).</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

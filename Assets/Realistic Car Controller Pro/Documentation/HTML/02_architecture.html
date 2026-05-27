@@ -1,0 +1,368 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>02_architecture</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Architecture Overview</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Architecture Overview</a></li>
+<li style='margin-left:20px'><a href='#section-1'>How RCCP Works</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Component System</a></li>
+<li style='margin-left:40px'><a href='#section-3'>The Base Class Family Tree</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Auto-Registration</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Registered Component Types</a></li>
+<li style='margin-left:20px'><a href='#section-6'>Drivetrain Chain</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Step-by-Step Breakdown</a></li>
+<li style='margin-left:40px'><a href='#section-8'>How Speed Is Calculated</a></li>
+<li style='margin-left:20px'><a href='#section-9'>Execution Order</a></li>
+<li style='margin-left:40px'><a href='#section-10'>The Drivetrain Chain (-7 → -4) and the Accumulator Pipeline (-2 → -1 → 0)</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Custom Components</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Verifying the Execution Order</a></li>
+<li style='margin-left:20px'><a href='#section-13'>Singleton Services</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Runtime Settings (Important)</a></li>
+<li style='margin-left:20px'><a href='#section-15'>Events System</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Available Events</a></li>
+<li style='margin-left:40px'><a href='#section-17'>How to Subscribe to Events</a></li>
+<li style='margin-left:20px'><a href='#section-18'>Behavior Presets</a></li>
+<li style='margin-left:40px'><a href='#section-19'>What a Behavior Preset Controls</a></li>
+<li style='margin-left:40px'><a href='#section-20'>Global vs Per-Vehicle Behaviors</a></li>
+<li style='margin-left:20px'><a href='#section-21'>Resources and ScriptableObjects</a></li>
+<li style='margin-left:20px'><a href='#section-22'>Next Steps</a></li>
+</ul></div>
+<p>This guide explains how Realistic Car Controller Pro (RCCP) is built under the hood. Understanding the architecture will help you work with the asset more confidently, whether you are setting up your first vehicle or building a full driving game.</p>
+<h2 id='section-1'>How RCCP Works</h2>
+<p>RCCP is a <strong>component-based vehicle physics system</strong>. Instead of putting all vehicle logic into a single massive script, RCCP splits every subsystem (engine, gearbox, wheels, stability, lights, damage, and more) into its own independent component.</p>
+<p>Here is the key idea: every RCCP vehicle has one main controller called <code>RCCP_CarController</code> on the root GameObject. All other subsystems live on child GameObjects and automatically register themselves with that controller when they initialize. You do not need to manually wire up references between components -- RCCP handles it for you.</p>
+<p>This modular design means you can:</p>
+<ul>
+<li>Add or remove features by adding or removing components (want NOS? add the component. Don't need damage? remove it)</li>
+<li>Understand one system at a time without being overwhelmed by the whole vehicle</li>
+<li>Extend the vehicle with your own scripts by listening to events and reading public properties</li>
+</ul>
+<h2 id='section-2'>Component System</h2>
+<h3 id='section-3'>The Base Class Family Tree</h3>
+<p>Every script in RCCP inherits from one of a few base classes. Think of it like a family tree where each branch serves a different purpose:</p>
+<pre><code>
+MonoBehaviour (Unity's built-in base)
+|
+|-- RCCP_GenericComponent
+|   |   Base for global managers (not attached to vehicles).
+|   |   Provides cached access to Settings, GroundMaterials, SceneManager.
+|   |
+|   +-- RCCP_Singleton&lt;T&gt;
+|       Thread-safe singleton pattern. Auto-creates a GameObject
+|       if no instance exists in the scene.
+|
+|-- RCCP_MainComponent
+|   Base for RCCP_CarController itself.
+|   Caches references to ALL vehicle subsystem components.
+|
+|-- RCCP_Component (implements IRCCP_Component)
+|   |   Base for ALL vehicle subsystems (engine, gearbox, wheels, etc.).
+|   |   Auto-discovers the parent RCCP_CarController and registers itself.
+|   |
+|   +-- RCCP_UpgradeComponent
+|       Base for customization/upgrade components (paint, spoiler, wheels).
+|       Has access to the vehicle's customization Loadout.
+|
+|-- RCCP_UIComponent
+    Base for UI components (dashboard displays, buttons, sliders).
+    Provides cached access to Settings and SceneManager.
+</code></pre>
+<p><strong>All six base classes are <code>abstract</code> in V2.31.1+.</strong> This means <code>RCCP_GenericComponent</code>, <code>RCCP_Singleton<T></code>, <code>RCCP_MainComponent</code>, <code>RCCP_Component</code>, <code>RCCP_UpgradeComponent</code>, and <code>RCCP_UIComponent</code> no longer appear in Unity's <strong>Add Component</strong> menu, and direct instantiation is a compile error -- calls like <code>AddComponent<RCCP_Component>()</code> or <code>new RCCP_GenericComponent()</code> will not build. Always use a concrete subclass instead (<code>RCCP_Engine</code>, <code>RCCP_Gearbox</code>, <code>RCCP_Stability</code>, and so on). This was a deliberate change to prevent accidental misuse, since the base classes have no behavior on their own.</p>
+<p><strong>Why does this matter?</strong> When you look at any RCCP script, knowing which base class it uses tells you immediately what kind of component it is and what it has access to.</p>
+<h3 id='section-4'>Auto-Registration</h3>
+<p>When any component that inherits from <code>RCCP_Component</code> initializes, it automatically:</p>
+<ol>
+<li>Finds the <code>RCCP_CarController</code> on its parent GameObject using <code>GetComponentInParent</code></li>
+<li>Calls the <code>Register()</code> method</li>
+<li><code>Register()</code> uses a type-switch to assign the component to the correct slot on the car controller</li>
+</ol>
+<p>For example, when <code>RCCP_Engine</code> initializes, the registration assigns it to <code>CarController.Engine</code>. When <code>RCCP_Gearbox</code> initializes, it goes to <code>CarController.Gearbox</code>. This happens automatically -- you never need to drag-and-drop references in the Inspector.</p>
+<p>Here is a simplified view of how registration works internally:</p>
+<pre><code>
+// Inside RCCP_Component.Register() -- simplified for clarity
+switch (component) {
+    case RCCP_Engine:
+        carController.Engine = component as RCCP_Engine;
+        break;
+    case RCCP_Clutch:
+        carController.Clutch = component as RCCP_Clutch;
+        break;
+    case RCCP_Gearbox:
+        carController.Gearbox = component as RCCP_Gearbox;
+        break;
+    // ... and so on for every component type
+}
+</code></pre>
+<h3 id='section-5'>Registered Component Types</h3>
+<p>Here is the full list of components that auto-register with the car controller:</p>
+<p><strong>Core Drivetrain:</strong></p>
+<table>
+<tr><th>Component</th><th>Slot on CarController</th><th>Purpose</th></tr>
+<tr><td>RCCP_Engine</td><td>.Engine</td><td>Power generation</td></tr>
+<tr><td>RCCP_Clutch</td><td>.Clutch</td><td>Engine-to-gearbox connection</td></tr>
+<tr><td>RCCP_Gearbox</td><td>.Gearbox</td><td>Gear ratios and shifting</td></tr>
+<tr><td>RCCP_Differential</td><td>(updates differentials list)</td><td>Torque splitting between wheels</td></tr>
+<tr><td>RCCP_Axles</td><td>.AxleManager</td><td>Manages all axle groups</td></tr>
+<tr><td>RCCP_Axle</td><td>(added to AxleManager.Axles list)</td><td>Groups left and right wheels</td></tr>
+<tr><td>RCCP_WheelCollider</td><td>(managed by parent Axle)</td><td>Individual wheel physics</td></tr>
+</table>
+<p><strong>Vehicle Systems:</strong></p>
+<table>
+<tr><th>Component</th><th>Slot on CarController</th><th>Purpose</th></tr>
+<tr><td>RCCP_AeroDynamics</td><td>.AeroDynamics</td><td>Downforce and drag</td></tr>
+<tr><td>RCCP_Audio</td><td>.Audio</td><td>Engine, skid, crash sounds</td></tr>
+<tr><td>RCCP_Input</td><td>.Inputs</td><td>Input processing for this vehicle</td></tr>
+<tr><td>RCCP_Lights</td><td>.Lights</td><td>Light group manager</td></tr>
+<tr><td>RCCP_Light</td><td>(registered with .Lights)</td><td>Individual light (headlight, brake, etc.)</td></tr>
+<tr><td>RCCP_Stability</td><td>.Stability</td><td>ABS, ESP, TCS, steering helpers</td></tr>
+<tr><td>RCCP_Damage</td><td>.Damage</td><td>Mesh deformation and repair</td></tr>
+<tr><td>RCCP_Particles</td><td>.Particles</td><td>Wheel smoke, sparks, debris</td></tr>
+<tr><td>RCCP_Customizer</td><td>.Customizer</td><td>Paint, upgrades, loadout system</td></tr>
+<tr><td>RCCP_Lod</td><td>.LOD</td><td>Level-of-detail optimization</td></tr>
+</table>
+<p><strong>Addon Components</strong> (registered via the OtherAddons manager):</p>
+<table>
+<tr><th>Component</th><th>Slot on OtherAddonsManager</th><th>Purpose</th></tr>
+<tr><td>RCCP_Recorder</td><td>.Recorder</td><td>Record and replay vehicle movement</td></tr>
+<tr><td>RCCP_Exhausts</td><td>.Exhausts</td><td>Exhaust flame and smoke effects</td></tr>
+<tr><td>RCCP_Limiter</td><td>.Limiter</td><td>Speed limiter</td></tr>
+<tr><td>RCCP_Nos</td><td>.Nos</td><td>Nitrous oxide boost</td></tr>
+<tr><td>RCCP_TrailerAttacher</td><td>.TrailAttacher</td><td>Trailer hitch connection</td></tr>
+<tr><td>RCCP_Visual_Dashboard</td><td>.Dashboard</td><td>3D dashboard gauges</td></tr>
+<tr><td>RCCP_Exterior_Cameras</td><td>.ExteriorCameras</td><td>Hood cam, bumper cam, etc.</td></tr>
+<tr><td>RCCP_AI</td><td>.AI</td><td>Waypoint-following AI driver</td></tr>
+<tr><td>RCCP_WheelBlur</td><td>.WheelBlur</td><td>Motion blur effect on spinning wheels</td></tr>
+<tr><td>RCCP_FuelTank</td><td>.FuelTank</td><td>Fuel consumption system</td></tr>
+<tr><td>RCCP_BodyTilt</td><td>.BodyTilt</td><td>Body lean in corners</td></tr>
+</table>
+<h2 id='section-6'>Drivetrain Chain</h2>
+<p>Power flows through the vehicle in a chain, just like a real car. Each component in the chain receives input from the previous one and passes its output to the next:</p>
+<pre><code>
+  Throttle Input
+       |
+       v
+  [1. ENGINE] ----&gt; Generates torque based on RPM and throttle
+       |
+       v
+  [2. CLUTCH] ----&gt; Connects or disconnects engine from gearbox
+       |
+       v
+  [3. GEARBOX] ---&gt; Multiplies torque by current gear ratio
+       |
+       v
+  [4. DIFFERENTIAL] -&gt; Splits torque between left and right wheels
+       |
+       v
+  [5. AXLE] -------&gt; Groups left and right wheels together
+       |
+       v
+  [6. WHEEL COLLIDERS] -&gt; Apply torque to Unity's physics system
+</code></pre>
+<h3 id='section-7'>Step-by-Step Breakdown</h3>
+<p><strong>1. RCCP_Engine</strong> -- The power plant. It generates torque based on the current RPM and throttle input. The engine has a torque curve (configurable in the Inspector) that determines how much power is available at each RPM. Think of it as the heart of the vehicle.</p>
+<p><strong>2. RCCP_Clutch</strong> -- Connects (or disconnects) the engine from the gearbox, just like pressing the clutch pedal in a real manual car. When the clutch is disengaged, the engine spins freely without driving the wheels. This matters during gear shifts and when starting from a stop.</p>
+<p><strong>3. RCCP_Gearbox</strong> -- Multiplies the engine's torque by the current gear ratio. Lower gears provide more torque (for acceleration), while higher gears allow higher top speed. Three transmission modes are available:</p>
+<table>
+<tr><th>Mode</th><th>Description</th></tr>
+<tr><td>Manual</td><td>Player shifts gears manually</td></tr>
+<tr><td>Automatic</td><td>Gears shift automatically based on RPM thresholds</td></tr>
+<tr><td>Automatic_DNRP</td><td>Semi-automatic with a selector for Drive, Neutral, Reverse, and Park</td></tr>
+</table>
+<p><strong>4. RCCP_Differential</strong> -- Splits torque between the left and right wheels on an axle. Without a differential, both wheels would always spin at the same speed, making cornering unrealistic. Four differential types are available:</p>
+<table>
+<tr><th>Type</th><th>Behavior</th></tr>
+<tr><td>Open</td><td>Sends more torque to the wheel with less resistance (realistic, but can cause wheelspin)</td></tr>
+<tr><td>Limited</td><td>Partially locks when one wheel spins faster than the other</td></tr>
+<tr><td>FullLocked</td><td>Both wheels always receive equal torque (great for off-road, causes understeer on pavement)</td></tr>
+<tr><td>Direct</td><td>Torque is applied directly without differential calculations</td></tr>
+</table>
+<p>The differential also applies the <strong>final drive ratio</strong>, which is one last gear reduction before the wheels.</p>
+<p><strong>5. RCCP_Axle</strong> -- Groups a left and right wheel together. Each axle has flags that control its role:</p>
+<table>
+<tr><th>Flag</th><th>Meaning</th></tr>
+<tr><td>isPower</td><td>This axle receives engine power</td></tr>
+<tr><td>isSteer</td><td>This axle turns with steering input</td></tr>
+<tr><td>isBrake</td><td>This axle applies braking force</td></tr>
+<tr><td>isHandbrake</td><td>This axle responds to the handbrake</td></tr>
+</table>
+<p><strong>Important:</strong> The <code>isPower</code> flag is set automatically by the Differential component based on which axles it is connected to. You do not set this flag manually. The Differential determines whether the vehicle is FWD, RWD, or AWD by which axles receive its output.</p>
+<p><strong>6. RCCP_WheelCollider</strong> -- A wrapper around Unity's built-in WheelCollider. Handles ground contact detection, friction calculation, slip, and aligns the visual wheel model (the 3D mesh you see) with the physics wheel's position and rotation.</p>
+<h3 id='section-8'>How Speed Is Calculated</h3>
+<p>The vehicle's speed is calculated from the <strong>Rigidbody's velocity</strong> (converted to km/h), not from wheel RPM. This gives an accurate reading even when wheels are spinning or locked:</p>
+<pre><code>
+// From RCCP_CarController -- simplified
+speed = transform.InverseTransformDirection(Rigid.linearVelocity).z * 3.6f;
+</code></pre>
+<p>A separate <code>wheelRPM2Speed</code> value is also calculated from wheel RPM for drivetrain calculations, but the main <code>speed</code> property uses physics velocity.</p>
+<h2 id='section-9'>Execution Order</h2>
+<p>Unity normally runs all scripts in an undefined order, which can cause problems when one script depends on another being initialized first. RCCP enforces its ordering automatically through <code>RCCP_ScriptExecutionOrderManager</code>, an editor-only <code>[InitializeOnLoad]</code> helper that writes the correct <code>MonoImporter</code> execution order for every RCCP script on every assembly reload. Every order-sensitive class also carries a matching <code>[DefaultExecutionOrder]</code> attribute baked directly onto the type, so the ordering survives projects where the editor enforcement helper is missing.</p>
+<p>Scripts with lower numbers run first:</p>
+<table>
+<tr><th>Order</th><th>Component</th><th>Why It Runs at This Priority</th></tr>
+<tr><td>-50</td><td>RCCP_SceneManager</td><td>Must track vehicles and cache terrain data before anything else</td></tr>
+<tr><td>-50</td><td>RCCP_InputManager</td><td>Must process input before vehicles try to read it</td></tr>
+<tr><td>-50</td><td>RCCP_SkidmarksManager</td><td>Shared rendering system must be ready before wheels query it</td></tr>
+<tr><td>-11</td><td>RCCP_AI</td><td>Writes <code>Inputs.OverrideInputs(...)</code> before CarController.PlayerInputs reads at -10</td></tr>
+<tr><td>-11</td><td>RCCP_Recorder</td><td>Same; writes recorded input snapshot before CarController reads it</td></tr>
+<tr><td>-10</td><td>RCCP_CarController</td><td>Main vehicle controller — polls component state and forwards inputs</td></tr>
+<tr><td>-8</td><td>RCCP_Limiter</td><td>Writes <code>Engine.cutFuel</code> before Engine consumes it the same frame</td></tr>
+<tr><td>-7</td><td>RCCP_Engine</td><td>Starts the drivetrain torque chain (<code>Output()</code> → <code>Clutch.ReceiveOutput</code>)</td></tr>
+<tr><td>-6</td><td>RCCP_Clutch</td><td>Reads stored received torque, applies clutch slip, forwards to Gearbox</td></tr>
+<tr><td>-5</td><td>RCCP_Axles</td><td>Axle manager collects axles before other components need wheel data</td></tr>
+<tr><td>-5</td><td>RCCP_Lights</td><td>Light manager ready before individual lights register</td></tr>
+<tr><td>-5</td><td>RCCP_OtherAddons</td><td>Addon manager ready before addon components register</td></tr>
+<tr><td>-5</td><td>RCCP_Exhausts</td><td>Exhaust system initializes before particle effects</td></tr>
+<tr><td>-5</td><td>RCCP_Gearbox</td><td>Drivetrain stage between Clutch and Differential (parents at -5 have no FixedUpdate, so tying is collision-free)</td></tr>
+<tr><td>-4</td><td>RCCP_Differential</td><td>Splits torque to L/R wheels and stores motor torque on the connected <code>RCCP_Axle</code></td></tr>
+<tr><td>-3</td><td>RCCP_AeroDynamics</td><td>Writes <code>Rigidbody.centerOfMass</code> and <code>linearDamping</code> before WheelCollider physics consumes them</td></tr>
+<tr><td>-2</td><td>RCCP_Axle</td><td>Populates wheel motor/brake torque accumulators via <code>AddMotorTorque</code></td></tr>
+<tr><td>-1</td><td>RCCP_Stability</td><td>Modifies accumulators (ESP brake add + motor cut) before wheels read them</td></tr>
+<tr><td>0</td><td>RCCP_WheelCollider</td><td>Consumes the accumulators, applies values to Unity's <code>WheelCollider</code>, resets for next frame</td></tr>
+<tr><td>5</td><td>RCCP_Camera</td><td>Camera follows vehicle after it has updated its position</td></tr>
+<tr><td>10</td><td>RCCP_Customizer</td><td>Late initialization for customization system</td></tr>
+<tr><td>10</td><td>RCCP_Lod</td><td>LOD decisions made after all other updates</td></tr>
+<tr><td>10</td><td>RCCP_BodyTilt</td><td>Body tilt applied after physics update</td></tr>
+</table>
+<h3 id='section-10'>The Drivetrain Chain (-7 → -4) and the Accumulator Pipeline (-2 → -1 → 0)</h3>
+<p>RCCP's drivetrain components don't propagate torque synchronously. Each upstream component's <code>Output()</code> calls <code>outputEvent.Invoke(...)</code>; the downstream component's <code>ReceiveOutput()</code> simply stores the received torque to a field. The downstream's own <code>FixedUpdate</code> reads that stored field, recomputes, and re-fires its own <code>Output()</code>. The chain therefore advances <strong>one stage per fixed frame</strong> unless the components run in upstream-to-downstream order within the same frame. With Engine at -7, Clutch at -6, Gearbox at -5, and Differential at -4, the entire chain (Engine → Clutch → Gearbox → Differential → Axle.ReceiveOutput) completes in a single fixed frame.</p>
+<p>The <code>-2 → -1 → 0</code> sequence at the wheel end is load-bearing. <code>RCCP_Axle</code> writes motor and brake torque into per-wheel accumulators at <code>-2</code>. <code>RCCP_Stability</code> then modifies those accumulators at <code>-1</code> — ESP can add differential brake torque and cut motor torque on a driven wheel in the same frame. Finally, <code>RCCP_WheelCollider</code> consumes the accumulators at <code>0</code> and pushes the final values into Unity's <code>WheelCollider</code> API. Without this strict ordering, motor torque and ESP brake torque would fight on the same driven wheel (for example, a RWD rear wheel during understeer or a FWD front wheel during oversteer) because <code>RCCP_Stability</code> would overwrite accumulators that <code>RCCP_WheelCollider</code> had already consumed.</p>
+<p><code>RCCP_AI</code> and <code>RCCP_Recorder</code> sit at <code>-11</code> (just before <code>RCCP_CarController</code> at <code>-10</code>) so the inputs they push via <code>Inputs.OverrideInputs(...)</code> are visible the same frame the controller polls them. <code>RCCP_Limiter</code> sits at <code>-8</code> so its <code>cutFuel</code> directive is honored before <code>RCCP_Engine</code> reads it. <code>RCCP_AeroDynamics</code> sits at <code>-3</code> so its <code>Rigidbody</code> modifications are visible to <code>RCCP_WheelCollider</code> and Unity's physics step.</p>
+<h3 id='section-11'>Custom Components</h3>
+<p>You generally do not need to worry about execution order unless you are writing custom components that interact with RCCP internals. If you do, place your scripts at order <code>0</code> or higher to ensure RCCP is ready. If your component writes into the wheel torque accumulators, place it between <code>-2</code> and <code>-1</code> (or explicitly after <code>RCCP_Stability</code> at order <code>0</code>) and make sure it does not clobber values Stability has already applied. If your component pushes input via <code>Inputs.OverrideInputs(...)</code>, set its order to <code>-11</code> or earlier so <code>RCCP_CarController</code> sees the values the same frame.</p>
+<h3 id='section-12'>Verifying the Execution Order</h3>
+<p>You do not need to click anything to enforce this ordering. <code>RCCP_ScriptExecutionOrderManager</code> is an <code>[InitializeOnLoad]</code> editor helper that runs automatically on every assembly reload and writes the correct <code>MonoImporter</code> execution order for every RCCP script. Every order-sensitive class also carries a matching <code>[DefaultExecutionOrder]</code> attribute baked directly onto the type, so the ordering still works in projects where the editor enforcement helper is not present.</p>
+<p>If you ever see drifty handling after a major refactor or after manually editing <code>ProjectSettings/ScriptExecutionOrder.asset</code>, verify that the ordering has not been overridden manually in that asset or by another editor script in your project.</p>
+<h2 id='section-13'>Singleton Services</h2>
+<p>RCCP uses several global managers that exist as single instances throughout your project. These &quot;singletons&quot; provide shared services that any script can access.</p>
+<table>
+<tr><th>Singleton</th><th>Type</th><th>How It Is Created</th><th>Purpose</th></tr>
+<tr><td><code>RCCP_Settings.Instance</code></td><td>ScriptableObject</td><td><code>Resources.Load</code> from the Resources folder</td><td>Master configuration: behaviors, physics, layers, prefab references</td></tr>
+<tr><td><code>RCCP_SceneManager.Instance</code></td><td>MonoBehaviour</td><td>Auto-created by <code>RCCP_Singleton<T></code></td><td>Tracks the active player vehicle, camera, UI, and terrain data</td></tr>
+<tr><td><code>RCCP_InputManager.Instance</code></td><td>MonoBehaviour</td><td>Auto-created by <code>RCCP_Singleton<T></code></td><td>Processes all input from keyboard, gamepad, and mobile controls</td></tr>
+<tr><td><code>RCCP_SkidmarksManager.Instance</code></td><td>MonoBehaviour</td><td>Auto-created by <code>RCCP_Singleton<T></code></td><td>Shared skidmark rendering for all vehicles in the scene</td></tr>
+<tr><td><code>RCCP_GroundMaterials.Instance</code></td><td>ScriptableObject</td><td><code>Resources.Load</code> from the Resources folder</td><td>Defines surface friction, particles, and sounds per physics material</td></tr>
+<tr><td><code>RCCP_ChangableWheels.Instance</code></td><td>ScriptableObject</td><td><code>Resources.Load</code> from the Resources folder</td><td>Stores wheel swap presets for the customization system</td></tr>
+</table>
+<h3 id='section-14'>Runtime Settings (Important)</h3>
+<p><code>RCCP_RuntimeSettings</code> is a static class that creates <strong>runtime clones</strong> of your ScriptableObject settings when the game starts. This is important because:</p>
+<ul>
+<li>Without cloning, any changes you make to settings during play mode would permanently modify the asset files on disk</li>
+<li>With <code>RCCP_RuntimeSettings</code>, play-mode changes only affect the clone, so your original settings are always safe</li>
+</ul>
+<p><strong>Rule of thumb:</strong> In your runtime scripts, always access settings through <code>RCCP_RuntimeSettings</code> (which RCCP components do automatically through their base class properties). The <code>RCCP_Settings.Instance</code> property returns the original asset and should only be used in editor code.</p>
+<h2 id='section-15'>Events System</h2>
+<p>RCCP provides a static event system through the <code>RCCP_Events</code> class. You can subscribe to these events from your own scripts to react to things happening in the vehicle system without directly referencing RCCP components.</p>
+<h3 id='section-16'>Available Events</h3>
+<table>
+<tr><th>Event</th><th>Parameter</th><th>When It Fires</th></tr>
+<tr><td><code>OnRCCPSpawned</code></td><td><code>RCCP_CarController</code></td><td>A vehicle is enabled and registered as the player vehicle</td></tr>
+<tr><td><code>OnRCCPDestroyed</code></td><td><code>RCCP_CarController</code></td><td>A vehicle is disabled or destroyed</td></tr>
+<tr><td><code>OnRCCPAISpawned</code></td><td><code>RCCP_CarController</code></td><td>An AI-controlled vehicle is enabled</td></tr>
+<tr><td><code>OnRCCPAIDestroyed</code></td><td><code>RCCP_CarController</code></td><td>An AI-controlled vehicle is disabled</td></tr>
+<tr><td><code>OnRCCPCollision</code></td><td><code>RCCP_CarController</code>, <code>Collision</code></td><td>A vehicle collides with something</td></tr>
+<tr><td><code>OnRCCPCameraSpawned</code></td><td><code>RCCP_Camera</code></td><td>The RCCP camera is enabled</td></tr>
+<tr><td><code>OnRCCPUISpawned</code></td><td><code>RCCP_UIManager</code></td><td>The RCCP UI canvas is enabled</td></tr>
+<tr><td><code>OnRCCPUIDestroyed</code></td><td><code>RCCP_UIManager</code></td><td>The RCCP UI canvas is disabled</td></tr>
+<tr><td><code>OnRCCPUIInformer</code></td><td><code>string</code></td><td>A UI informer message is displayed to the player</td></tr>
+<tr><td><code>OnBehaviorChanged</code></td><td>(none)</td><td>The global behavior preset is changed</td></tr>
+<tr><td><code>OnVehicleChanged</code></td><td>(none)</td><td>The active player vehicle is switched</td></tr>
+<tr><td><code>OnVehicleChangedToVehicle</code></td><td><code>RCCP_CarController</code></td><td>The active player vehicle is switched (includes a reference to the new vehicle)</td></tr>
+</table>
+<h3 id='section-17'>How to Subscribe to Events</h3>
+<p>Here is a complete example showing how to listen for a vehicle spawn event:</p>
+<pre><code>
+using UnityEngine;
+
+public class MyGameManager : MonoBehaviour {
+
+    void OnEnable() {
+        // Subscribe when this script is enabled
+        RCCP_Events.OnRCCPSpawned += OnVehicleSpawned;
+        RCCP_Events.OnRCCPCollision += OnVehicleCollision;
+    }
+
+    void OnDisable() {
+        // ALWAYS unsubscribe when disabled to prevent memory leaks
+        RCCP_Events.OnRCCPSpawned -= OnVehicleSpawned;
+        RCCP_Events.OnRCCPCollision -= OnVehicleCollision;
+    }
+
+    void OnVehicleSpawned(RCCP_CarController vehicle) {
+        Debug.Log(&quot;Player vehicle spawned: &quot; + vehicle.name);
+    }
+
+    void OnVehicleCollision(RCCP_CarController vehicle, Collision collision) {
+        Debug.Log(vehicle.name + &quot; hit &quot; + collision.gameObject.name);
+    }
+
+}
+</code></pre>
+<p><strong>Important:</strong> Always unsubscribe from events in <code>OnDisable()</code>. If you forget, the event system will hold a reference to your destroyed object, which causes memory leaks and null reference exceptions.</p>
+<h2 id='section-18'>Behavior Presets</h2>
+<p>Behavior presets are pre-configured driving profiles that control how vehicles feel to drive. Think of them like driving modes: &quot;Sport&quot; mode, &quot;Drift&quot; mode, &quot;Comfort&quot; mode, and so on.</p>
+<h3 id='section-19'>What a Behavior Preset Controls</h3>
+<p>Each behavior preset (<code>BehaviorType</code>) configures the following systems:</p>
+<table>
+<tr><th>Category</th><th>Settings</th></tr>
+<tr><td><strong>Stability Aids</strong></td><td>ABS (anti-lock brakes), ESP (electronic stability), TCS (traction control), steering helper, traction helper, angular drag helper</td></tr>
+<tr><td><strong>Drift Mode</strong></td><td>Enable/disable drift, drift forces (yaw torque, forward push, sideways push), min/max speed, throttle yaw factor</td></tr>
+<tr><td><strong>Drift Friction</strong></td><td>Rear/front sideways and forward grip reduction, response and recovery speed</td></tr>
+<tr><td><strong>Drift Recovery</strong></td><td>Max angular velocity, counter-steer recovery boost, momentum maintenance</td></tr>
+<tr><td><strong>Steering</strong></td><td>Steering curve (speed vs angle), sensitivity, counter-steering, limiting</td></tr>
+<tr><td><strong>Differential</strong></td><td>Which differential type to use (Open, Limited, FullLocked, Direct)</td></tr>
+<tr><td><strong>Gear Shifting</strong></td><td>RPM threshold for upshift, shift delay range</td></tr>
+<tr><td><strong>Wheel Friction</strong></td><td>Forward and sideways friction curves for front and rear wheels</td></tr>
+<tr><td><strong>Anti-Roll</strong></td><td>Minimum anti-roll bar force</td></tr>
+</table>
+<h3 id='section-20'>Global vs Per-Vehicle Behaviors</h3>
+<p>By default, when you change the active behavior using <code>RCCP.SetBehavior()</code>, it applies to <strong>all vehicles</strong> in the scene. However, individual vehicles can opt out:</p>
+<table>
+<tr><th>Setting</th><th>Effect</th></tr>
+<tr><td><code>ineffectiveBehavior = true</code></td><td>This vehicle ignores ALL global behavior changes completely</td></tr>
+<tr><td><code>useCustomBehavior = true</code></td><td>This vehicle uses its own behavior preset index instead of the global one</td></tr>
+</table>
+<p>This is useful when you want AI vehicles to behave differently from the player, or when different vehicles in a garage should have different handling characteristics.</p>
+<p>See <a href='04_settings.html'>Settings</a> for detailed behavior configuration.</p>
+<h2 id='section-21'>Resources and ScriptableObjects</h2>
+<p>RCCP stores its configuration in ScriptableObject assets inside the <code>Resources/</code> folder. These assets are loaded automatically at runtime using <code>Resources.Load</code>.</p>
+<table>
+<tr><th>Asset File</th><th>Script</th><th>What It Configures</th></tr>
+<tr><td>RCCP_Settings.asset</td><td>RCCP_Settings</td><td>Master configuration: behaviors, physics, audio settings, layer assignments, prefab references</td></tr>
+<tr><td>RCCP_GroundMaterials.asset</td><td>RCCP_GroundMaterials</td><td>Per-surface friction, particle effects, and sound clips</td></tr>
+<tr><td>RCCP_ChangableWheels.asset</td><td>RCCP_ChangableWheels</td><td>Wheel model presets for the customization system</td></tr>
+<tr><td>RCCP_DemoVehicles.asset</td><td>RCCP_DemoVehicles</td><td>List of demo vehicle prefabs</td></tr>
+<tr><td>RCCP_DemoContent.asset</td><td>RCCP_DemoContent</td><td>Prefab references used by demo scenes</td></tr>
+<tr><td>RCCP_DemoScenes.asset</td><td>RCCP_DemoScenes</td><td>List of included demo scenes</td></tr>
+<tr><td>RCCP_CustomizationSetups.asset</td><td>RCCP_CustomizationSetups</td><td>UI prefab references for the customization system</td></tr>
+<tr><td>RCCP_InputActions.asset</td><td>RCCP_InputActions</td><td>Input action definitions for the Input System</td></tr>
+<tr><td>RCCP_Records.asset</td><td>RCCP_Records</td><td>Stored vehicle recording clips for replay</td></tr>
+<tr><td>RCCP_PrototypeContent.asset</td><td>RCCP_PrototypeContent</td><td>Content used by the prototype test scene</td></tr>
+<tr><td>RCCP_AddonPackages.asset</td><td>RCCP_AddonPackages</td><td>References to installable addon packages</td></tr>
+</table>
+<p>You can find all of these in <code>Assets/Realistic Car Controller Pro/Resources/</code>. Open them in the Inspector to view and modify their settings. The <code>Resources/</code> folder also contains three subfolders (<code>Editor/</code>, <code>Editor Icons/</code>, and <code>Generated/</code>) used internally by RCCP for editor-only resources -- you do not normally need to touch them.</p>
+<h2 id='section-22'>Next Steps</h2>
+<ul>
+<li><a href='03_vehicle_setup.html'>Vehicle Setup</a> -- Set up your first vehicle using the Setup Wizard</li>
+<li><a href='04_settings.html'>Settings</a> -- Configure behavior presets and physics settings</li>
+<li><a href='16_api_reference.html'>API Reference</a> -- All public methods for controlling vehicles from code</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a>  </p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

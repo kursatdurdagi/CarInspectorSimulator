@@ -1,0 +1,401 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>25_troubleshooting</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Troubleshooting and FAQ</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Troubleshooting and FAQ</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Installation Issues</a></li>
+<li style='margin-left:40px'><a href='#section-2'>Import and Package Errors</a></li>
+<li style='margin-left:40px'><a href='#section-3'>Upgrade Issues</a></li>
+<li style='margin-left:20px'><a href='#section-4'>Vehicle Setup Issues</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Vehicle Does Not Move</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Vehicle Behaves Incorrectly</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Component Hierarchy Errors</a></li>
+<li style='margin-left:20px'><a href='#section-8'>Input Issues</a></li>
+<li style='margin-left:40px'><a href='#section-9'>No Input Response</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Specific Input Problems</a></li>
+<li style='margin-left:20px'><a href='#section-11'>Physics Issues</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Unrealistic Behavior</a></li>
+<li style='margin-left:40px'><a href='#section-13'>Stability and Aids</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Differential Problems</a></li>
+<li style='margin-left:20px'><a href='#section-15'>Visual and Audio Issues</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Skidmarks and Particles</a></li>
+<li style='margin-left:40px'><a href='#section-17'>Lights</a></li>
+<li style='margin-left:40px'><a href='#section-18'>Damage</a></li>
+<li style='margin-left:40px'><a href='#section-19'>Audio</a></li>
+<li style='margin-left:40px'><a href='#section-20'>Decals and Neons</a></li>
+<li style='margin-left:20px'><a href='#section-21'>Camera Issues</a></li>
+<li style='margin-left:20px'><a href='#section-22'>Performance Issues</a></li>
+<li style='margin-left:40px'><a href='#section-23'>Performance Optimization Checklist</a></li>
+<li style='margin-left:20px'><a href='#section-24'>Customization Issues</a></li>
+<li style='margin-left:20px'><a href='#section-25'>Networking Issues</a></li>
+<li style='margin-left:40px'><a href='#section-26'>Photon PUN 2</a></li>
+<li style='margin-left:40px'><a href='#section-27'>Mirror</a></li>
+<li style='margin-left:20px'><a href='#section-28'>AI Vehicle Issues</a></li>
+<li style='margin-left:20px'><a href='#section-29'>Demo Scene Issues</a></li>
+<li style='margin-left:20px'><a href='#section-30'>Common Error Messages Reference</a></li>
+<li style='margin-left:20px'><a href='#section-31'>Frequently Asked Questions</a></li>
+<li style='margin-left:40px'><a href='#section-32'>General</a></li>
+<li style='margin-left:40px'><a href='#section-33'>Vehicle Setup</a></li>
+<li style='margin-left:40px'><a href='#section-34'>Physics</a></li>
+<li style='margin-left:40px'><a href='#section-35'>Customization</a></li>
+<li style='margin-left:40px'><a href='#section-36'>Networking</a></li>
+<li style='margin-left:20px'><a href='#section-37'>Diagnostic Steps</a></li>
+<li style='margin-left:40px'><a href='#section-38'>Step 1: Read the Console</a></li>
+<li style='margin-left:40px'><a href='#section-39'>Step 2: Check the Minimal Setup</a></li>
+<li style='margin-left:40px'><a href='#section-40'>Step 3: Test in a Clean Scene</a></li>
+<li style='margin-left:40px'><a href='#section-41'>Step 4: Test with the Prototype Scene</a></li>
+<li style='margin-left:40px'><a href='#section-42'>Step 5: Enable Telemetry</a></li>
+<li style='margin-left:40px'><a href='#section-43'>Step 6: Verify Script Execution Order</a></li>
+<li style='margin-left:40px'><a href='#section-44'>Step 7: Contact Support</a></li>
+</ul></div>
+<p>This guide covers the most common issues you may encounter when using Realistic Car Controller Pro, organized by category. Each entry includes the problem, its likely cause, and a step-by-step solution.</p>
+<p><strong>Tip:</strong> Always check Unity's Console window (<strong>Window &gt; General &gt; Console</strong>) first. Most RCCP errors include descriptive messages that point directly to the cause.</p>
+<hr>
+<h2 id='section-1'>Installation Issues</h2>
+<h3 id='section-2'>Import and Package Errors</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>&quot;Input System not found&quot; error after import</td><td>Unity's Input System package is not installed</td><td>Open <strong>Window &gt; Package Manager</strong>, select <strong>Unity Registry</strong>, search for <strong>Input System</strong>, and click <strong>Install</strong>. See <a href='01_installation.html'>Installation</a>.</td></tr>
+<tr><td>&quot;Newtonsoft.Json not found&quot; error</td><td>Missing package dependency</td><td>Open <strong>Window &gt; Package Manager</strong>, select <strong>Unity Registry</strong>, search for <strong>Newtonsoft Json</strong>, and click <strong>Install</strong>.</td></tr>
+<tr><td>Compilation errors immediately after import</td><td>Conflicting packages or missing dependencies</td><td>Read the full error in Console. Ensure both <strong>Input System</strong> and <strong>Newtonsoft Json</strong> packages are installed. If errors persist, try deleting the <code>Library</code> folder and reopening the project.</td></tr>
+<tr><td>&quot;Editor Coroutines not found&quot; error</td><td>Missing editor coroutines package</td><td>Open <strong>Window &gt; Package Manager</strong>, select <strong>Unity Registry</strong>, search for <strong>Editor Coroutines</strong>, and click <strong>Install</strong>.</td></tr>
+<tr><td>Pink or magenta materials everywhere</td><td>Wrong render pipeline shaders</td><td>You need to import the correct shader package for your pipeline (URP or HDRP). See <a href='18_render_pipelines.html'>Render Pipelines</a>. Built-in pipeline works without additional imports.</td></tr>
+<tr><td>Missing layers warning on first run</td><td>RCCP layers not yet created</td><td>Open <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Settings</strong>. RCCP creates its three layers (<code>RCCP_Vehicle</code>, <code>RCCP_DetachablePart</code>, <code>RCCP_Prop</code>) automatically. If this fails, restart Unity.</td></tr>
+<tr><td>&quot;All allowed layers have been filled&quot;</td><td>Unity has no free layer slots (max 32)</td><td>Remove unused layers in <strong>Edit &gt; Project Settings &gt; Tags and Layers</strong> to free up at least 3 slots for RCCP.</td></tr>
+<tr><td>NullReferenceException on entering Play mode</td><td><code>RCCP_Settings</code> asset missing from Resources</td><td>Verify the file <code>Assets/Realistic Car Controller Pro/Resources/RCCP_Settings.asset</code> exists. If missing, reimport the package.</td></tr>
+<tr><td>&quot;Missing script&quot; warnings on prefabs</td><td>A previously installed addon was removed but references remain</td><td>Either reimport the addon, or select the affected prefab and remove the missing script components manually via the Inspector context menu.</td></tr>
+<tr><td>Duplicate class or namespace errors</td><td>Multiple versions of RCCP in the project</td><td>Ensure you only have one copy of the RCCP folder. Delete any older versions before importing a new one.</td></tr>
+</table>
+<h3 id='section-3'>Upgrade Issues</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Errors after upgrading RCCP version</td><td>Old cached data or renamed scripts</td><td>Delete the <code>Library</code> folder and reopen the project. Unity will reimport everything.</td></tr>
+<tr><td>Vehicle prefabs broken after upgrade</td><td>Serialized references changed between versions</td><td>Re-run the Setup Wizard on affected vehicles, or recreate them from fresh models. See <a href='03_vehicle_setup.html'>Vehicle Setup</a>.</td></tr>
+<tr><td>Behavior presets reset after upgrade</td><td>Settings asset was overwritten</td><td>Reconfigure your behavior presets in <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Settings</strong>. See <a href='04_settings.html'>Settings</a>.</td></tr>
+</table>
+<hr>
+<h2 id='section-4'>Vehicle Setup Issues</h2>
+<h3 id='section-5'>Vehicle Does Not Move</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Vehicle does not move at all</td><td>No power reaching the wheels</td><td>Check the <strong>RCCP_Differential</strong> component's drive type (FWD, RWD, or AWD). Verify that the <strong>RCCP_Engine</strong> component exists on the vehicle. Confirm axles have <code>isPower</code> set correctly (this is controlled by the Differential, not set directly).</td></tr>
+<tr><td>Engine starts but wheels do not spin</td><td>Clutch or gearbox misconfiguration</td><td>Check that <strong>RCCP_Clutch</strong> and <strong>RCCP_Gearbox</strong> components exist. Verify gear ratios are not zero.</td></tr>
+<tr><td>Vehicle moves only in reverse</td><td>Gear ratios inverted</td><td>Check the gear ratios in <strong>RCCP_Gearbox</strong>. Forward gears should have positive ratios.</td></tr>
+<tr><td>Vehicle barely moves, very slow</td><td>Torque too low or gear ratios too tall</td><td>Increase <code>maxTorqueAsNM</code> on <strong>RCCP_Engine</strong>. Lower the final drive ratio on <strong>RCCP_Gearbox</strong> for more acceleration.</td></tr>
+</table>
+<h3 id='section-6'>Vehicle Behaves Incorrectly</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Vehicle flips immediately on Play</td><td>Wheel colliders intersecting the ground plane</td><td>Increase suspension distance on <strong>RCCP_Axle</strong> components. Verify wheel collider radius matches the visual wheel size. Check that the wheel collider center offset is correct.</td></tr>
+<tr><td>Vehicle bounces continuously</td><td>Suspension damper force too low</td><td>Increase the damper value on <strong>RCCP_Axle</strong> components. A good starting range is 2000-5000 for normal cars.</td></tr>
+<tr><td>Wheels floating above the ground</td><td>Suspension distance too large or center offset wrong</td><td>Decrease suspension distance on <strong>RCCP_Axle</strong>. Check the wheel collider center Y offset.</td></tr>
+<tr><td>Vehicle slides sideways excessively</td><td>Sideways friction too low</td><td>Adjust sideways friction values in the active behavior preset (<strong>RCCP_Settings &gt; Behavior Types</strong>). Increase <code>sidewaysExtremumValue</code> and <code>sidewaysAsymptoteValue</code>.</td></tr>
+<tr><td>Vehicle is too fast or too slow</td><td>Engine torque or speed limiter settings</td><td>Adjust <code>maxTorqueAsNM</code> and <code>maxEngineRPM</code> on <strong>RCCP_Engine</strong>. Check if <strong>RCCP_Limiter</strong> is attached and capping speed.</td></tr>
+<tr><td>Wheels spinning in the wrong visual direction</td><td>Incorrect wheel model pivot orientation</td><td>The wheel mesh pivot must be centered on the wheel. Check your 3D model's axis orientation -- the rotation axis should align with Unity's conventions.</td></tr>
+<tr><td>Steering feels unresponsive at low speed</td><td>Steering curve dropping off too early</td><td>Check the steering curve on the behavior preset or <strong>RCCP_Axle</strong>. The Y value at low speeds (left side of the curve) should be close to 1.0. The curve format is X = speed in km/h, Y = steering multiplier (0 to 1).</td></tr>
+<tr><td>Steering too sensitive at high speed</td><td>Steering curve not reducing at high speed</td><td>Edit the steering curve so the Y value drops toward 0.2-0.4 at higher X (speed) values.</td></tr>
+</table>
+<h3 id='section-7'>Component Hierarchy Errors</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>&quot;Couldn't find RCCP_CarController in parent&quot;</td><td>Subsystem component placed on the wrong GameObject</td><td>All RCCP subsystem components (Engine, Gearbox, Axle, etc.) must be placed on child GameObjects of the root GameObject that has <code>RCCP_CarController</code>. Move the component to the correct hierarchy position.</td></tr>
+<tr><td>&quot;This component is missing RCCP_CarController on parent&quot;</td><td>Same as above</td><td>Same fix -- ensure the component is a child of the RCCP_CarController GameObject.</td></tr>
+<tr><td>&quot;Customizer component couldn't found&quot;</td><td>RCCP_Customizer not added to the vehicle</td><td>Add an <strong>RCCP_Customizer</strong> component to the vehicle before adding upgrade components. See <a href='12_customization.html'>Customization</a>.</td></tr>
+</table>
+<hr>
+<h2 id='section-8'>Input Issues</h2>
+<h3 id='section-9'>No Input Response</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Vehicle ignores all input</td><td><code>canControl</code> is false on RCCP_CarController</td><td>Select the vehicle in the Inspector and set <code>canControl = true</code>. This flag is also toggled by <code>RCCP.SetControl()</code>.</td></tr>
+<tr><td>Vehicle ignores player input but AI works</td><td><code>externalControl</code> is true</td><td>Set <code>externalControl = false</code> on <strong>RCCP_CarController</strong>. When true, the vehicle ignores RCCP_InputManager and expects external input (AI, replay, network).</td></tr>
+<tr><td>Input works in editor but not in build</td><td>Input System not included in build</td><td>Go to <strong>Edit &gt; Project Settings &gt; Player &gt; Other Settings</strong> and ensure <strong>Active Input Handling</strong> is set to <strong>Both</strong> or <strong>Input System Package (New)</strong>.</td></tr>
+<tr><td>RCCP_InputActions.Instance is null</td><td>Input Actions asset missing from Resources</td><td>Check that <code>Assets/Realistic Car Controller Pro/Resources/RCCP_InputActions.asset</code> exists. Reimport the package if missing.</td></tr>
+</table>
+<h3 id='section-10'>Specific Input Problems</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Gamepad not detected</td><td>Input System not recognizing the device</td><td>Open <strong>Window &gt; Analysis &gt; Input Debugger</strong> to see connected devices. Ensure your gamepad is listed. Try disconnecting and reconnecting.</td></tr>
+<tr><td>Key rebindings not saving between sessions</td><td>Auto-save disabled in settings</td><td>Enable <code>autoSaveLoadInputRebind</code> in <strong>RCCP_Settings</strong>. See <a href='04_settings.html'>Settings</a>.</td></tr>
+<tr><td>Mobile controls not appearing</td><td>Mobile controller not enabled</td><td>Set <code>mobileControllerEnabled = true</code> in <strong>RCCP_Settings &gt; Mobile Input</strong> section. See <a href='07_mobile.html'>Mobile</a>.</td></tr>
+<tr><td>Both keyboard and mobile controls active</td><td>Mobile controller enabled on desktop</td><td>Set <code>mobileControllerEnabled = false</code> in <strong>RCCP_Settings</strong> for desktop platforms. Use platform-specific checks or preprocessor directives.</td></tr>
+<tr><td>Vehicle drives itself without input</td><td><code>overridePlayerInputs</code> is true on RCCP_Input</td><td>Check the <strong>RCCP_Input</strong> component and set <code>overridePlayerInputs = false</code>. Also verify <code>externalControl</code> is false on the car controller.</td></tr>
+<tr><td>Logitech wheel not responding</td><td>SDK not initialized or wrong mapping</td><td>See <a href='08_logitech_steering_wheels.html'>Logitech Steering Wheels</a> for detailed setup instructions.</td></tr>
+</table>
+<hr>
+<h2 id='section-11'>Physics Issues</h2>
+<h3 id='section-12'>Unrealistic Behavior</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Unrealistic drifting on every turn</td><td>Drift mode enabled in behavior preset</td><td>Check the active behavior preset in <strong>RCCP_Settings</strong>. Set <code>driftMode = false</code> if you want realistic grip driving.</td></tr>
+<tr><td>Vehicle jitters or vibrates at low speed</td><td>Physics timestep too large</td><td>Lower <code>fixedTimeStep</code> in <strong>RCCP_Settings</strong>. Try 0.01 instead of the default 0.02. Do not go below 0.005 as this severely impacts performance.</td></tr>
+<tr><td>Vehicle flies off ramps unrealistically</td><td>Max angular velocity too high</td><td>Lower <code>maxAngularVelocity</code> in <strong>RCCP_Settings</strong>. The default is 6. Try values between 4-7 for realistic behavior.</td></tr>
+<tr><td>Wheels clip through the ground</td><td>Wheel collider mass too low or fixed colliders disabled</td><td>Enable <code>useFixedWheelColliders</code> in <strong>RCCP_Settings</strong>. This uses higher-mass wheel colliders that resist sinking.</td></tr>
+<tr><td>Car spins out too easily</td><td>Rear friction too low or stability aids disabled</td><td>Enable ESP/TCS in the behavior preset. Increase rear sideways friction values. Check the <strong>RCCP_Stability</strong> component settings.</td></tr>
+</table>
+<h3 id='section-13'>Stability and Aids</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>ABS not working (wheels lock up)</td><td>ABS disabled in behavior preset</td><td>Enable ABS in the active behavior preset under <strong>RCCP_Settings</strong>.</td></tr>
+<tr><td>TCS not working (wheels spin freely)</td><td>TCS disabled in behavior preset</td><td>Enable TCS in the active behavior preset.</td></tr>
+<tr><td>ESP not working (car oversteers)</td><td>ESP disabled on the vehicle</td><td>Enable <strong>ESP</strong> on the <code>RCCP_Stability</code> component. If it is already on, raise <strong>ESP Intensity</strong> (default 0.5) or lower <strong>ESP Deadband</strong> (default 6 deg/s → try 4 deg/s).</td></tr>
+<tr><td>ESP dashboard light flickers on and off</td><td><code>ESPIndicatorEngaged</code> threshold or hold time too low</td><td>Raise <strong>Min Noticeable Brake Torque</strong> (default 75 Nm) and/or <strong>UI Min Hold Time</strong> (default 0.1 s) on <code>RCCP_Stability</code>. Or bind your dashboard lamp to <code>ESPIndicatorEngaged</code>, not <code>ESPEngaged</code>. See <a href='17_telemetry_debug.html'>Telemetry and Debug</a>.</td></tr>
+<tr><td>ESP engages on every small steering input</td><td>Deadband too low for the target vehicle</td><td>Raise <strong>ESP Deadband</strong> to 6–10 deg/s (default 6). Alternatively, widen hysteresis by also raising <strong>ESP Deactivation Deadband</strong> (default 2.5 deg/s).</td></tr>
+<tr><td>ESP brakes the wrong wheel during rapid transitions</td><td>Classification flipping between oversteer and understeer</td><td>Raise <strong>ESP Mode Commit Time</strong> (default 0.2 s). Check that <strong>Understeer Gradient (K_us)</strong> matches the vehicle archetype — the V2.31.1 default is 0.01 (aggressive sport baseline); use 0.0035 for a typical passenger sedan, 0.002 for a sportier feel, 0.005+ for an SUV.</td></tr>
+<tr><td>ESP bleeds too much speed through corners in arcade games</td><td>ESP brake deceleration not compensated</td><td>Lower <strong>Preserve Speed Factor</strong> on <code>RCCP_Stability</code> (0 = realistic — ESP bleeds speed; 1 = full cancellation of ESP brake drag — V2.31.1 default). Set <strong>ESP Mode</strong> to <code>Sport</code> to also disable the motor-torque cut.</td></tr>
+<tr><td>ESP never engages at high speed</td><td><code>ψ̇_ref</code> being clamped by friction limit before the error matters</td><td>Raise <strong>Estimated Mu (μ)</strong> (default 0.85) toward 1.0 for dry asphalt gameplay. Lower it (0.3–0.6) only if the game surface is genuinely wet/icy.</td></tr>
+<tr><td>Stability aids too aggressive</td><td>Aid strength values too high</td><td>Lower <strong>ESP Intensity</strong> / <strong>TCS Intensity</strong> / <strong>ABS Intensity</strong> (all on <code>RCCP_Stability</code>) and the behavior-preset steering helper strengths. See <a href='04_settings.html'>Settings</a>.</td></tr>
+<tr><td>Motor torque and ESP brake torque fight on the same driven wheel</td><td>Script execution order corrupted</td><td>The expected order is Axle (-2) → Stability (-1) → WheelCollider (0) and is enforced automatically via <code>[InitializeOnLoad]</code> on <code>RCCP_ScriptExecutionOrderManager</code>. If you suspect drift, verify nothing has overridden the ordering in <code>ProjectSettings/ScriptExecutionOrder.asset</code> or another editor script. See <a href='02_architecture.md#execution-order'>Architecture</a>.</td></tr>
+</table>
+<h3 id='section-14'>Differential Problems</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>One wheel spins while the other does not</td><td>Open differential behavior</td><td>This is correct for <code>Open</code> differential type. Switch to <code>Limited</code> or <code>FullLocked</code> on <strong>RCCP_Differential</strong> for more equal power distribution.</td></tr>
+<tr><td>Both wheels always spin at the same rate</td><td>Full locked differential</td><td>This is correct for <code>FullLocked</code> type. Switch to <code>Limited</code> or <code>Open</code> for more natural behavior on turns.</td></tr>
+<tr><td>Car pulls to one side under acceleration</td><td>Unequal torque split</td><td>Check differential type. <code>Direct</code> gives equal split. <code>Limited</code> with a low slip ratio can cause slight pull.</td></tr>
+</table>
+<p><strong>Differential types explained:</strong></p>
+<table>
+<tr><th>Type</th><th>Behavior</th><th>Best For</th></tr>
+<tr><td>Open</td><td>Torque shifts based on wheel slip</td><td>Realistic street driving</td></tr>
+<tr><td>Limited</td><td>Partially locks based on slip ratio (0-100%)</td><td>General purpose, most common</td></tr>
+<tr><td>FullLocked</td><td>Both wheels always receive equal torque</td><td>Drift setups, off-road</td></tr>
+<tr><td>Direct</td><td>Equal 50/50 split regardless of conditions</td><td>Simplified physics</td></tr>
+</table>
+<hr>
+<h2 id='section-15'>Visual and Audio Issues</h2>
+<h3 id='section-16'>Skidmarks and Particles</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Skidmarks not appearing</td><td>Skidmark prefab not assigned for the surface type</td><td>Open <strong>RCCP_GroundMaterials</strong> asset and verify each ground material has a skidmark prefab assigned. See <a href='10_ground_materials.html'>Ground Materials</a>.</td></tr>
+<tr><td>Particles not showing on wheel slip</td><td>Particle prefab not assigned for the surface type</td><td>Open <strong>RCCP_GroundMaterials</strong> asset and assign particle prefabs for each ground material.</td></tr>
+<tr><td>Skidmarks appear but are invisible</td><td>Skidmark material or shader issue</td><td>Check that the skidmark prefab's material uses a shader compatible with your render pipeline.</td></tr>
+<tr><td>Wrong surface effects on terrain</td><td>Terrain splatmap not recognized</td><td>Ensure your terrain's splat textures are listed in <strong>RCCP_GroundMaterials</strong> in the correct order matching the terrain layers.</td></tr>
+</table>
+<h3 id='section-17'>Lights</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Vehicle lights not working</td><td>RCCP_Lights component missing or no RCCP_Light children</td><td>Add <strong>RCCP_Lights</strong> to the vehicle, then add <strong>RCCP_Light</strong> components to individual light GameObjects. See <a href='03_vehicle_setup.html'>Vehicle Setup</a>.</td></tr>
+<tr><td>Lens flares not showing</td><td>Wrong flare component for your pipeline</td><td>Built-in pipeline uses Unity's <code>LensFlare</code> component. URP and HDRP require <code>LensFlareComponentSRP</code>. See <a href='18_render_pipelines.html'>Render Pipelines</a>.</td></tr>
+<tr><td>Headlights illuminate the vehicle body</td><td>Light culling mask includes vehicle layer</td><td>Exclude the <code>RCCP_Vehicle</code> layer from the headlight's culling mask in the Light component.</td></tr>
+</table>
+<h3 id='section-18'>Damage</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Damage not deforming the mesh</td><td>RCCP_Damage not configured or mesh has too few vertices</td><td>Check that <code>automaticInstallation</code> is true on <strong>RCCP_Damage</strong>, or manually assign mesh filters. The mesh needs sufficient vertex density to show visible deformation.</td></tr>
+<tr><td>Detachable parts not falling off</td><td>RCCP_DetachablePart not configured</td><td>Add <strong>RCCP_DetachablePart</strong> to each part that should detach. Configure the break force threshold. See <a href='11_damage_system.html'>Damage System</a>.</td></tr>
+<tr><td>&quot;Configurable Joint not found&quot; warning</td><td>Joint setup incomplete on detachable part</td><td>Ensure the detachable part has a properly configured <code>ConfigurableJoint</code> with a connected body.</td></tr>
+</table>
+<h3 id='section-19'>Audio</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>No engine sound</td><td>RCCP_Audio component missing or no audio clips</td><td>Add <strong>RCCP_Audio</strong> to the vehicle. Check <strong>RCCP_Settings</strong> to ensure engine audio clips are assigned in the audio section.</td></tr>
+<tr><td>Engine sound pitch is wrong</td><td>RPM-to-pitch mapping incorrect</td><td>Adjust the audio settings on <strong>RCCP_Audio</strong>. The pitch scales with engine RPM.</td></tr>
+<tr><td>Audio cuts out at distance</td><td>Audio source max distance too short</td><td>Increase the max distance on the AudioSource components attached to the vehicle's audio child objects.</td></tr>
+</table>
+<h3 id='section-20'>Decals and Neons</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Decals not visible</td><td>Using Built-in Render Pipeline</td><td>Decals require <strong>URP</strong> or <strong>HDRP</strong>. They are not supported on the Built-in pipeline. See <a href='18_render_pipelines.html'>Render Pipelines</a>.</td></tr>
+<tr><td>Neon lights not visible</td><td>Using Built-in Render Pipeline</td><td>Neons also require <strong>URP</strong> or <strong>HDRP</strong>.</td></tr>
+</table>
+<hr>
+<h2 id='section-21'>Camera Issues</h2>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>No camera following the vehicle</td><td>RCCP_Camera not in the scene</td><td>Add an <strong>RCCP_Camera</strong> prefab to your scene, or ensure <code>RCCP_SceneManager</code> is present (it can auto-create the camera). See <a href='09_camera_system.html'>Camera System</a>.</td></tr>
+<tr><td>Camera clips through objects</td><td>Occlusion layer mask not configured</td><td>Set the <code>occlusionLayerMask</code> on <strong>RCCP_Camera</strong> to include environment layers but exclude RCCP vehicle layers.</td></tr>
+<tr><td>Camera mode not switching</td><td>Camera mode disabled in settings</td><td>Check <code>useHoodCameraMode</code>, <code>useWheelCameraMode</code>, <code>useFixedCameraMode</code>, <code>useCinematicCameraMode</code>, <code>useTopCameraMode</code> on <strong>RCCP_Camera</strong>. Disabled modes are skipped when cycling.</td></tr>
+<tr><td>&quot;UniversalAdditionalCameraData component couldn't found&quot;</td><td>URP camera data missing</td><td>Select the actual Camera child of <strong>RCCP_Camera</strong> in the Inspector. Unity should auto-add the <code>UniversalAdditionalCameraData</code> component. If not, add it manually. This is required for URP post-processing and lens flares.</td></tr>
+<tr><td>Hood camera shaking violently</td><td>ConfigurableJoint misconfiguration</td><td>Check the <strong>RCCP_HoodCamera</strong> component. If you see &quot;has a ConfigurableJoint with no connected body,&quot; remove the joint and rigidbody, then reconfigure.</td></tr>
+</table>
+<p><strong>Available camera modes:</strong></p>
+<table>
+<tr><th>Mode</th><th>Description</th></tr>
+<tr><td>TPS</td><td>Third-person chase camera (default)</td></tr>
+<tr><td>FPS</td><td>First-person hood camera</td></tr>
+<tr><td>WHEEL</td><td>Wheel-level camera</td></tr>
+<tr><td>FIXED</td><td>Fixed position camera</td></tr>
+<tr><td>CINEMATIC</td><td>Cinematic angle camera</td></tr>
+<tr><td>TOP</td><td>Top-down camera</td></tr>
+<tr><td>TRUCKTRAILER</td><td>Truck and trailer view</td></tr>
+</table>
+<hr>
+<h2 id='section-22'>Performance Issues</h2>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Low FPS with many vehicles</td><td>Too many physics calculations per frame</td><td>Add <strong>RCCP_Lod</strong> to each vehicle to automatically disable expensive logic (audio, skidmarks, wheel alignment) at distance. Enable <code>multithreading</code> in <strong>RCCP_Settings</strong>. Reduce total vehicle count.</td></tr>
+<tr><td>High CPU usage from physics</td><td>Fixed timestep too low (too many physics steps per frame)</td><td>Increase <code>fixedTimeStep</code> in <strong>RCCP_Settings</strong>. The default 0.02 is a good balance. Never go below 0.005.</td></tr>
+<tr><td>Memory spike on scene load</td><td>Terrain splatmap caching</td><td>This is normal. <strong>RCCP_SceneManager</strong> caches terrain data on the first frame for ground material detection. The spike is temporary.</td></tr>
+<tr><td>Skidmark rendering is slow</td><td>Too many skidmark sections</td><td>Skidmarks are managed by <strong>RCCP_SkidmarksManager</strong>. If multithreading is supported and enabled, mesh rebuilds happen on background threads. If performance is still an issue, reduce the maximum skidmark count in the skidmark prefab settings.</td></tr>
+<tr><td>&quot;Multithreading is disabled on this platform&quot;</td><td>Platform does not support async operations</td><td>This is a warning, not an error. RCCP falls back to synchronous methods automatically. Performance may be slightly lower on single-threaded platforms.</td></tr>
+</table>
+<h3 id='section-23'>Performance Optimization Checklist</h3>
+<ol>
+<li>Enable <code>multithreading</code> in RCCP_Settings (on by default)</li>
+<li>Add <strong>RCCP_Lod</strong> to all vehicles, especially AI/traffic vehicles</li>
+<li>Keep <code>fixedTimeStep</code> at 0.02 or higher for large vehicle counts</li>
+<li>Limit the number of simultaneously active vehicles</li>
+<li>Use LOD Groups on vehicle meshes (standard Unity LOD, separate from RCCP_Lod)</li>
+<li>Disable <code>useTelemetry</code> and <code>useInputDebugger</code> in builds</li>
+</ol>
+<hr>
+<h2 id='section-24'>Customization Issues</h2>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Customization loadout not saving</td><td><code>saveFileName</code> is empty or not unique</td><td>Set a unique <code>saveFileName</code> on the <strong>RCCP_Customizer</strong> component for each vehicle. If left empty, it defaults to the GameObject name, but duplicates will overwrite each other. Loadouts are stored in <code>PlayerPrefs</code>.</td></tr>
+<tr><td>Paint color not applying</td><td>Material does not support color changes</td><td>Ensure the vehicle body material uses a shader with a <code>_Color</code> or <code>_BaseColor</code> property. The <strong>RCCP_VehicleUpgrade_Paint</strong> component needs the body material reference assigned.</td></tr>
+<tr><td>Wheel swap not working</td><td>No wheels in the changeable wheels list</td><td>Add wheel prefabs to the <strong>RCCP_ChangableWheels</strong> asset located in <code>Assets/Realistic Car Controller Pro/Resources/</code>. See <a href='12_customization.html'>Customization</a>.</td></tr>
+<tr><td>&quot;RCCP_ChangableWheels doesn't have wheelIndex&quot; error</td><td>Requesting a wheel index that does not exist</td><td>Check that the wheel index you are requesting is within the range of the wheels array in <strong>RCCP_ChangableWheels</strong>.</td></tr>
+<tr><td>Upgrade components not working</td><td>Missing upgrade manager</td><td>Add <strong>RCCP_VehicleUpgrade_UpgradeManager</strong> to the vehicle before adding individual upgrade components (Engine, Brake, Handling, Speed).</td></tr>
+<tr><td>&quot;Engine couldn't found in the vehicle&quot;</td><td>Upgrade component missing a required dependency</td><td><strong>RCCP_VehicleUpgrade_Engine</strong> and <strong>RCCP_VehicleUpgrade_Speed</strong> require an <strong>RCCP_Engine</strong> component. <strong>RCCP_VehicleUpgrade_Brake</strong> requires <strong>RCCP_Axle</strong> components. <strong>RCCP_VehicleUpgrade_Handling</strong> requires <strong>RCCP_Stability</strong>.</td></tr>
+<tr><td>Spoiler not appearing</td><td>Body renderer not assigned</td><td>Set the body renderer reference on <strong>RCCP_VehicleUpgrade_Spoiler</strong>. Without it, the spoiler cannot position itself correctly.</td></tr>
+<tr><td>Customization resets on scene load</td><td><code>autoInitialize</code> is false or loadout not saved</td><td>Ensure <code>autoInitialize = true</code> on <strong>RCCP_Customizer</strong> and that <code>Save()</code> was called after changes.</td></tr>
+</table>
+<hr>
+<h2 id='section-25'>Networking Issues</h2>
+<h3 id='section-26'>Photon PUN 2</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Remote vehicles jittering</td><td>High latency or low sync rate</td><td>Increase the sync rate on <strong>RCCP_PhotonSync</strong>. Enable interpolation for smoother visual updates. See <a href='21_integration_photon.html'>Photon PUN 2</a>.</td></tr>
+<tr><td>Input not working for local player</td><td>Ownership not assigned correctly</td><td>Ensure <code>photonView.IsMine</code> is true before sending input. Only the owner should send control inputs.</td></tr>
+<tr><td>Customization not syncing across network</td><td>autoInitialize on for remote vehicles</td><td>Set <code>RCCP_Customizer.autoInitialize = false</code> for non-local (remote) vehicles. Sync customization data separately via RPC.</td></tr>
+</table>
+<h3 id='section-27'>Mirror</h3>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>Authority errors on vehicle control</td><td>Wrong ownership model</td><td>Check <code>isLocalPlayer</code> before sending input commands. Only the local player should control the vehicle. See <a href='22_integration_mirror.html'>Mirror Networking</a>.</td></tr>
+<tr><td>Vehicle snapping on remote clients</td><td>Sync interval too low or no interpolation</td><td>Increase the sync interval and enable interpolation on <strong>RCCP_MirrorSync</strong>.</td></tr>
+</table>
+<hr>
+<h2 id='section-28'>AI Vehicle Issues</h2>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>AI vehicle does not follow waypoints</td><td>Waypoint container not assigned</td><td>Assign an <strong>RCCP_AIWaypointsContainer</strong> to the <strong>RCCP_AI</strong> component. See <a href='13_ai_vehicles.html'>AI Vehicles</a>.</td></tr>
+<tr><td>AI vehicle gets stuck</td><td>Stuck detection not configured or obstacles blocking</td><td>Check the stuck detection settings on <strong>RCCP_AI</strong>. Ensure the waypoint path is clear. The AI has a built-in stuck timer that triggers reverse.</td></tr>
+<tr><td>AI vehicle ignores brake zones</td><td>Brake zone container not assigned</td><td>Assign an <strong>RCCP_AIBrakeZonesContainer</strong> to the <strong>RCCP_AI</strong> component. Brake zone triggers must be on the &quot;Ignore Raycast&quot; layer.</td></tr>
+<tr><td>AI vehicle collides with obstacles</td><td>Dynamic obstacle avoidance not configured</td><td>Add <strong>RCCP_AIDynamicObstacleAvoidance</strong> to the AI vehicle. Set <code>dynamicObstacleLayers</code> to include layers with obstacles.</td></tr>
+<tr><td>AI drives erratically at intersections</td><td>Waypoint spacing too tight</td><td>Increase spacing between waypoints at intersections. Use the waypoint editor to smooth the path.</td></tr>
+</table>
+<hr>
+<h2 id='section-29'>Demo Scene Issues</h2>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td>&quot;This scene couldn't found in the Build Settings&quot;</td><td>Demo scene not added to build settings</td><td>Go to <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Welcome Window</strong> and click <strong>Add Demo Scenes To Build Settings</strong>.</td></tr>
+<tr><td>Demo scene works but my scene does not</td><td>Missing scene manager or camera</td><td>Your scene needs at minimum: an <strong>RCCP_SceneManager</strong> (auto-created via singleton), an <strong>RCCP_Camera</strong>, and a properly set up vehicle. Compare your scene to <code>RCCP_Scene_Blank_Prototype</code>.</td></tr>
+<tr><td>Demo vehicles not spawning</td><td>RCCP_DemoVehicles asset not configured</td><td>Check <code>Assets/Realistic Car Controller Pro/Resources/RCCP_DemoVehicles.asset</code>. Ensure it has vehicle prefabs assigned.</td></tr>
+</table>
+<hr>
+<h2 id='section-30'>Common Error Messages Reference</h2>
+<p>This table lists the most frequently seen error and warning messages, what they mean, and how to fix them.</p>
+<table>
+<tr><th>Error Message</th><th>Meaning</th><th>Fix</th></tr>
+<tr><td>&quot;Couldn't find RCCP_CarController in parent, this component named X is disabled!&quot;</td><td>A subsystem component is not a child of an RCCP_CarController</td><td>Move the component to be under the RCCP_CarController hierarchy</td></tr>
+<tr><td>&quot;This component named X is missing RCCP_CarController on parent&quot;</td><td>Same as above</td><td>Same fix</td></tr>
+<tr><td>&quot;Customizer component couldn't found on the X!&quot;</td><td>An upgrade component cannot find RCCP_Customizer</td><td>Add RCCP_Customizer to the vehicle</td></tr>
+<tr><td>&quot;Engine couldn't found in the vehicle&quot;</td><td>Engine upgrade/speed upgrade missing RCCP_Engine</td><td>Add RCCP_Engine to the vehicle</td></tr>
+<tr><td>&quot;Axles couldn't found in your vehicle&quot;</td><td>Brake upgrade missing RCCP_Axle components</td><td>Add RCCP_Axle components to the vehicle</td></tr>
+<tr><td>&quot;Stability component couldn't found in the vehicle&quot;</td><td>Handling upgrade missing RCCP_Stability</td><td>Add RCCP_Stability to the vehicle</td></tr>
+<tr><td>&quot;Body renderer of this spoiler is not selected!&quot;</td><td>Spoiler component has no renderer reference</td><td>Assign the body renderer in the RCCP_VehicleUpgrade_Spoiler Inspector</td></tr>
+<tr><td>&quot;Body material is not selected for this painter&quot;</td><td>Paint component has no material reference</td><td>Assign the body material in RCCP_VehicleUpgrade_Paint</td></tr>
+<tr><td>&quot;WheelCollider is not selected for this caliper named X&quot;</td><td>Caliper has no wheel reference</td><td>Assign the WheelCollider reference in RCCP_Caliper</td></tr>
+<tr><td>&quot;Wheel model is not selected for X. Disabling this wheelcollider.&quot;</td><td>RCCP_WheelCollider has no visual wheel model</td><td>Assign the wheel model transform in the RCCP_WheelCollider Inspector</td></tr>
+<tr><td>&quot;No ParticleSystem found on this exhaust named X&quot;</td><td>Exhaust object missing ParticleSystem</td><td>Add a ParticleSystem to the exhaust GameObject</td></tr>
+<tr><td>&quot;Particles couldn't be found on this GameObject named X&quot;</td><td>Wheel slip particle object missing ParticleSystem</td><td>Ensure the wheel slip prefab has a ParticleSystem component</td></tr>
+<tr><td>&quot;Terrain data of the X is missing!&quot;</td><td>Terrain has no terrain data asset</td><td>Assign terrain data to the terrain in the Inspector</td></tr>
+<tr><td>&quot;RCCP_InputActions.Instance is null&quot;</td><td>Input actions asset missing from Resources</td><td>Reimport RCCP or restore the RCCP_InputActions asset to the Resources folder</td></tr>
+<tr><td>&quot;Could not find action map: X&quot;</td><td>Input action maps not found in the input asset</td><td>Reimport RCCP. The input asset should contain Driving, Camera, and Replay action maps.</td></tr>
+<tr><td>&quot;Behavior preset 'X' not found.&quot;</td><td>Trying to switch to a nonexistent behavior</td><td>Check the behavior name matches one defined in RCCP_Settings.behaviorTypes</td></tr>
+<tr><td>&quot;Camera target not found!&quot;</td><td>Showroom camera has no target assigned</td><td>Assign a target transform on RCCP_ShowroomCamera</td></tr>
+<tr><td>&quot;Damage component couldn't found on the vehicle named: X!&quot;</td><td>RCCP_DamageData used without RCCP_Damage</td><td>Add RCCP_Damage to the vehicle</td></tr>
+<tr><td>&quot;RCCP_UIManager couldn't be found in the scene.&quot;</td><td>Demo customization station missing UI manager</td><td>Add RCCP_UIManager to the scene (included in demo scene prefabs)</td></tr>
+<tr><td>&quot;Corrupt preference file for X&quot;</td><td>PlayerPrefs data corrupted</td><td>Delete the corrupted key using <code>PlayerPrefs.DeleteKey()</code> or clear all with <code>PlayerPrefs.DeleteAll()</code></td></tr>
+</table>
+<hr>
+<h2 id='section-31'>Frequently Asked Questions</h2>
+<h3 id='section-32'>General</h3>
+<p><strong>Q: What Unity versions does RCCP support?</strong></p>
+<p>A: RCCP V2.41.1 requires Unity 6000.0 (Unity 6) or newer.</p>
+<p><strong>Q: Which render pipelines are supported?</strong></p>
+<p>A: Built-in, URP, and HDRP are all supported. You need to import the matching shader package for URP or HDRP. See <a href='18_render_pipelines.html'>Render Pipelines</a>.</p>
+<p><strong>Q: Does RCCP work with the old Input Manager?</strong></p>
+<p>A: No. RCCP requires Unity's <strong>Input System</strong> package (the new input system). Make sure your project's Active Input Handling is set to <strong>Input System Package (New)</strong> or <strong>Both</strong> in Player Settings.</p>
+<p><strong>Q: Can I use RCCP in a mobile game?</strong></p>
+<p>A: Yes. Enable <code>mobileControllerEnabled</code> in RCCP_Settings and choose a mobile controller type (TouchScreen, Gyro, SteeringWheel, or Joystick). See <a href='07_mobile.html'>Mobile</a>.</p>
+<h3 id='section-33'>Vehicle Setup</h3>
+<p><strong>Q: How do I set up a new vehicle from scratch?</strong></p>
+<p>A: Use the Setup Wizard at <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Vehicle Setup Wizard</strong>. It walks you through the entire process. See <a href='03_vehicle_setup.html'>Vehicle Setup</a>.</p>
+<p><strong>Q: Why does the Differential set wheel power instead of the Axle component?</strong></p>
+<p>A: The <code>isPower</code> flag on axles is controlled by <strong>RCCP_Differential</strong> based on its drive type (FWD/RWD/AWD). You do not set it directly on the axle. This is a common source of confusion.</p>
+<p><strong>Q: What is <code>RCCP_RuntimeSettings</code> and why do my runtime changes not persist?</strong></p>
+<p>A: <code>RCCP_RuntimeSettings</code> creates runtime clones of ScriptableObjects so that Play mode changes do not modify your asset files. Modify the runtime clone during gameplay, not the original asset. Changes to runtime clones are lost when you exit Play mode, by design.</p>
+<p><strong>Q: How do I add a new component type to RCCP?</strong></p>
+<p>A: If you create a new class inheriting from <code>RCCP_Component</code>, you must also add a case for it in <code>RCCP_Component.Register()</code>. The registration uses a type-switch, so missing your type means the car controller will not cache a reference to it.</p>
+<h3 id='section-34'>Physics</h3>
+<p><strong>Q: What is the recommended fixedTimeStep?</strong></p>
+<p>A: The default of <strong>0.02</strong> (50 Hz) works well for most cases. Use <strong>0.01</strong> (100 Hz) for more precise physics at the cost of performance. Never go below <strong>0.005</strong>.</p>
+<p><strong>Q: How do steering curves work?</strong></p>
+<p>A: Steering curves use X = speed in km/h and Y = steering multiplier from 0 to 1. They control how much steering angle is available at a given speed. A Y value of 1 at X=0 means full steering at standstill. A Y value of 0.3 at X=200 means 30% steering at 200 km/h. The Y axis is a multiplier, <strong>not</strong> degrees.</p>
+<p><strong>Q: What does <code>useFixedWheelColliders</code> do?</strong></p>
+<p>A: It increases wheel collider mass to prevent wheels from sinking through the ground at high speeds or under heavy load. Recommended to leave enabled (default: true).</p>
+<h3 id='section-35'>Customization</h3>
+<p><strong>Q: Where are customization loadouts saved?</strong></p>
+<p>A: Loadouts are saved to <code>PlayerPrefs</code> using the <code>saveFileName</code> from <strong>RCCP_Customizer</strong>. They persist between sessions on the same machine. For cloud saves, you would need to implement your own save system.</p>
+<p><strong>Q: How do I reset a vehicle's customization?</strong></p>
+<p>A: Call <code>RCCP_Customizer.Delete()</code> on the vehicle to remove its saved loadout from PlayerPrefs, then reload the vehicle.</p>
+<h3 id='section-36'>Networking</h3>
+<p><strong>Q: Can I use RCCP with networking solutions other than Photon and Mirror?</strong></p>
+<p>A: Yes. Use the <code>overridePlayerInputs</code> and <code>externalControl</code> flags on the vehicle to feed input from your networking solution. Override RCCP_Input values on remote clients using the external input API. See <a href='06_overriding_inputs.html'>Overriding Inputs</a>.</p>
+<hr>
+<h2 id='section-37'>Diagnostic Steps</h2>
+<p>When you encounter an issue not listed above, follow these steps:</p>
+<h3 id='section-38'>Step 1: Read the Console</h3>
+<p>Open <strong>Window &gt; General &gt; Console</strong> in Unity. Look for red (error) and yellow (warning) messages. RCCP prefixes most messages with the component name, making it easier to locate the source.</p>
+<h3 id='section-39'>Step 2: Check the Minimal Setup</h3>
+<p>Ensure your scene has the bare minimum:</p>
+<ul>
+<li>A GameObject with <strong>RCCP_CarController</strong> (plus Rigidbody, auto-added)</li>
+<li>Child objects with <strong>RCCP_Engine</strong>, <strong>RCCP_Clutch</strong>, <strong>RCCP_Gearbox</strong>, <strong>RCCP_Differential</strong></li>
+<li>At least one <strong>RCCP_Axle</strong> with wheel colliders and wheel models assigned</li>
+<li>An <strong>RCCP_Input</strong> component</li>
+<li>An <strong>RCCP_SceneManager</strong> in the scene (created automatically via singleton)</li>
+</ul>
+<h3 id='section-40'>Step 3: Test in a Clean Scene</h3>
+<p>Create a new empty scene and set up a single vehicle. If it works there but not in your main scene, the issue is in your scene configuration, not RCCP itself.</p>
+<h3 id='section-41'>Step 4: Test with the Prototype Scene</h3>
+<p>Open <code>Assets/Realistic Car Controller Pro/Scenes/RCCP_Scene_Blank_Prototype.unity</code> and press Play. If the demo vehicle works correctly, your RCCP installation is fine.</p>
+<h3 id='section-42'>Step 5: Enable Telemetry</h3>
+<p>Set <code>useTelemetry = true</code> in <strong>RCCP_Settings</strong> to see real-time vehicle data overlaid on screen during Play mode. This shows engine RPM, speed, gear, wheel slip, and other diagnostics. See <a href='17_telemetry_debug.html'>Telemetry and Debug</a>.</p>
+<h3 id='section-43'>Step 6: Verify Script Execution Order</h3>
+<p>If the issue is physics-flavored (motor torque getting cut when it shouldn't, ESP braking the wrong wheel, strange drivetrain fights during stability events, AI inputs visibly lagging the player override, or the speed limiter not cutting fuel cleanly), your <code>ScriptExecutionOrder</code> may have been overridden. RCCP enforces the ordering automatically via <code>[InitializeOnLoad]</code> on <code>RCCP_ScriptExecutionOrderManager</code>. Every order-sensitive class also carries a matching <code>[DefaultExecutionOrder]</code> attribute baked directly onto the type, so ordering survives even in projects where the editor helper is missing — you should not normally need to act.</p>
+<p>If you suspect drift, open <code>ProjectSettings/ScriptExecutionOrder.asset</code> and confirm both ordering ranges are intact: the drivetrain chain (<code>-7 Engine → -6 Clutch → -5 Gearbox → -4 Differential</code>) and the wheel accumulator pipeline (<code>-2 Axle → -1 Stability → 0 WheelCollider</code>). Also check that input writers (<code>RCCP_AI</code>, <code>RCCP_Recorder</code>) sit at <code>-11</code> and <code>RCCP_Limiter</code> sits at <code>-8</code>. See <a href='02_architecture.md#execution-order'>Architecture — Execution Order</a>.</p>
+<h3 id='section-44'>Step 7: Contact Support</h3>
+<p>If you cannot resolve the issue, contact us with the following information:</p>
+<ul>
+<li>Your Unity version (e.g., Unity 6000.0.49f1)</li>
+<li>RCCP version (V2.41.1)</li>
+<li>Your render pipeline (Built-in, URP, or HDRP)</li>
+<li>The full error message copied from Console</li>
+<li>Steps to reproduce the issue</li>
+<li>Screenshots if applicable</li>
+</ul>
+<p><strong>Email:</strong> bonecrackergames@gmail.com</p>
+<p><strong>Website:</strong> <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+</div></body></html>

@@ -1,0 +1,412 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>06_overriding_inputs</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Overriding Inputs</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Overriding Inputs</a></li>
+<li style='margin-left:20px'><a href='#section-1'>When to Override Inputs</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Understanding the Override System</a></li>
+<li style='margin-left:40px'><a href='#section-3'>The Input Pipeline</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Key Flags</a></li>
+<li style='margin-left:40px'><a href='#section-5'>The RCCP_Inputs Class</a></li>
+<li style='margin-left:20px'><a href='#section-6'>Method 1: Direct Property Override</a></li>
+<li style='margin-left:40px'><a href='#section-7'>When to Use</a></li>
+<li style='margin-left:20px'><a href='#section-8'>Method 2: Using the OverrideInputs Method</a></li>
+<li style='margin-left:40px'><a href='#section-9'>When to Use</a></li>
+<li style='margin-left:20px'><a href='#section-10'>Method 3: Using RCCP.SetExternalControl</a></li>
+<li style='margin-left:40px'><a href='#section-11'>When to Use</a></li>
+<li style='margin-left:20px'><a href='#section-12'>Method 4: Using RCCP.SetControl</a></li>
+<li style='margin-left:40px'><a href='#section-13'>When to Use</a></li>
+<li style='margin-left:20px'><a href='#section-14'>Practical Code Examples</a></li>
+<li style='margin-left:40px'><a href='#section-15'>AI-Controlled Vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Cutscene: Drive Forward Then Stop</a></li>
+<li style='margin-left:40px'><a href='#section-17'>Network Vehicle (Remote Player)</a></li>
+<li style='margin-left:20px'><a href='#section-18'>Disabling Post-Processing</a></li>
+<li style='margin-left:20px'><a href='#section-19'>Resetting Inputs</a></li>
+<li style='margin-left:20px'><a href='#section-20'>Quick Reference: Which Flags to Set</a></li>
+<li style='margin-left:20px'><a href='#section-21'>Common Pitfalls</a></li>
+<li style='margin-left:20px'><a href='#section-22'>Next Steps</a></li>
+</ul></div>
+<p>This guide explains how to take programmatic control of an RCCP vehicle by overriding its default input pipeline. You will learn the three main approaches, when to use each one, and how to avoid the most common mistakes.</p>
+<h2 id='section-1'>When to Override Inputs</h2>
+<p>Override inputs any time you need code -- not the player -- to drive a vehicle:</p>
+<ul>
+<li><strong>AI-controlled vehicles</strong> -- bots, traffic, opponents</li>
+<li><strong>Scripted sequences</strong> -- cutscenes, tutorials, cinematics</li>
+<li><strong>Replay / playback system</strong> -- replaying a recorded session</li>
+<li><strong>Networked vehicles</strong> -- vehicles driven by remote players</li>
+<li><strong>Automated testing</strong> -- driving a predefined path to verify physics</li>
+</ul>
+<h2 id='section-2'>Understanding the Override System</h2>
+<h3 id='section-3'>The Input Pipeline</h3>
+<p>Every frame, the <code>RCCP_Input</code> component on the vehicle runs through these steps:</p>
+<ol>
+<li><strong>Fetch inputs</strong> from <code>RCCP_InputManager</code> (keyboard, gamepad, mobile).</li>
+<li><strong>Apply deadzones</strong> to each axis.</li>
+<li><strong>Post-process</strong> with steering limiter, counter steering, auto-reverse, and the speed-based steering curve.</li>
+</ol>
+<p>When you override inputs, you are injecting your own values at step 1 so the rest of the pipeline still applies normally.</p>
+<h3 id='section-4'>Key Flags</h3>
+<p>The system uses two boolean flags on <code>RCCP_Input</code> and two on <code>RCCP_CarController</code>:</p>
+<table>
+<tr><th>Flag</th><th>Lives On</th><th>Default</th><th>Purpose</th></tr>
+<tr><td><code>overridePlayerInputs</code></td><td><code>RCCP_Input</code></td><td><code>false</code></td><td>When <code>true</code>, the component skips reading from <code>RCCP_InputManager</code> and uses whatever values you write to the <code>inputs</code> field.</td></tr>
+<tr><td><code>overrideExternalInputs</code></td><td><code>RCCP_Input</code></td><td><code>false</code></td><td>When <code>true</code>, the post-processing step (steering limiter, counter steering, auto-reverse, steering curve) is skipped entirely.</td></tr>
+<tr><td><code>canControl</code></td><td><code>RCCP_CarController</code></td><td><code>true</code></td><td>When <code>false</code>, the vehicle ignores player input. Set via <code>RCCP.SetControl()</code>.</td></tr>
+<tr><td><code>externalControl</code></td><td><code>RCCP_CarController</code></td><td><code>false</code></td><td>When <code>true</code>, the vehicle is marked as externally driven (AI, replay, network). Set via <code>RCCP.SetExternalControl()</code>.</td></tr>
+</table>
+<p>A vehicle only reads player input when <strong>both</strong> <code>canControl</code> is <code>true</code> <strong>and</strong> <code>externalControl</code> is <code>false</code>. This is checked by <code>RCCP_CarController.IsControllableByPlayer()</code>.</p>
+<h3 id='section-5'>The RCCP_Inputs Class</h3>
+<p><code>RCCP_Inputs</code> is a serializable class that holds all driving axes:</p>
+<table>
+<tr><th>Field</th><th>Range</th><th>Description</th></tr>
+<tr><td><code>throttleInput</code></td><td>0 to 1</td><td>Accelerator pedal. 0 = no throttle, 1 = full throttle.</td></tr>
+<tr><td><code>brakeInput</code></td><td>0 to 1</td><td>Brake pedal. 0 = no brake, 1 = full brake.</td></tr>
+<tr><td><code>steerInput</code></td><td>-1 to 1</td><td>Steering wheel. -1 = full left, 0 = center, 1 = full right.</td></tr>
+<tr><td><code>handbrakeInput</code></td><td>0 to 1</td><td>Handbrake lever. 0 = released, 1 = fully engaged.</td></tr>
+<tr><td><code>clutchInput</code></td><td>0 to 1</td><td>Clutch pedal. 0 = engaged, 1 = fully disengaged.</td></tr>
+<tr><td><code>nosInput</code></td><td>0 to 1</td><td>Nitrous oxide. 0 = off, 1 = full.</td></tr>
+</table>
+<p>You can construct an <code>RCCP_Inputs</code> instance either with the default constructor (all zeros) or by passing all six values plus a <code>Vector2</code> for mouse/camera input.</p>
+<h2 id='section-6'>Method 1: Direct Property Override</h2>
+<p>The most straightforward approach. Get the <code>RCCP_Input</code> component, enable the override flag, and write values directly to its <code>inputs</code> field every frame.</p>
+<pre><code>
+using UnityEngine;
+
+public class DirectOverrideExample : MonoBehaviour {
+
+    private RCCP_CarController vehicle;
+    private RCCP_Input vehicleInput;
+
+    void Start() {
+        vehicle = GetComponent&lt;RCCP_CarController&gt;();
+        vehicleInput = vehicle.Inputs;
+
+        // Tell RCCP_Input to stop reading from keyboard/gamepad
+        vehicleInput.overridePlayerInputs = true;
+    }
+
+    void Update() {
+        // Write your desired values every frame
+        vehicleInput.inputs.throttleInput = 0.8f;  // 80% throttle
+        vehicleInput.inputs.steerInput = -0.5f;     // Turn left
+        vehicleInput.inputs.brakeInput = 0f;         // No brake
+    }
+
+    void OnDisable() {
+        // Always restore normal input when done
+        if (vehicleInput != null)
+            vehicleInput.overridePlayerInputs = false;
+    }
+}
+</code></pre>
+<h3 id='section-7'>When to Use</h3>
+<p>Use this method when you have a simple, self-contained script that controls one vehicle and does not need to interact with RCCP's scene management.</p>
+<h2 id='section-8'>Method 2: Using the OverrideInputs Method</h2>
+<p><code>RCCP_Input</code> provides a convenience method that sets <code>overridePlayerInputs = true</code> and assigns your <code>RCCP_Inputs</code> struct in one call.</p>
+<pre><code>
+using UnityEngine;
+
+public class StructOverrideExample : MonoBehaviour {
+
+    private RCCP_CarController vehicle;
+    private RCCP_Input vehicleInput;
+
+    void Start() {
+        vehicle = GetComponent&lt;RCCP_CarController&gt;();
+        vehicleInput = vehicle.Inputs;
+    }
+
+    void Update() {
+        // Build an inputs struct with the values you want
+        RCCP_Inputs myInputs = new RCCP_Inputs();
+        myInputs.throttleInput = 0.6f;
+        myInputs.steerInput = Mathf.Sin(Time.time); // Oscillate left-right
+
+        // This sets overridePlayerInputs = true and applies the struct
+        vehicleInput.OverrideInputs(myInputs);
+    }
+
+    void OnDisable() {
+        // Restore normal input
+        if (vehicleInput != null)
+            vehicleInput.DisableOverrideInputs();
+    }
+}
+</code></pre>
+<p>The matching restore method is <code>DisableOverrideInputs()</code>, which sets <code>overridePlayerInputs</code> back to <code>false</code>.</p>
+<h3 id='section-9'>When to Use</h3>
+<p>Use this method when you prefer to build a complete input snapshot each frame rather than setting individual fields. It is also useful when passing inputs from one system to another (for example, a network packet deserialized into an <code>RCCP_Inputs</code> object).</p>
+<h2 id='section-10'>Method 3: Using RCCP.SetExternalControl</h2>
+<p>Call <code>RCCP.SetExternalControl(vehicle, true)</code> to mark the vehicle as externally controlled. This sets <code>externalControl = true</code> on <code>RCCP_CarController</code>, which tells the input system that a non-player system is driving.</p>
+<pre><code>
+using UnityEngine;
+
+public class ExternalControlExample : MonoBehaviour {
+
+    private RCCP_CarController vehicle;
+    private RCCP_Input vehicleInput;
+
+    void Start() {
+        vehicle = GetComponent&lt;RCCP_CarController&gt;();
+        vehicleInput = vehicle.Inputs;
+
+        // Mark this vehicle as externally controlled
+        RCCP.SetExternalControl(vehicle, true);
+
+        // Also override player inputs so our values are used
+        vehicleInput.overridePlayerInputs = true;
+    }
+
+    void Update() {
+        vehicleInput.inputs.throttleInput = 0.5f;
+        vehicleInput.inputs.steerInput = CalculateSteering();
+    }
+
+    float CalculateSteering() {
+        // Your AI or network steering logic here
+        return 0f;
+    }
+
+    void OnDisable() {
+        if (vehicle != null)
+            RCCP.SetExternalControl(vehicle, false);
+        if (vehicleInput != null)
+            vehicleInput.overridePlayerInputs = false;
+    }
+}
+</code></pre>
+<h3 id='section-11'>When to Use</h3>
+<p>Use this method for AI vehicles, traffic, and any vehicle that should be permanently (or semi-permanently) driven by code. The <code>externalControl</code> flag is checked by many RCCP systems -- for example, input event listeners for lights, gears, and stability toggles all call <code>IsControllableByPlayer()</code> and will correctly ignore keyboard events for externally controlled vehicles.</p>
+<h2 id='section-12'>Method 4: Using RCCP.SetControl</h2>
+<p>Call <code>RCCP.SetControl(vehicle, false)</code> to disable player control entirely. This sets <code>canControl = false</code> on <code>RCCP_CarController</code>.</p>
+<pre><code>
+using UnityEngine;
+
+public class DisableControlExample : MonoBehaviour {
+
+    private RCCP_CarController vehicle;
+    private RCCP_Input vehicleInput;
+
+    void Start() {
+        vehicle = GetComponent&lt;RCCP_CarController&gt;();
+        vehicleInput = vehicle.Inputs;
+
+        // Disable player control
+        RCCP.SetControl(vehicle, false);
+
+        // Override inputs so our scripted values are used
+        vehicleInput.overridePlayerInputs = true;
+    }
+
+    void Update() {
+        vehicleInput.inputs.throttleInput = 0.7f;
+        vehicleInput.inputs.brakeInput = 0f;
+        vehicleInput.inputs.steerInput = 0f;
+    }
+
+    void OnDisable() {
+        // Return control to the player
+        if (vehicleInput != null)
+            vehicleInput.overridePlayerInputs = false;
+        if (vehicle != null)
+            RCCP.SetControl(vehicle, true);
+    }
+}
+</code></pre>
+<h3 id='section-13'>When to Use</h3>
+<p>Use this for temporary takeovers where the player should not be able to control the vehicle at all -- cutscenes, tutorials, respawn sequences. Combine with <code>overridePlayerInputs = true</code> to inject your own values during that period.</p>
+<h2 id='section-14'>Practical Code Examples</h2>
+<h3 id='section-15'>AI-Controlled Vehicle</h3>
+<p>A minimal AI controller that drives toward a target transform.</p>
+<pre><code>
+using UnityEngine;
+
+public class SimpleAIDriver : MonoBehaviour {
+
+    public Transform target;
+
+    private RCCP_CarController vehicle;
+    private RCCP_Input vehicleInput;
+
+    void Start() {
+        vehicle = GetComponent&lt;RCCP_CarController&gt;();
+        vehicleInput = vehicle.Inputs;
+
+        // Mark as externally controlled and override inputs
+        RCCP.SetExternalControl(vehicle, true);
+        vehicleInput.overridePlayerInputs = true;
+    }
+
+    void Update() {
+        if (target == null) return;
+
+        // Calculate direction to target
+        Vector3 directionToTarget = target.position - transform.position;
+        float distanceToTarget = directionToTarget.magnitude;
+
+        // Steering: use the dot product with the vehicle's right axis
+        float dot = Vector3.Dot(transform.right, directionToTarget.normalized);
+        vehicleInput.inputs.steerInput = Mathf.Clamp(dot * 2f, -1f, 1f);
+
+        // Throttle: drive forward if far away, brake if close
+        if (distanceToTarget &gt; 10f) {
+            vehicleInput.inputs.throttleInput = 0.6f;
+            vehicleInput.inputs.brakeInput = 0f;
+        } else {
+            vehicleInput.inputs.throttleInput = 0f;
+            vehicleInput.inputs.brakeInput = 0.8f;
+        }
+    }
+
+    void OnDisable() {
+        if (vehicle != null)
+            RCCP.SetExternalControl(vehicle, false);
+        if (vehicleInput != null)
+            vehicleInput.overridePlayerInputs = false;
+    }
+}
+</code></pre>
+<h3 id='section-16'>Cutscene: Drive Forward Then Stop</h3>
+<p>A coroutine-based scripted sequence that drives a vehicle forward, brakes to a stop, and then returns control to the player.</p>
+<pre><code>
+using UnityEngine;
+using System.Collections;
+
+public class CutsceneDriver : MonoBehaviour {
+
+    public RCCP_CarController vehicle;
+
+    public void StartCutscene() {
+        StartCoroutine(DriveCutscene());
+    }
+
+    IEnumerator DriveCutscene() {
+        RCCP_Input input = vehicle.Inputs;
+
+        // Take control away from the player
+        RCCP.SetControl(vehicle, false);
+        input.overridePlayerInputs = true;
+
+        // Drive forward at 70% throttle for 3 seconds
+        input.inputs.throttleInput = 0.7f;
+        input.inputs.brakeInput = 0f;
+        input.inputs.steerInput = 0f;
+        yield return new WaitForSeconds(3f);
+
+        // Brake to a stop for 2 seconds
+        input.inputs.throttleInput = 0f;
+        input.inputs.brakeInput = 1f;
+        yield return new WaitForSeconds(2f);
+
+        // Release all inputs
+        input.inputs.brakeInput = 0f;
+
+        // Return control to the player
+        input.overridePlayerInputs = false;
+        RCCP.SetControl(vehicle, true);
+    }
+}
+</code></pre>
+<h3 id='section-17'>Network Vehicle (Remote Player)</h3>
+<p>A sketch showing how you might apply inputs received from the network.</p>
+<pre><code>
+using UnityEngine;
+
+public class NetworkVehicleReceiver : MonoBehaviour {
+
+    private RCCP_CarController vehicle;
+    private RCCP_Input vehicleInput;
+
+    // These would be updated by your networking layer
+    [HideInInspector] public float netThrottle;
+    [HideInInspector] public float netBrake;
+    [HideInInspector] public float netSteer;
+    [HideInInspector] public float netHandbrake;
+
+    void Start() {
+        vehicle = GetComponent&lt;RCCP_CarController&gt;();
+        vehicleInput = vehicle.Inputs;
+
+        // This is a remote vehicle -- mark it as external
+        RCCP.SetExternalControl(vehicle, true);
+        vehicleInput.overridePlayerInputs = true;
+    }
+
+    void Update() {
+        // Apply the latest values from the network
+        vehicleInput.inputs.throttleInput = netThrottle;
+        vehicleInput.inputs.brakeInput = netBrake;
+        vehicleInput.inputs.steerInput = netSteer;
+        vehicleInput.inputs.handbrakeInput = netHandbrake;
+    }
+}
+</code></pre>
+<h2 id='section-18'>Disabling Post-Processing</h2>
+<p>By default, even when you override player inputs, the vehicle still applies post-processing: the steering limiter, counter steering, auto-reverse logic, and the speed-based steering curve. This is usually desirable because it makes the vehicle behave realistically.</p>
+<p>If you need full raw control (for example, for a replay system where the recorded values should be applied exactly), set <code>overrideExternalInputs = true</code> as well:</p>
+<pre><code>
+vehicleInput.overridePlayerInputs = true;    // Skip reading from InputManager
+vehicleInput.overrideExternalInputs = true;  // Skip steering limiter, counter steer, etc.
+</code></pre>
+<p>When <code>overrideExternalInputs</code> is <code>true</code>, the values you write to <code>inputs</code> are used directly with only deadzone processing applied.</p>
+<h2 id='section-19'>Resetting Inputs</h2>
+<p>If you need to zero out all input values at once, call <code>ResetInputs()</code> on the <code>RCCP_Input</code> component:</p>
+<pre><code>
+vehicleInput.ResetInputs();
+</code></pre>
+<p>This sets all six axes (throttle, brake, steer, handbrake, clutch, NOS) to zero. Note that this also resets the internal <code>inputs</code> struct, so any override values you previously set will be cleared.</p>
+<h2 id='section-20'>Quick Reference: Which Flags to Set</h2>
+<table>
+<tr><th>Scenario</th><th><code>overridePlayerInputs</code></th><th><code>overrideExternalInputs</code></th><th><code>canControl</code></th><th><code>externalControl</code></th></tr>
+<tr><td>Normal player driving</td><td><code>false</code></td><td><code>false</code></td><td><code>true</code></td><td><code>false</code></td></tr>
+<tr><td>AI / traffic vehicle</td><td><code>true</code></td><td><code>false</code></td><td><code>true</code></td><td><code>true</code></td></tr>
+<tr><td>Cutscene (player locked out)</td><td><code>true</code></td><td><code>false</code></td><td><code>false</code></td><td><code>false</code></td></tr>
+<tr><td>Replay (exact recorded values)</td><td><code>true</code></td><td><code>true</code></td><td><code>false</code></td><td><code>true</code></td></tr>
+<tr><td>Network remote player</td><td><code>true</code></td><td><code>false</code></td><td><code>true</code></td><td><code>true</code></td></tr>
+</table>
+<h2 id='section-21'>Common Pitfalls</h2>
+<ul>
+<li><strong>Forgetting <code>overridePlayerInputs = true</code>.</strong> If you only set values on the <code>inputs</code> field but leave the override flag off, the <code>RCCP_InputManager</code> will overwrite your values every frame.</li>
+</ul>
+<ul>
+<li><strong>Not restoring flags when done.</strong> Always set <code>overridePlayerInputs = false</code> (and re-enable <code>canControl</code> / disable <code>externalControl</code> as needed) when you want the player to take control back. Consider using <code>OnDisable()</code> or <code>OnDestroy()</code> as a safety net.</li>
+</ul>
+<ul>
+<li><strong>Setting input values only once.</strong> In the coroutine example above, the values persist because <code>overridePlayerInputs</code> prevents the input system from overwriting them. But if you are not using a coroutine, you must set values every frame in <code>Update()</code>.</li>
+</ul>
+<ul>
+<li><strong>Setting <code>externalControl</code> but not <code>overridePlayerInputs</code>.</strong> The <code>externalControl</code> flag tells other RCCP systems the vehicle is not player-driven, but it does not by itself redirect input. You typically need both flags set together.</li>
+</ul>
+<ul>
+<li><strong>Inputs resetting on state change.</strong> When <code>canControl</code> or <code>externalControl</code> changes, <code>RCCP_Input</code> automatically resets all input values to zero. If you toggle these flags, make sure to re-apply your override values on the next frame.</li>
+</ul>
+<ul>
+<li><strong>Confusing <code>RCCP_Inputs</code> (the class) with <code>RCCP_Input</code> (the component).</strong> <code>RCCP_Inputs</code> is the data class holding the axis values. <code>RCCP_Input</code> is the MonoBehaviour component attached to the vehicle that processes those values.</li>
+</ul>
+<h2 id='section-22'>Next Steps</h2>
+<ul>
+<li><a href='05_inputs.html'>Inputs</a> -- Default keyboard and gamepad bindings</li>
+<li><a href='13_ai_vehicles.html'>AI Vehicles</a> -- Full AI system with waypoints</li>
+<li><a href='16_api_reference.html'>API Reference</a> -- All public methods in the RCCP static class</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

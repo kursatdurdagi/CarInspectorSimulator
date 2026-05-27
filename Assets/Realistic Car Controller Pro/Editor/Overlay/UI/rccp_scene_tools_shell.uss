@@ -1,0 +1,71 @@
+/* ──── Scene Tools Shell ──────────────────────────────── */
+.rccp-scene-tools-shell {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-direction: column;
+    background-color: var(--color-bg);
+}
+
+.rccp-scene-tools-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    min-width: 0;
+}
+
+.rccp-scene-tools-header__title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.rccp-scene-tools-header__buttons {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.rccp-scene-tools-search {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    min-width: 0;
+}
+
+.rccp-scene-tools-search__field {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.rccp-scene-tools-shell__tab-slot {
+    flex-shrink: 0;
+}
+
+.rccp-scene-tools-content {
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: hidden;
+}
+
+.rccp-scene-tools-shell__content-placeholder {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.rccp-scene-tools-shell__placeholder-text {
+    color: var(--color-text-secondary);
+}
+
+.rccp-scene-tools-footer__content {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.rccp-scene-tools-footer {
+    flex-shrink: 0;
+}
+

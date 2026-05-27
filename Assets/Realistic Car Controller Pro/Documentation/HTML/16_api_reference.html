@@ -1,0 +1,871 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>16_api_reference</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>API Reference</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>API Reference</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Overview</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Vehicle Spawning and Registration</a></li>
+<li style='margin-left:40px'><a href='#section-3'>SpawnRCC</a></li>
+<li style='margin-left:40px'><a href='#section-4'>RegisterPlayerVehicle</a></li>
+<li style='margin-left:40px'><a href='#section-5'>DeRegisterPlayerVehicle</a></li>
+<li style='margin-left:20px'><a href='#section-6'>Vehicle Control</a></li>
+<li style='margin-left:40px'><a href='#section-7'>SetControl</a></li>
+<li style='margin-left:40px'><a href='#section-8'>SetExternalControl</a></li>
+<li style='margin-left:40px'><a href='#section-9'>SetEngine</a></li>
+<li style='margin-left:40px'><a href='#section-10'>SetAutomaticGear</a></li>
+<li style='margin-left:20px'><a href='#section-11'>Camera</a></li>
+<li style='margin-left:40px'><a href='#section-12'>ChangeCamera</a></li>
+<li style='margin-left:20px'><a href='#section-13'>Transport</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Transport (Player Vehicle)</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Transport (Specific Vehicle)</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Transport (With Velocity Reset)</a></li>
+<li style='margin-left:20px'><a href='#section-17'>Behavior</a></li>
+<li style='margin-left:40px'><a href='#section-18'>SetBehavior (By Index)</a></li>
+<li style='margin-left:40px'><a href='#section-19'>SetBehavior (By Name)</a></li>
+<li style='margin-left:40px'><a href='#section-20'>GetBehaviorIndexByName</a></li>
+<li style='margin-left:40px'><a href='#section-21'>GetBehaviorByName</a></li>
+<li style='margin-left:20px'><a href='#section-22'>Mobile Input</a></li>
+<li style='margin-left:40px'><a href='#section-23'>SetMobileController</a></li>
+<li style='margin-left:20px'><a href='#section-24'>Recording</a></li>
+<li style='margin-left:40px'><a href='#section-25'>StartStopRecord</a></li>
+<li style='margin-left:40px'><a href='#section-26'>StartStopReplay (Last Recording)</a></li>
+<li style='margin-left:40px'><a href='#section-27'>StartStopReplay (Specific Recording)</a></li>
+<li style='margin-left:40px'><a href='#section-28'>StopRecordReplay</a></li>
+<li style='margin-left:20px'><a href='#section-29'>Maintenance</a></li>
+<li style='margin-left:40px'><a href='#section-30'>Repair (Specific Vehicle)</a></li>
+<li style='margin-left:40px'><a href='#section-31'>Repair (Player Vehicle)</a></li>
+<li style='margin-left:40px'><a href='#section-32'>CleanSkidmarks (All)</a></li>
+<li style='margin-left:40px'><a href='#section-33'>CleanSkidmarks (By Index)</a></li>
+<li style='margin-left:20px'><a href='#section-34'>Events Reference</a></li>
+<li style='margin-left:40px'><a href='#section-35'>How to Subscribe and Unsubscribe</a></li>
+<li style='margin-left:40px'><a href='#section-36'>Events Table</a></li>
+<li style='margin-left:40px'><a href='#section-37'>Event Details</a></li>
+<li style='margin-left:20px'><a href='#section-38'>RCCP_CarController Key Properties</a></li>
+<li style='margin-left:40px'><a href='#section-39'>Vehicle State</a></li>
+<li style='margin-left:40px'><a href='#section-40'>Engine and Drivetrain</a></li>
+<li style='margin-left:40px'><a href='#section-41'>Vehicle-Side Inputs (Read from Components)</a></li>
+<li style='margin-left:40px'><a href='#section-42'>Player-Side Inputs (Raw from Input Manager)</a></li>
+<li style='margin-left:40px'><a href='#section-43'>Control Flags</a></li>
+<li style='margin-left:40px'><a href='#section-44'>Lights</a></li>
+<li style='margin-left:40px'><a href='#section-45'>Other</a></li>
+<li style='margin-left:40px'><a href='#section-46'>GetVehicleBehaviorType (V2.31+)</a></li>
+<li style='margin-left:20px'><a href='#section-47'>Practical Code Examples</a></li>
+<li style='margin-left:40px'><a href='#section-48'>Example 1: Spawning a Vehicle and Registering as Player</a></li>
+<li style='margin-left:40px'><a href='#section-49'>Example 2: Switching Between Multiple Vehicles</a></li>
+<li style='margin-left:40px'><a href='#section-50'>Example 3: Reading Vehicle Speed and RPM for a Custom HUD</a></li>
+<li style='margin-left:40px'><a href='#section-51'>Example 4: Listening to Events</a></li>
+<li style='margin-left:20px'><a href='#section-52'>Quick Reference Table</a></li>
+</ul></div>
+<p>This document covers every public method in the <code>RCCP</code> static class and every event in <code>RCCP_Events</code>. These are the two primary entry points you will use when integrating Realistic Car Controller Pro into your own game scripts.</p>
+<hr>
+<h2 id='section-1'>Overview</h2>
+<p><code>RCCP</code> is a <strong>static utility class</strong>. You do not need to create an instance or attach it to a GameObject. Call any method directly:</p>
+<pre><code>
+RCCP.MethodName();
+</code></pre>
+<p>Every script that calls the RCCP API should include the following at the top:</p>
+<pre><code>
+using UnityEngine;
+</code></pre>
+<p>No additional <code>using</code> statements are required because RCCP uses the global namespace.</p>
+<p><strong>Key points:</strong></p>
+<ul>
+<li>All methods are <code>public static</code> -- call them from any MonoBehaviour.</li>
+<li>Methods that target a specific vehicle take an <code>RCCP_CarController</code> parameter.</li>
+<li>Methods that target the current player vehicle operate through <code>RCCP_SceneManager.Instance</code>.</li>
+<li>Vehicle prefabs must have an <code>RCCP_CarController</code> component to work with this API.</li>
+</ul>
+<hr>
+<h2 id='section-2'>Vehicle Spawning and Registration</h2>
+<p>These methods handle instantiating vehicle prefabs at runtime and telling the system which vehicle the player is currently driving.</p>
+<h3 id='section-3'>SpawnRCC</h3>
+<p>Instantiates a vehicle prefab, activates it, and optionally registers it as the player vehicle.</p>
+<pre><code>
+public static RCCP_CarController SpawnRCC(
+    RCCP_CarController vehiclePrefab,
+    Vector3 position,
+    Quaternion rotation,
+    bool registerAsPlayerVehicle,
+    bool isControllable,
+    bool isEngineRunning
+)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehiclePrefab</code></td><td><code>RCCP_CarController</code></td><td>The vehicle prefab to instantiate. Must have an RCCP_CarController component.</td></tr>
+<tr><td><code>position</code></td><td><code>Vector3</code></td><td>World position where the vehicle will spawn.</td></tr>
+<tr><td><code>rotation</code></td><td><code>Quaternion</code></td><td>World rotation applied to the spawned vehicle.</td></tr>
+<tr><td><code>registerAsPlayerVehicle</code></td><td><code>bool</code></td><td>If <code>true</code>, the spawned vehicle becomes the active player vehicle immediately.</td></tr>
+<tr><td><code>isControllable</code></td><td><code>bool</code></td><td>If <code>true</code>, the player can control this vehicle right away.</td></tr>
+<tr><td><code>isEngineRunning</code></td><td><code>bool</code></td><td>If <code>true</code>, the engine starts running immediately. If <code>false</code>, the engine is killed.</td></tr>
+</table>
+<p><strong>Returns:</strong> The spawned <code>RCCP_CarController</code> instance.</p>
+<pre><code>
+// Spawn a car at the origin, register as player, controllable, engine on
+public RCCP_CarController carPrefab;
+
+void Start() {
+    RCCP_CarController spawnedCar = RCCP.SpawnRCC(
+        carPrefab,
+        Vector3.zero,
+        Quaternion.identity,
+        true,   // register as player vehicle
+        true,   // player can control it
+        true    // engine starts running
+    );
+}
+</code></pre>
+<h3 id='section-4'>RegisterPlayerVehicle</h3>
+<p>Registers an existing vehicle as the active player vehicle. The RCCP camera and UI will follow this vehicle. There are three overloads.</p>
+<p><strong>Overload 1 -- Vehicle only:</strong></p>
+<pre><code>
+public static void RegisterPlayerVehicle(RCCP_CarController vehicle)
+</code></pre>
+<p>Registers the vehicle with its current controllable and engine states unchanged.</p>
+<pre><code>
+// Register an already-spawned vehicle as the player vehicle
+RCCP.RegisterPlayerVehicle(myVehicle);
+</code></pre>
+<p><strong>Overload 2 -- Vehicle with controllable state:</strong></p>
+<pre><code>
+public static void RegisterPlayerVehicle(RCCP_CarController vehicle, bool isControllable)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>The vehicle to register.</td></tr>
+<tr><td><code>isControllable</code></td><td><code>bool</code></td><td>If <code>true</code>, enables player control. If <code>false</code>, disables it.</td></tr>
+</table>
+<pre><code>
+// Register vehicle and enable player control
+RCCP.RegisterPlayerVehicle(myVehicle, true);
+</code></pre>
+<p><strong>Overload 3 -- Vehicle with controllable and engine state:</strong></p>
+<pre><code>
+public static void RegisterPlayerVehicle(RCCP_CarController vehicle, bool isControllable, bool engineState)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>The vehicle to register.</td></tr>
+<tr><td><code>isControllable</code></td><td><code>bool</code></td><td>If <code>true</code>, enables player control.</td></tr>
+<tr><td><code>engineState</code></td><td><code>bool</code></td><td>If <code>true</code>, starts the engine. If <code>false</code>, kills it.</td></tr>
+</table>
+<pre><code>
+// Register vehicle, enable control, and start the engine
+RCCP.RegisterPlayerVehicle(myVehicle, true, true);
+</code></pre>
+<h3 id='section-5'>DeRegisterPlayerVehicle</h3>
+<p>Removes the current player vehicle registration. The camera and UI will no longer follow any vehicle.</p>
+<pre><code>
+public static void DeRegisterPlayerVehicle()
+</code></pre>
+<p>Takes no parameters.</p>
+<pre><code>
+// Player exits the car -- deregister so camera stops following
+RCCP.DeRegisterPlayerVehicle();
+</code></pre>
+<hr>
+<h2 id='section-6'>Vehicle Control</h2>
+<p>These methods control whether a vehicle accepts player input and whether its engine is running.</p>
+<h3 id='section-7'>SetControl</h3>
+<p>Enables or disables player control of a vehicle. When disabled, player inputs are zeroed and brakes are applied automatically.</p>
+<pre><code>
+public static void SetControl(RCCP_CarController vehicle, bool isControllable)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>Target vehicle.</td></tr>
+<tr><td><code>isControllable</code></td><td><code>bool</code></td><td><code>true</code> to enable player input, <code>false</code> to disable it.</td></tr>
+</table>
+<pre><code>
+// Disable player control during a cutscene
+RCCP.SetControl(playerCar, false);
+
+// Re-enable after the cutscene
+RCCP.SetControl(playerCar, true);
+</code></pre>
+<h3 id='section-8'>SetExternalControl</h3>
+<p>Marks a vehicle as being driven by an external controller (AI, network, replay). When <code>true</code>, the vehicle's input component ignores the player input manager and instead uses override inputs.</p>
+<pre><code>
+public static void SetExternalControl(RCCP_CarController vehicle, bool isExternal)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>Target vehicle.</td></tr>
+<tr><td><code>isExternal</code></td><td><code>bool</code></td><td><code>true</code> to mark as externally controlled, <code>false</code> to return to player control.</td></tr>
+</table>
+<pre><code>
+// Hand control to an AI driver
+RCCP.SetExternalControl(aiCar, true);
+
+// Return to player control
+RCCP.SetExternalControl(aiCar, false);
+</code></pre>
+<p><strong>Note:</strong> This method performs a null check. If <code>vehicle</code> is null, it returns silently.</p>
+<h3 id='section-9'>SetEngine</h3>
+<p>Starts or stops the vehicle engine.</p>
+<pre><code>
+public static void SetEngine(RCCP_CarController vehicle, bool engineState)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>Target vehicle.</td></tr>
+<tr><td><code>engineState</code></td><td><code>bool</code></td><td><code>true</code> to start the engine, <code>false</code> to kill it.</td></tr>
+</table>
+<pre><code>
+// Start the engine
+RCCP.SetEngine(playerCar, true);
+
+// Kill the engine (e.g., player parked the car)
+RCCP.SetEngine(playerCar, false);
+</code></pre>
+<h3 id='section-10'>SetAutomaticGear</h3>
+<p>Sets the vehicle's transmission type. There are two overloads.</p>
+<p><strong>Overload 1 -- Boolean (Automatic or Manual):</strong></p>
+<pre><code>
+public static void SetAutomaticGear(RCCP_CarController vehicle, bool state)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>Target vehicle.</td></tr>
+<tr><td><code>state</code></td><td><code>bool</code></td><td><code>true</code> = Automatic, <code>false</code> = Manual.</td></tr>
+</table>
+<pre><code>
+// Switch to automatic transmission
+RCCP.SetAutomaticGear(playerCar, true);
+</code></pre>
+<p><strong>Overload 2 -- TransmissionType enum:</strong></p>
+<pre><code>
+public static void SetAutomaticGear(RCCP_CarController vehicle, RCCP_Gearbox.TransmissionType transmissionType)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>Target vehicle.</td></tr>
+<tr><td><code>transmissionType</code></td><td><code>RCCP_Gearbox.TransmissionType</code></td><td>One of: <code>Manual</code>, <code>Automatic</code>, <code>Automatic_DNRP</code>.</td></tr>
+</table>
+<p>The <code>Automatic_DNRP</code> option adds a Drive/Neutral/Reverse/Park selector, similar to real automatic cars.</p>
+<pre><code>
+// Switch to DNRP automatic mode
+RCCP.SetAutomaticGear(playerCar, RCCP_Gearbox.TransmissionType.Automatic_DNRP);
+</code></pre>
+<p><strong>Note:</strong> Both overloads check whether the vehicle has a Gearbox component. If it does not, the call is ignored.</p>
+<hr>
+<h2 id='section-11'>Camera</h2>
+<h3 id='section-12'>ChangeCamera</h3>
+<p>Cycles through the available camera modes on the RCCP camera (TPS, FPS, Top-Down, etc.).</p>
+<pre><code>
+public static void ChangeCamera()
+</code></pre>
+<p>Takes no parameters. Operates through <code>RCCP_SceneManager.Instance</code>.</p>
+<pre><code>
+// Bind to a UI button to let the player cycle camera views
+public void OnCameraButtonPressed() {
+    RCCP.ChangeCamera();
+}
+</code></pre>
+<p>For more details on available camera modes, see <a href='09_camera_system.html'>Camera System</a>.</p>
+<hr>
+<h2 id='section-13'>Transport</h2>
+<p>Teleports a vehicle to a new position and rotation. Useful for respawning after going off-track or for checkpoint systems.</p>
+<h3 id='section-14'>Transport (Player Vehicle)</h3>
+<p>Transports the currently registered player vehicle.</p>
+<pre><code>
+public static void Transport(Vector3 position, Quaternion rotation)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>position</code></td><td><code>Vector3</code></td><td>World position to move the vehicle to.</td></tr>
+<tr><td><code>rotation</code></td><td><code>Quaternion</code></td><td>World rotation to apply.</td></tr>
+</table>
+<pre><code>
+// Respawn the player car at the last checkpoint
+RCCP.Transport(checkpointPosition, checkpointRotation);
+</code></pre>
+<h3 id='section-15'>Transport (Specific Vehicle)</h3>
+<p>Transports a specific vehicle.</p>
+<pre><code>
+public static void Transport(RCCP_CarController vehicle, Vector3 position, Quaternion rotation)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>The vehicle to transport.</td></tr>
+<tr><td><code>position</code></td><td><code>Vector3</code></td><td>World position to move the vehicle to.</td></tr>
+<tr><td><code>rotation</code></td><td><code>Quaternion</code></td><td>World rotation to apply.</td></tr>
+</table>
+<pre><code>
+// Transport a specific AI vehicle to a new position
+RCCP.Transport(aiCar, spawnPoint.position, spawnPoint.rotation);
+</code></pre>
+<h3 id='section-16'>Transport (With Velocity Reset)</h3>
+<p>Transports a specific vehicle and optionally resets its velocity so it does not continue sliding after teleport.</p>
+<pre><code>
+public static void Transport(RCCP_CarController vehicle, Vector3 position, Quaternion rotation, bool resetVelocity)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>The vehicle to transport.</td></tr>
+<tr><td><code>position</code></td><td><code>Vector3</code></td><td>World position to move the vehicle to.</td></tr>
+<tr><td><code>rotation</code></td><td><code>Quaternion</code></td><td>World rotation to apply.</td></tr>
+<tr><td><code>resetVelocity</code></td><td><code>bool</code></td><td>If <code>true</code>, resets the Rigidbody velocity after transport.</td></tr>
+</table>
+<pre><code>
+// Transport and stop the car completely
+RCCP.Transport(playerCar, respawnPos, respawnRot, true);
+</code></pre>
+<hr>
+<h2 id='section-17'>Behavior</h2>
+<p>Behavior presets let you change how all vehicles handle at runtime (e.g., switching between &quot;Sim&quot; and &quot;Arcade&quot; modes). Presets are configured in the RCCP Settings asset. See <a href='04_settings.html'>Settings</a> for how to create behavior presets.</p>
+<h3 id='section-18'>SetBehavior (By Index)</h3>
+<p>Applies a behavior preset by its index in the <code>RCCP_Settings.behaviorTypes</code> array.</p>
+<pre><code>
+public static void SetBehavior(int behaviorIndex)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>behaviorIndex</code></td><td><code>int</code></td><td>Zero-based index into the behavior presets array in RCCP Settings.</td></tr>
+</table>
+<pre><code>
+// Apply the first behavior preset
+RCCP.SetBehavior(0);
+</code></pre>
+<h3 id='section-19'>SetBehavior (By Name)</h3>
+<p>Applies a behavior preset by its name. The name comparison is case-insensitive.</p>
+<pre><code>
+public static void SetBehavior(string behaviorName)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>behaviorName</code></td><td><code>string</code></td><td>Name of the behavior preset. Case-insensitive.</td></tr>
+</table>
+<pre><code>
+// Switch to the &quot;Drift&quot; behavior preset
+RCCP.SetBehavior(&quot;Drift&quot;);
+</code></pre>
+<p>If no preset with the given name is found, a warning is logged to the console and no change is made.</p>
+<h3 id='section-20'>GetBehaviorIndexByName</h3>
+<p>Returns the index of a behavior preset by its name, or <code>-1</code> if not found.</p>
+<pre><code>
+public static int GetBehaviorIndexByName(string behaviorName)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>behaviorName</code></td><td><code>string</code></td><td>Name of the behavior preset. Case-insensitive.</td></tr>
+</table>
+<p><strong>Returns:</strong> The zero-based index of the preset, or <code>-1</code> if no match is found.</p>
+<pre><code>
+int driftIndex = RCCP.GetBehaviorIndexByName(&quot;Drift&quot;);
+
+if (driftIndex &gt;= 0)
+    Debug.Log(&quot;Drift preset is at index &quot; + driftIndex);
+else
+    Debug.Log(&quot;Drift preset not found!&quot;);
+</code></pre>
+<h3 id='section-21'>GetBehaviorByName</h3>
+<p>Returns the full <code>BehaviorType</code> object for a preset, or <code>null</code> if not found.</p>
+<pre><code>
+public static RCCP_Settings.BehaviorType GetBehaviorByName(string behaviorName)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>behaviorName</code></td><td><code>string</code></td><td>Name of the behavior preset. Case-insensitive.</td></tr>
+</table>
+<p><strong>Returns:</strong> The matching <code>RCCP_Settings.BehaviorType</code> object, or <code>null</code>.</p>
+<pre><code>
+RCCP_Settings.BehaviorType simBehavior = RCCP.GetBehaviorByName(&quot;Sim&quot;);
+
+if (simBehavior != null)
+    Debug.Log(&quot;Found behavior: &quot; + simBehavior.behaviorName);
+</code></pre>
+<hr>
+<h2 id='section-22'>Mobile Input</h2>
+<h3 id='section-23'>SetMobileController</h3>
+<p>Changes the active mobile input method at runtime. Use this to let players switch between touch controls, gyroscope, steering wheel UI, or joystick.</p>
+<pre><code>
+public static void SetMobileController(RCCP_Settings.MobileController mobileController)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>mobileController</code></td><td><code>RCCP_Settings.MobileController</code></td><td>One of: <code>TouchScreen</code>, <code>Gyro</code>, <code>SteeringWheel</code>, <code>Joystick</code>.</td></tr>
+</table>
+<pre><code>
+// Switch to gyroscope controls
+RCCP.SetMobileController(RCCP_Settings.MobileController.Gyro);
+
+// Switch to on-screen joystick
+RCCP.SetMobileController(RCCP_Settings.MobileController.Joystick);
+</code></pre>
+<p>For more details on mobile controls, see <a href='07_mobile.html'>Mobile</a>.</p>
+<hr>
+<h2 id='section-24'>Recording</h2>
+<p>These methods control the vehicle recording and replay system. The vehicle must have an <code>RCCP_Recorder</code> component attached through the OtherAddonsManager. See <a href='14_recording_playback.html'>Recording and Playback</a> for setup instructions.</p>
+<p>All recording methods perform null checks on the OtherAddonsManager and Recorder components. If either is missing, the call is silently ignored.</p>
+<h3 id='section-25'>StartStopRecord</h3>
+<p>Toggles recording on or off for the specified vehicle. Call once to start recording, call again to stop.</p>
+<pre><code>
+public static void StartStopRecord(RCCP_CarController vehicle)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>Target vehicle to record.</td></tr>
+</table>
+<pre><code>
+// Toggle recording with a button press
+public void OnRecordButton() {
+    RCCP.StartStopRecord(playerCar);
+}
+</code></pre>
+<h3 id='section-26'>StartStopReplay (Last Recording)</h3>
+<p>Toggles replay of the most recent recording. Call once to start replay, call again to stop.</p>
+<pre><code>
+public static void StartStopReplay(RCCP_CarController vehicle)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>Target vehicle to replay.</td></tr>
+</table>
+<pre><code>
+// Replay the last recorded run
+RCCP.StartStopReplay(playerCar);
+</code></pre>
+<h3 id='section-27'>StartStopReplay (Specific Recording)</h3>
+<p>Toggles replay of a specific recorded clip.</p>
+<pre><code>
+public static void StartStopReplay(RCCP_CarController vehicle, RCCP_Recorder.RecordedClip recordedClip)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>Target vehicle to replay.</td></tr>
+<tr><td><code>recordedClip</code></td><td><code>RCCP_Recorder.RecordedClip</code></td><td>The specific recorded clip to play back.</td></tr>
+</table>
+<pre><code>
+// Play a specific recorded ghost lap
+RCCP.StartStopReplay(ghostCar, savedGhostClip);
+</code></pre>
+<h3 id='section-28'>StopRecordReplay</h3>
+<p>Stops any active recording or replay on the vehicle.</p>
+<pre><code>
+public static void StopRecordReplay(RCCP_CarController vehicle)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>vehicle</code></td><td><code>RCCP_CarController</code></td><td>Target vehicle to stop recording or replaying.</td></tr>
+</table>
+<pre><code>
+// Force stop all recording/replay
+RCCP.StopRecordReplay(playerCar);
+</code></pre>
+<hr>
+<h2 id='section-29'>Maintenance</h2>
+<h3 id='section-30'>Repair (Specific Vehicle)</h3>
+<p>Triggers a repair on the specified vehicle, restoring all damage.</p>
+<pre><code>
+public static void Repair(RCCP_CarController carController)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>carController</code></td><td><code>RCCP_CarController</code></td><td>The vehicle to repair.</td></tr>
+</table>
+<pre><code>
+// Repair a specific vehicle
+RCCP.Repair(playerCar);
+</code></pre>
+<h3 id='section-31'>Repair (Player Vehicle)</h3>
+<p>Repairs the currently registered player vehicle. If no player vehicle is registered, this method does nothing.</p>
+<pre><code>
+public static void Repair()
+</code></pre>
+<p>Takes no parameters.</p>
+<pre><code>
+// Repair the current player car (e.g., from a UI button)
+RCCP.Repair();
+</code></pre>
+<h3 id='section-32'>CleanSkidmarks (All)</h3>
+<p>Removes all skidmarks from the current scene.</p>
+<pre><code>
+public static void CleanSkidmarks()
+</code></pre>
+<p>Takes no parameters.</p>
+<pre><code>
+// Clean up all tire marks (e.g., on scene reset)
+RCCP.CleanSkidmarks();
+</code></pre>
+<h3 id='section-33'>CleanSkidmarks (By Index)</h3>
+<p>Removes a specific set of skidmarks by index.</p>
+<pre><code>
+public static void CleanSkidmarks(int index)
+</code></pre>
+<table>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>index</code></td><td><code>int</code></td><td>Index of the skidmark set to clean.</td></tr>
+</table>
+<pre><code>
+// Clean skidmark set 0 only
+RCCP.CleanSkidmarks(0);
+</code></pre>
+<hr>
+<h2 id='section-34'>Events Reference</h2>
+<p><code>RCCP_Events</code> is a static class containing C# events you can subscribe to. These events fire automatically when the corresponding actions occur in RCCP. Use them to react to vehicle spawns, collisions, camera changes, and more.</p>
+<h3 id='section-35'>How to Subscribe and Unsubscribe</h3>
+<p>Always subscribe in <code>OnEnable()</code> and unsubscribe in <code>OnDisable()</code> to prevent memory leaks and errors from destroyed objects.</p>
+<pre><code>
+using UnityEngine;
+
+public class MyGameManager : MonoBehaviour {
+
+    void OnEnable() {
+        // Subscribe to events
+        RCCP_Events.OnRCCPSpawned += OnVehicleSpawned;
+        RCCP_Events.OnRCCPCollision += OnVehicleCollision;
+        RCCP_Events.OnVehicleChanged += OnPlayerVehicleChanged;
+    }
+
+    void OnDisable() {
+        // Unsubscribe from events
+        RCCP_Events.OnRCCPSpawned -= OnVehicleSpawned;
+        RCCP_Events.OnRCCPCollision -= OnVehicleCollision;
+        RCCP_Events.OnVehicleChanged -= OnPlayerVehicleChanged;
+    }
+
+    void OnVehicleSpawned(RCCP_CarController vehicle) {
+        Debug.Log(&quot;Vehicle spawned: &quot; + vehicle.name);
+    }
+
+    void OnVehicleCollision(RCCP_CarController vehicle, Collision collision) {
+        Debug.Log(vehicle.name + &quot; collided with &quot; + collision.gameObject.name);
+    }
+
+    void OnPlayerVehicleChanged() {
+        Debug.Log(&quot;Player switched to a different vehicle.&quot;);
+    }
+}
+</code></pre>
+<h3 id='section-36'>Events Table</h3>
+<table>
+<tr><th>Event</th><th>Delegate Signature</th><th>When It Fires</th></tr>
+<tr><td><code>OnRCCPSpawned</code></td><td><code>onRCCPSpawned(RCCP_CarController rccp)</code></td><td>A player vehicle spawns or becomes enabled.</td></tr>
+<tr><td><code>OnRCCPDestroyed</code></td><td><code>onRCCPDestroyed(RCCP_CarController rccp)</code></td><td>A player vehicle is destroyed or disabled.</td></tr>
+<tr><td><code>OnRCCPAISpawned</code></td><td><code>onRCCPAISpawned(RCCP_CarController rccp)</code></td><td>A vehicle with an AI component spawns or becomes enabled.</td></tr>
+<tr><td><code>OnRCCPAIDestroyed</code></td><td><code>onRCCPAIDestroyed(RCCP_CarController rccp)</code></td><td>A vehicle with an AI component is destroyed or disabled.</td></tr>
+<tr><td><code>OnRCCPCollision</code></td><td><code>onRCCPCollision(RCCP_CarController rccp, Collision collision)</code></td><td>Any RCCP vehicle collides with another object.</td></tr>
+<tr><td><code>OnRCCPCameraSpawned</code></td><td><code>onRCCPCameraSpawned(RCCP_Camera cam)</code></td><td>The RCCP camera is spawned or initialized.</td></tr>
+<tr><td><code>OnRCCPUISpawned</code></td><td><code>onRCCPUISpawned(RCCP_UIManager UI)</code></td><td>The RCCP UI canvas is spawned or initialized.</td></tr>
+<tr><td><code>OnRCCPUIDestroyed</code></td><td><code>onRCCPUIDestroyed(RCCP_UIManager UI)</code></td><td>The RCCP UI canvas is destroyed or disabled.</td></tr>
+<tr><td><code>OnRCCPUIInformer</code></td><td><code>onRCCPUIInformer(string text)</code></td><td>A UI informer message should be displayed to the player.</td></tr>
+<tr><td><code>OnBehaviorChanged</code></td><td><code>onBehaviorChanged()</code></td><td>The global behavior preset is changed via <code>RCCP.SetBehavior()</code>.</td></tr>
+<tr><td><code>OnVehicleChanged</code></td><td><code>onVehicleChanged()</code></td><td>The registered player vehicle changes (no vehicle reference).</td></tr>
+<tr><td><code>OnVehicleChangedToVehicle</code></td><td><code>onVehicleChangedToVehicle(RCCP_CarController carController)</code></td><td>The registered player vehicle changes (includes the new vehicle reference).</td></tr>
+</table>
+<h3 id='section-37'>Event Details</h3>
+<p><strong>OnRCCPSpawned / OnRCCPDestroyed</strong> -- These fire for player vehicles (vehicles without an AI component). If a vehicle has an AI component attached, <code>OnRCCPAISpawned</code> and <code>OnRCCPAIDestroyed</code> fire instead.</p>
+<p><strong>OnRCCPCollision</strong> -- Provides both the RCCP vehicle and the Unity <code>Collision</code> object, so you can inspect contact points, impulse, and the other collider.</p>
+<p><strong>OnVehicleChanged vs OnVehicleChangedToVehicle</strong> -- Both fire when the player vehicle changes. <code>OnVehicleChanged</code> takes no parameters (useful when you just need to refresh UI). <code>OnVehicleChangedToVehicle</code> passes the new vehicle reference (useful when you need to read data from the new vehicle).</p>
+<p><strong>OnRCCPUIInformer</strong> -- Subscribe to this event to display informational messages in your own custom UI. RCCP fires this when it wants to show a message to the player (e.g., &quot;Engine Started&quot;).</p>
+<hr>
+<h2 id='section-38'>RCCP_CarController Key Properties</h2>
+<p>Once you have a reference to an <code>RCCP_CarController</code>, you can read these public fields and properties to build HUD displays, telemetry systems, or game logic.</p>
+<h3 id='section-39'>Vehicle State</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>speed</code></td><td><code>float</code></td><td>Current speed in km/h. Signed: positive = forward, negative = reverse.</td></tr>
+<tr><td><code>absoluteSpeed</code></td><td><code>float</code></td><td>Same as <code>speed</code> but always positive (unsigned). Use this for speedometer displays.</td></tr>
+<tr><td><code>maximumSpeed</code></td><td><code>float</code></td><td>Calculated maximum speed based on engine RPM, gear ratios, differential ratio, and wheel diameter.</td></tr>
+<tr><td><code>direction</code></td><td><code>int</code></td><td><code>1</code> = forward, <code>-1</code> = reverse.</td></tr>
+<tr><td><code>engineRunning</code></td><td><code>bool</code></td><td><code>true</code> if the engine is currently running.</td></tr>
+<tr><td><code>engineStarting</code></td><td><code>bool</code></td><td><code>true</code> during the engine start animation/delay.</td></tr>
+<tr><td><code>IsGrounded</code></td><td><code>bool</code></td><td><code>true</code> if at least one wheel is touching the ground.</td></tr>
+</table>
+<h3 id='section-40'>Engine and Drivetrain</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>engineRPM</code></td><td><code>float</code></td><td>Current engine RPM.</td></tr>
+<tr><td><code>minEngineRPM</code></td><td><code>float</code></td><td>Idle RPM (engine will not drop below this).</td></tr>
+<tr><td><code>maxEngineRPM</code></td><td><code>float</code></td><td>Redline RPM (engine will not exceed this).</td></tr>
+<tr><td><code>currentGear</code></td><td><code>int</code></td><td>Current gear index. <code>0</code> = first gear.</td></tr>
+<tr><td><code>currentGearRatio</code></td><td><code>float</code></td><td>Gear ratio of the current gear.</td></tr>
+<tr><td><code>differentialRatio</code></td><td><code>float</code></td><td>Differential ratio.</td></tr>
+<tr><td><code>shiftingNow</code></td><td><code>bool</code></td><td><code>true</code> while the gearbox is in the middle of a gear change.</td></tr>
+<tr><td><code>NGearNow</code></td><td><code>bool</code></td><td><code>true</code> if the gearbox is currently in Neutral.</td></tr>
+<tr><td><code>reversingNow</code></td><td><code>bool</code></td><td><code>true</code> if the vehicle is currently in a reverse gear.</td></tr>
+<tr><td><code>producedEngineTorque</code></td><td><code>float</code></td><td>Torque currently produced by the engine.</td></tr>
+<tr><td><code>producedGearboxTorque</code></td><td><code>float</code></td><td>Torque output from the gearbox.</td></tr>
+<tr><td><code>producedDifferentialTorque</code></td><td><code>float</code></td><td>Torque output from the differential.</td></tr>
+<tr><td><code>steerAngle</code></td><td><code>float</code></td><td>Current steering angle in degrees.</td></tr>
+</table>
+<h3 id='section-41'>Vehicle-Side Inputs (Read from Components)</h3>
+<p>These values reflect what the vehicle's subsystems are actually applying. Use these for accurate HUD gauges.</p>
+<table>
+<tr><th>Property</th><th>Type</th><th>Range</th><th>Description</th></tr>
+<tr><td><code>throttleInput_V</code></td><td><code>float</code></td><td>0 to 1</td><td>Throttle being applied to the engine.</td></tr>
+<tr><td><code>brakeInput_V</code></td><td><code>float</code></td><td>0 to 1</td><td>Brake force being applied.</td></tr>
+<tr><td><code>steerInput_V</code></td><td><code>float</code></td><td>-1 to 1</td><td>Steering input (-1 = full left, 1 = full right).</td></tr>
+<tr><td><code>handbrakeInput_V</code></td><td><code>float</code></td><td>0 to 1</td><td>Handbrake force being applied.</td></tr>
+<tr><td><code>clutchInput_V</code></td><td><code>float</code></td><td>0 to 1</td><td>Clutch engagement.</td></tr>
+<tr><td><code>nosInput_V</code></td><td><code>float</code></td><td>0 to 1</td><td>Nitrous oxide input.</td></tr>
+<tr><td><code>fuelInput_V</code></td><td><code>float</code></td><td>0 to 1</td><td>Fuel flow to the engine.</td></tr>
+<tr><td><code>gearInput_V</code></td><td><code>float</code></td><td>--</td><td>Gear shift input value.</td></tr>
+</table>
+<h3 id='section-42'>Player-Side Inputs (Raw from Input Manager)</h3>
+<p>These values reflect what the player is pressing before any processing by vehicle components.</p>
+<table>
+<tr><th>Property</th><th>Type</th><th>Range</th><th>Description</th></tr>
+<tr><td><code>throttleInput_P</code></td><td><code>float</code></td><td>0 to 1</td><td>Raw throttle input from the player.</td></tr>
+<tr><td><code>brakeInput_P</code></td><td><code>float</code></td><td>0 to 1</td><td>Raw brake input from the player.</td></tr>
+<tr><td><code>steerInput_P</code></td><td><code>float</code></td><td>-1 to 1</td><td>Raw steering input from the player.</td></tr>
+<tr><td><code>handbrakeInput_P</code></td><td><code>float</code></td><td>0 to 1</td><td>Raw handbrake input from the player.</td></tr>
+<tr><td><code>clutchInput_P</code></td><td><code>float</code></td><td>0 to 1</td><td>Raw clutch input from the player.</td></tr>
+<tr><td><code>nosInput_P</code></td><td><code>float</code></td><td>0 to 1</td><td>Raw nitrous input from the player.</td></tr>
+</table>
+<h3 id='section-43'>Control Flags</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>canControl</code></td><td><code>bool</code></td><td>When <code>true</code>, the vehicle accepts player input. When <code>false</code>, inputs are zeroed and brakes apply.</td></tr>
+<tr><td><code>externalControl</code></td><td><code>bool</code></td><td>When <code>true</code>, the vehicle is driven externally (AI, network, replay). Player input is ignored.</td></tr>
+<tr><td><code>ineffectiveBehavior</code></td><td><code>bool</code></td><td>When <code>true</code>, global behavior presets are not applied to this vehicle.</td></tr>
+<tr><td><code>useCustomBehavior</code></td><td><code>bool</code></td><td>When <code>true</code>, this vehicle uses its own behavior preset (<code>customBehaviorIndex</code>) instead of the global one.</td></tr>
+<tr><td><code>customBehaviorIndex</code></td><td><code>int</code></td><td>Index into <code>RCCP_Settings.behaviorTypes</code> to use when <code>useCustomBehavior</code> is <code>true</code>. Use <code>RCCP.GetBehaviorIndexByName()</code> to resolve a name to an index.</td></tr>
+</table>
+<h3 id='section-44'>Lights</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>lowBeamLights</code></td><td><code>bool</code></td><td>Low beam headlights on/off.</td></tr>
+<tr><td><code>highBeamLights</code></td><td><code>bool</code></td><td>High beam headlights on/off.</td></tr>
+<tr><td><code>indicatorsLeftLights</code></td><td><code>bool</code></td><td>Left indicator on/off.</td></tr>
+<tr><td><code>indicatorsRightLights</code></td><td><code>bool</code></td><td>Right indicator on/off.</td></tr>
+<tr><td><code>indicatorsAllLights</code></td><td><code>bool</code></td><td>Hazard lights (all indicators) on/off.</td></tr>
+</table>
+<h3 id='section-45'>Other</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>ConnectedTrailer</code></td><td><code>RCCP_TrailerController</code></td><td>The currently attached trailer, or <code>null</code> if no trailer is connected.</td></tr>
+<tr><td><code>wheelRPM2Speed</code></td><td><code>float</code></td><td>Vehicle speed calculated from wheel RPM.</td></tr>
+<tr><td><code>tractionWheelRPM2EngineRPM</code></td><td><code>float</code></td><td>Engine RPM calculated from traction wheel RPM.</td></tr>
+</table>
+<h3 id='section-46'>GetVehicleBehaviorType (V2.31+)</h3>
+<p>Returns the behavior preset that is actually active on this vehicle, honoring per-vehicle overrides. <strong>Always use this when reading <code>BehaviorType</code> fields per-frame</strong> — <code>RCCP_Settings.SelectedBehaviorType</code> only returns the global preset and does not respect <code>useCustomBehavior</code>.</p>
+<pre><code>
+public RCCP_Settings.BehaviorType GetVehicleBehaviorType()
+</code></pre>
+<p><strong>Returns:</strong> The active <code>BehaviorType</code> for this vehicle. If <code>useCustomBehavior</code> is <code>true</code> and <code>customBehaviorIndex</code> is valid, returns that custom preset; otherwise returns the global preset (which may be <code>null</code> if the index is invalid or the array is empty — every caller must null-check).</p>
+<pre><code>
+// Read the active drift mode for this vehicle (custom OR global)
+RCCP_Settings.BehaviorType behavior = playerCar.GetVehicleBehaviorType();
+
+if (behavior != null &amp;&amp; behavior.driftMode) {
+    Debug.Log(&quot;This vehicle is in drift mode.&quot;);
+}
+</code></pre>
+<hr>
+<h2 id='section-47'>Practical Code Examples</h2>
+<h3 id='section-48'>Example 1: Spawning a Vehicle and Registering as Player</h3>
+<p>This example spawns a vehicle from a prefab, registers it as the player vehicle, starts the engine, and enables control.</p>
+<pre><code>
+using UnityEngine;
+
+public class VehicleSpawner : MonoBehaviour {
+
+    // Assign your vehicle prefab in the Inspector
+    public RCCP_CarController vehiclePrefab;
+    public Transform spawnPoint;
+
+    void Start() {
+
+        // Spawn the vehicle at the spawn point
+        RCCP_CarController car = RCCP.SpawnRCC(
+            vehiclePrefab,
+            spawnPoint.position,
+            spawnPoint.rotation,
+            true,   // register as player vehicle
+            true,   // enable player control
+            true    // start engine
+        );
+
+        Debug.Log(&quot;Spawned vehicle: &quot; + car.name);
+
+    }
+}
+</code></pre>
+<h3 id='section-49'>Example 2: Switching Between Multiple Vehicles</h3>
+<p>This example lets the player cycle through a list of pre-spawned vehicles by pressing a key.</p>
+<pre><code>
+using UnityEngine;
+
+public class VehicleSwitcher : MonoBehaviour {
+
+    // Assign your pre-spawned vehicles in the Inspector
+    public RCCP_CarController[] vehicles;
+    private int currentIndex = 0;
+
+    void Start() {
+
+        // Register the first vehicle as the player vehicle
+        if (vehicles.Length &gt; 0) {
+            RCCP.RegisterPlayerVehicle(vehicles[0], true, true);
+        }
+
+    }
+
+    void Update() {
+
+        // Press V to switch to the next vehicle
+        if (Input.GetKeyDown(KeyCode.V) &amp;&amp; vehicles.Length &gt; 1) {
+
+            // Disable control on the current vehicle
+            RCCP.SetControl(vehicles[currentIndex], false);
+            RCCP.SetEngine(vehicles[currentIndex], false);
+
+            // Move to the next vehicle
+            currentIndex = (currentIndex + 1) % vehicles.Length;
+
+            // Register the new vehicle as the player vehicle
+            RCCP.RegisterPlayerVehicle(vehicles[currentIndex], true, true);
+
+            Debug.Log(&quot;Switched to: &quot; + vehicles[currentIndex].name);
+
+        }
+
+    }
+}
+</code></pre>
+<h3 id='section-50'>Example 3: Reading Vehicle Speed and RPM for a Custom HUD</h3>
+<p>This example reads real-time data from the player vehicle and displays it using Unity UI.</p>
+<pre><code>
+using UnityEngine;
+using UnityEngine.UI;
+
+public class CustomHUD : MonoBehaviour {
+
+    public Text speedText;
+    public Text rpmText;
+    public Text gearText;
+    public Slider rpmBar;
+
+    void Update() {
+
+        // Get the active player vehicle from the scene manager
+        RCCP_CarController car = RCCP_SceneManager.Instance.activePlayerVehicle;
+
+        // If no player vehicle is registered, hide the HUD
+        if (car == null) {
+            speedText.text = &quot;---&quot;;
+            rpmText.text = &quot;---&quot;;
+            gearText.text = &quot;-&quot;;
+            return;
+        }
+
+        // Display speed (always positive for the speedometer)
+        speedText.text = car.absoluteSpeed.ToString(&quot;F0&quot;) + &quot; km/h&quot;;
+
+        // Display engine RPM
+        rpmText.text = car.engineRPM.ToString(&quot;F0&quot;) + &quot; RPM&quot;;
+
+        // Display current gear (add 1 for human-readable numbering)
+        if (car.NGearNow)
+            gearText.text = &quot;N&quot;;
+        else if (car.reversingNow)
+            gearText.text = &quot;R&quot;;
+        else
+            gearText.text = (car.currentGear + 1).ToString();
+
+        // RPM bar normalized between min and max RPM
+        if (rpmBar != null) {
+            float normalizedRPM = Mathf.InverseLerp(car.minEngineRPM, car.maxEngineRPM, car.engineRPM);
+            rpmBar.value = normalizedRPM;
+        }
+
+    }
+}
+</code></pre>
+<h3 id='section-51'>Example 4: Listening to Events</h3>
+<p>This example demonstrates subscribing to multiple RCCP events to build a game manager.</p>
+<pre><code>
+using UnityEngine;
+
+public class RaceManager : MonoBehaviour {
+
+    void OnEnable() {
+        RCCP_Events.OnRCCPSpawned += HandleVehicleSpawned;
+        RCCP_Events.OnRCCPCollision += HandleCollision;
+        RCCP_Events.OnBehaviorChanged += HandleBehaviorChanged;
+        RCCP_Events.OnVehicleChangedToVehicle += HandleVehicleSwitch;
+    }
+
+    void OnDisable() {
+        RCCP_Events.OnRCCPSpawned -= HandleVehicleSpawned;
+        RCCP_Events.OnRCCPCollision -= HandleCollision;
+        RCCP_Events.OnBehaviorChanged -= HandleBehaviorChanged;
+        RCCP_Events.OnVehicleChangedToVehicle -= HandleVehicleSwitch;
+    }
+
+    void HandleVehicleSpawned(RCCP_CarController vehicle) {
+        Debug.Log(&quot;New vehicle entered the race: &quot; + vehicle.name);
+    }
+
+    void HandleCollision(RCCP_CarController vehicle, Collision collision) {
+        // Apply score penalty for wall hits
+        if (collision.gameObject.CompareTag(&quot;Wall&quot;)) {
+            Debug.Log(vehicle.name + &quot; hit a wall!&quot;);
+        }
+    }
+
+    void HandleBehaviorChanged() {
+        Debug.Log(&quot;Driving mode changed.&quot;);
+    }
+
+    void HandleVehicleSwitch(RCCP_CarController newVehicle) {
+        Debug.Log(&quot;Player now driving: &quot; + newVehicle.name);
+    }
+}
+</code></pre>
+<hr>
+<h2 id='section-52'>Quick Reference Table</h2>
+<p>A summary of every method in the <code>RCCP</code> class for quick lookup.</p>
+<table>
+<tr><th>Method</th><th>Parameters</th><th>Returns</th><th>Description</th></tr>
+<tr><td><code>SpawnRCC</code></td><td>prefab, position, rotation, register, control, engine</td><td><code>RCCP_CarController</code></td><td>Spawn a vehicle prefab.</td></tr>
+<tr><td><code>RegisterPlayerVehicle</code></td><td>vehicle</td><td><code>void</code></td><td>Register as player vehicle.</td></tr>
+<tr><td><code>RegisterPlayerVehicle</code></td><td>vehicle, isControllable</td><td><code>void</code></td><td>Register with control state.</td></tr>
+<tr><td><code>RegisterPlayerVehicle</code></td><td>vehicle, isControllable, engineState</td><td><code>void</code></td><td>Register with control and engine state.</td></tr>
+<tr><td><code>DeRegisterPlayerVehicle</code></td><td>(none)</td><td><code>void</code></td><td>Remove player vehicle registration.</td></tr>
+<tr><td><code>SetControl</code></td><td>vehicle, isControllable</td><td><code>void</code></td><td>Enable/disable player input.</td></tr>
+<tr><td><code>SetExternalControl</code></td><td>vehicle, isExternal</td><td><code>void</code></td><td>Mark as AI/network controlled.</td></tr>
+<tr><td><code>SetEngine</code></td><td>vehicle, engineState</td><td><code>void</code></td><td>Start or stop the engine.</td></tr>
+<tr><td><code>SetAutomaticGear</code></td><td>vehicle, state (bool)</td><td><code>void</code></td><td>Toggle automatic/manual transmission.</td></tr>
+<tr><td><code>SetAutomaticGear</code></td><td>vehicle, transmissionType</td><td><code>void</code></td><td>Set specific transmission type.</td></tr>
+<tr><td><code>ChangeCamera</code></td><td>(none)</td><td><code>void</code></td><td>Cycle camera modes.</td></tr>
+<tr><td><code>Transport</code></td><td>position, rotation</td><td><code>void</code></td><td>Teleport the player vehicle.</td></tr>
+<tr><td><code>Transport</code></td><td>vehicle, position, rotation</td><td><code>void</code></td><td>Teleport a specific vehicle.</td></tr>
+<tr><td><code>Transport</code></td><td>vehicle, position, rotation, resetVelocity</td><td><code>void</code></td><td>Teleport with optional velocity reset.</td></tr>
+<tr><td><code>SetBehavior</code></td><td>behaviorIndex (int)</td><td><code>void</code></td><td>Apply behavior preset by index.</td></tr>
+<tr><td><code>SetBehavior</code></td><td>behaviorName (string)</td><td><code>void</code></td><td>Apply behavior preset by name.</td></tr>
+<tr><td><code>GetBehaviorIndexByName</code></td><td>behaviorName</td><td><code>int</code></td><td>Get preset index (-1 if not found).</td></tr>
+<tr><td><code>GetBehaviorByName</code></td><td>behaviorName</td><td><code>BehaviorType</code></td><td>Get preset object (null if not found).</td></tr>
+<tr><td><code>SetMobileController</code></td><td>mobileController</td><td><code>void</code></td><td>Change mobile input method.</td></tr>
+<tr><td><code>StartStopRecord</code></td><td>vehicle</td><td><code>void</code></td><td>Toggle recording.</td></tr>
+<tr><td><code>StartStopReplay</code></td><td>vehicle</td><td><code>void</code></td><td>Toggle replay of last recording.</td></tr>
+<tr><td><code>StartStopReplay</code></td><td>vehicle, recordedClip</td><td><code>void</code></td><td>Toggle replay of specific clip.</td></tr>
+<tr><td><code>StopRecordReplay</code></td><td>vehicle</td><td><code>void</code></td><td>Stop all recording/replay.</td></tr>
+<tr><td><code>Repair</code></td><td>carController</td><td><code>void</code></td><td>Repair a specific vehicle.</td></tr>
+<tr><td><code>Repair</code></td><td>(none)</td><td><code>void</code></td><td>Repair the player vehicle.</td></tr>
+<tr><td><code>CleanSkidmarks</code></td><td>(none)</td><td><code>void</code></td><td>Remove all skidmarks.</td></tr>
+<tr><td><code>CleanSkidmarks</code></td><td>index (int)</td><td><code>void</code></td><td>Remove skidmarks by index.</td></tr>
+</table>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

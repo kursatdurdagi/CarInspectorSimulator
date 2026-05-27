@@ -1,0 +1,384 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>05_inputs</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Inputs</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Inputs</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Overview</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Input Architecture</a></li>
+<li style='margin-left:40px'><a href='#section-3'>Action Maps</a></li>
+<li style='margin-left:40px'><a href='#section-4'>RCCP_Inputs Struct</a></li>
+<li style='margin-left:20px'><a href='#section-5'>Default Keyboard Bindings</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Vehicle Controls</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Camera Controls</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Optional Controls</a></li>
+<li style='margin-left:20px'><a href='#section-9'>Default Gamepad Bindings</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Vehicle Controls</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Camera Controls</a></li>
+<li style='margin-left:20px'><a href='#section-12'>Additional Control Schemes</a></li>
+<li style='margin-left:20px'><a href='#section-13'>Transmission Modes</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Automatic</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Manual</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Automatic DNRP (Semi-Automatic)</a></li>
+<li style='margin-left:20px'><a href='#section-17'>Input Component Settings</a></li>
+<li style='margin-left:40px'><a href='#section-18'>Steering Curve</a></li>
+<li style='margin-left:40px'><a href='#section-19'>Steering Limiter</a></li>
+<li style='margin-left:40px'><a href='#section-20'>Counter Steering</a></li>
+<li style='margin-left:40px'><a href='#section-21'>Auto Reverse</a></li>
+<li style='margin-left:40px'><a href='#section-22'>Inverse Throttle/Brake on Reverse</a></li>
+<li style='margin-left:40px'><a href='#section-23'>Cut Throttle When Shifting</a></li>
+<li style='margin-left:40px'><a href='#section-24'>Brake/Handbrake on Disable</a></li>
+<li style='margin-left:40px'><a href='#section-25'>Deadzones</a></li>
+<li style='margin-left:20px'><a href='#section-26'>Input Rebinding at Runtime</a></li>
+<li style='margin-left:40px'><a href='#section-27'>How It Works</a></li>
+<li style='margin-left:40px'><a href='#section-28'>Key Classes</a></li>
+<li style='margin-left:40px'><a href='#section-29'>Auto Save/Load</a></li>
+<li style='margin-left:40px'><a href='#section-30'>Setting Up Rebind UI</a></li>
+<li style='margin-left:20px'><a href='#section-31'>Input Events</a></li>
+<li style='margin-left:40px'><a href='#section-32'>Gear Events</a></li>
+<li style='margin-left:40px'><a href='#section-33'>Camera Events</a></li>
+<li style='margin-left:40px'><a href='#section-34'>Light Events</a></li>
+<li style='margin-left:40px'><a href='#section-35'>Engine Events</a></li>
+<li style='margin-left:40px'><a href='#section-36'>Stability Helper Events</a></li>
+<li style='margin-left:40px'><a href='#section-37'>Other Events</a></li>
+<li style='margin-left:40px'><a href='#section-38'>Subscribing to Events</a></li>
+<li style='margin-left:20px'><a href='#section-39'>Mobile Input</a></li>
+<li style='margin-left:20px'><a href='#section-40'>Troubleshooting</a></li>
+<li style='margin-left:40px'><a href='#section-41'>No input response at all</a></li>
+<li style='margin-left:40px'><a href='#section-42'>Vehicle not responding to input</a></li>
+<li style='margin-left:40px'><a href='#section-43'>Stuck inputs after alt-tabbing</a></li>
+<li style='margin-left:40px'><a href='#section-44'>Rebindings not saving</a></li>
+<li style='margin-left:40px'><a href='#section-45'>Gamepad not detected</a></li>
+<li style='margin-left:20px'><a href='#section-46'>Next Steps</a></li>
+</ul></div>
+<h2 id='section-1'>Overview</h2>
+<p>RCCP uses Unity's <strong>New Input System</strong> (<code>com.unity.inputsystem</code> package) for all player input. This replaces the legacy <code>Input.GetAxis</code> / <code>Input.GetKey</code> approach with a modern, data-driven system that supports multiple devices out of the box.</p>
+<p>Key points:</p>
+<ul>
+<li>All input processing goes through the <strong>RCCP_InputManager</strong> singleton.</li>
+<li>Input actions and their bindings are defined in a Unity <strong>InputActionAsset</strong> file located at <code>Assets/Realistic Car Controller Pro/InputActions/RCCP_InputActions.inputactions</code>.</li>
+<li>The asset is referenced through the <strong>RCCP_InputActions</strong> ScriptableObject stored in <code>Resources/RCCP_InputActions.asset</code>.</li>
+<li>Each vehicle has an <strong>RCCP_Input</strong> component that receives processed inputs from the manager and applies them to the car controller.</li>
+<li>Four control schemes are preconfigured: Keyboard &amp; Mouse, Gamepad, Logitech G920 racing wheel, and Oculus Quest.</li>
+</ul>
+<h2 id='section-2'>Input Architecture</h2>
+<p>Input flows through three layers before reaching the vehicle:</p>
+<pre><code>
+InputActionAsset (.inputactions file)
+        |
+        v
+RCCP_InputManager  (singleton, reads actions, fires static events)
+        |
+        v
+RCCP_Input  (per-vehicle component, processes and applies inputs)
+        |
+        v
+RCCP_CarController  (vehicle systems consume throttle, brake, steer, etc.)
+</code></pre>
+<h3 id='section-3'>Action Maps</h3>
+<p>The InputActionAsset contains three action maps:</p>
+<table>
+<tr><th>Action Map</th><th>Purpose</th><th>Actions</th></tr>
+<tr><td><strong>Vehicle</strong></td><td>Driving controls</td><td>Throttle, Brake, Steering, Handbrake, NOS, Clutch, Engine, Lights, Indicators, Gears, Trail Detach</td></tr>
+<tr><td><strong>Camera</strong></td><td>Camera control</td><td>MouseInput, Change Camera, Look Back, Zoom, Hold (orbit)</td></tr>
+<tr><td><strong>Optional</strong></td><td>Recording and replay</td><td>Record, Replay</td></tr>
+</table>
+<p>All three maps are enabled simultaneously at runtime. The RCCP_InputManager caches references to each map on initialization for performance.</p>
+<h3 id='section-4'>RCCP_Inputs Struct</h3>
+<p>The <code>RCCP_Inputs</code> class carries all analog input values between the manager and vehicle components:</p>
+<table>
+<tr><th>Field</th><th>Type</th><th>Range</th><th>Description</th></tr>
+<tr><td><code>throttleInput</code></td><td>float</td><td>0 to 1</td><td>Throttle pedal amount</td></tr>
+<tr><td><code>brakeInput</code></td><td>float</td><td>0 to 1</td><td>Brake pedal amount</td></tr>
+<tr><td><code>steerInput</code></td><td>float</td><td>-1 to 1</td><td>Steering direction (negative = left, positive = right)</td></tr>
+<tr><td><code>handbrakeInput</code></td><td>float</td><td>0 to 1</td><td>Handbrake engagement</td></tr>
+<tr><td><code>clutchInput</code></td><td>float</td><td>0 to 1</td><td>Clutch disengagement</td></tr>
+<tr><td><code>nosInput</code></td><td>float</td><td>0 to 1</td><td>Nitrous oxide activation</td></tr>
+<tr><td><code>mouseInput</code></td><td>Vector2</td><td>unbounded</td><td>Mouse/stick delta for camera orbit</td></tr>
+</table>
+<p>Button-press actions (engine start, lights, gear shifts, etc.) are not carried in this struct. They are delivered via static events instead. See <a href='#input-events'>Input Events</a> below.</p>
+<h2 id='section-5'>Default Keyboard Bindings</h2>
+<h3 id='section-6'>Vehicle Controls</h3>
+<table>
+<tr><th>Action</th><th>Keyboard Key</th><th>Description</th></tr>
+<tr><td>Throttle</td><td>W / Up Arrow</td><td>Accelerate</td></tr>
+<tr><td>Brake</td><td>S / Down Arrow</td><td>Brake / Decelerate</td></tr>
+<tr><td>Steer Left</td><td>A / Left Arrow</td><td>Turn left</td></tr>
+<tr><td>Steer Right</td><td>D / Right Arrow</td><td>Turn right</td></tr>
+<tr><td>Handbrake</td><td>Space</td><td>Engage handbrake</td></tr>
+<tr><td>NOS (Nitrous)</td><td>F</td><td>Activate nitrous oxide boost</td></tr>
+<tr><td>Clutch</td><td>M</td><td>Disengage clutch</td></tr>
+<tr><td>Start/Stop Engine</td><td>I</td><td>Toggle engine on/off</td></tr>
+<tr><td>Low Beam Headlights</td><td>L</td><td>Toggle low beam headlights</td></tr>
+<tr><td>High Beam Headlights</td><td>K</td><td>Toggle high beam headlights</td></tr>
+<tr><td>Indicator Left</td><td>Q</td><td>Toggle left turn signal</td></tr>
+<tr><td>Indicator Right</td><td>E</td><td>Toggle right turn signal</td></tr>
+<tr><td>Indicator Hazard</td><td>Z</td><td>Toggle hazard lights</td></tr>
+<tr><td>Gear Shift Up</td><td>Left Shift</td><td>Shift up one gear</td></tr>
+<tr><td>Gear Shift Down</td><td>Left Ctrl</td><td>Shift down one gear</td></tr>
+<tr><td>Gear N (Neutral)</td><td>N</td><td>Toggle neutral gear</td></tr>
+<tr><td>Gear 1</td><td>1</td><td>Shift directly to 1st gear</td></tr>
+<tr><td>Gear 2</td><td>2</td><td>Shift directly to 2nd gear</td></tr>
+<tr><td>Gear 3</td><td>3</td><td>Shift directly to 3rd gear</td></tr>
+<tr><td>Gear 4</td><td>4</td><td>Shift directly to 4th gear</td></tr>
+<tr><td>Gear 5</td><td>5</td><td>Shift directly to 5th gear</td></tr>
+<tr><td>Gear 6</td><td>6</td><td>Shift directly to 6th gear</td></tr>
+<tr><td>Trail Detach</td><td>T</td><td>Detach attached trailer</td></tr>
+</table>
+<h3 id='section-7'>Camera Controls</h3>
+<table>
+<tr><th>Action</th><th>Keyboard / Mouse</th><th>Description</th></tr>
+<tr><td>Change Camera</td><td>C</td><td>Cycle through camera modes</td></tr>
+<tr><td>Look Back</td><td>B</td><td>Look behind vehicle (hold)</td></tr>
+<tr><td>Camera Orbit</td><td>Mouse Delta</td><td>Orbit camera around vehicle</td></tr>
+<tr><td>Hold Orbit</td><td>Left Mouse Button</td><td>Enable camera orbit mode</td></tr>
+<tr><td>Zoom</td><td>Mouse Scroll Wheel</td><td>Zoom camera in/out</td></tr>
+</table>
+<h3 id='section-8'>Optional Controls</h3>
+<table>
+<tr><th>Action</th><th>Keyboard Key</th><th>Description</th></tr>
+<tr><td>Record</td><td>R</td><td>Start/stop recording vehicle state</td></tr>
+<tr><td>Replay</td><td>P</td><td>Start/stop replaying recorded state</td></tr>
+</table>
+<h2 id='section-9'>Default Gamepad Bindings</h2>
+<p>These bindings use the standard Gamepad layout. Button names follow Unity's convention: Button South = A (Xbox) / X (PlayStation), Button East = B (Xbox) / O (PlayStation), and so on.</p>
+<h3 id='section-10'>Vehicle Controls</h3>
+<table>
+<tr><th>Action</th><th>Gamepad Input</th><th>Description</th></tr>
+<tr><td>Throttle</td><td>Right Trigger</td><td>Accelerate</td></tr>
+<tr><td>Brake</td><td>Left Trigger</td><td>Brake / Decelerate</td></tr>
+<tr><td>Steering</td><td>Left Stick (horizontal)</td><td>Turn left/right</td></tr>
+<tr><td>Handbrake</td><td>Button South (A / X)</td><td>Engage handbrake</td></tr>
+<tr><td>NOS (Nitrous)</td><td>Button East (B / O)</td><td>Activate nitrous</td></tr>
+<tr><td>Start/Stop Engine</td><td>Button North (Y / Triangle)</td><td>Toggle engine</td></tr>
+<tr><td>Low Beam Headlights</td><td>D-Pad Up</td><td>Toggle low beam</td></tr>
+<tr><td>High Beam Headlights</td><td>Left Stick Down</td><td>Toggle high beam</td></tr>
+<tr><td>Indicator Left</td><td>D-Pad Left</td><td>Toggle left signal</td></tr>
+<tr><td>Indicator Right</td><td>D-Pad Right</td><td>Toggle right signal</td></tr>
+<tr><td>Indicator Hazard</td><td>D-Pad Down</td><td>Toggle hazard lights</td></tr>
+<tr><td>Gear Shift Up</td><td>Right Shoulder (RB / R1)</td><td>Shift up</td></tr>
+<tr><td>Gear Shift Down</td><td>Left Shoulder (LB / L1)</td><td>Shift down</td></tr>
+<tr><td>Trail Detach</td><td>Right Stick Press</td><td>Detach trailer</td></tr>
+</table>
+<h3 id='section-11'>Camera Controls</h3>
+<table>
+<tr><th>Action</th><th>Gamepad Input</th><th>Description</th></tr>
+<tr><td>Change Camera</td><td>Left Stick Press</td><td>Cycle camera modes</td></tr>
+<tr><td>Look Back</td><td>Button West (X / Square)</td><td>Look behind (hold)</td></tr>
+<tr><td>Camera Orbit</td><td>Right Stick</td><td>Orbit camera</td></tr>
+<tr><td>Hold Orbit</td><td>Right Stick Press</td><td>Toggle orbit mode</td></tr>
+</table>
+<h2 id='section-12'>Additional Control Schemes</h2>
+<p>RCCP includes preconfigured bindings for two additional devices:</p>
+<ul>
+<li><strong>Logitech G920 Racing Wheel</strong> -- Mapped to wheel axis for steering, pedals for throttle/brake/clutch, and wheel buttons for all other actions. The control scheme name is <code>G920</code>.</li>
+<li><strong>Oculus Quest Controllers</strong> -- Mapped to triggers for throttle/brake, thumbstick for steering, and controller buttons for other actions. The control scheme name is <code>Oculus Quest</code>.</li>
+</ul>
+<p>You can view and edit all bindings by opening the InputActionAsset at <code>Assets/Realistic Car Controller Pro/InputActions/RCCP_InputActions.inputactions</code> in Unity's Input Actions editor.</p>
+<h2 id='section-13'>Transmission Modes</h2>
+<p>RCCP supports three transmission types, configured on the <strong>RCCP_Gearbox</strong> component. The active transmission mode determines how gear input is interpreted.</p>
+<h3 id='section-14'>Automatic</h3>
+<p>The gearbox shifts automatically based on engine RPM thresholds. No manual gear input is required from the player. The shift point is controlled by the <code>shiftThreshold</code> property on RCCP_Gearbox (higher values = shifts at higher RPM for a sportier feel).</p>
+<p>When <strong>Auto Reverse</strong> is enabled on RCCP_Input (default: on), the vehicle automatically shifts into reverse when the player holds the brake at low speed, and shifts back to first gear when accelerating forward.</p>
+<h3 id='section-15'>Manual</h3>
+<p>The player shifts gears manually using the Gear Shift Up and Gear Shift Down inputs (Left Shift / Left Ctrl by default). Direct gear selection is also available using number keys 1-6, N for neutral, or by pressing Gear_R for reverse (only available on G920 wheel scheme by default).</p>
+<h3 id='section-16'>Automatic DNRP (Semi-Automatic)</h3>
+<p>Uses a Drive / Neutral / Reverse / Park selector similar to a real automatic vehicle. Within Drive mode, gears shift automatically. The player selects the operating mode (D, N, R, or P) using the gear selector inputs.</p>
+<h2 id='section-17'>Input Component Settings</h2>
+<p>Each vehicle has an <strong>RCCP_Input</strong> component with per-vehicle input processing settings. These let you fine-tune how raw input translates into vehicle behavior.</p>
+<h3 id='section-18'>Steering Curve</h3>
+<p>An <code>AnimationCurve</code> that reduces the maximum steering angle as vehicle speed increases. This prevents unrealistic sharp turns at high speed.</p>
+<ul>
+<li><strong>X axis</strong> = vehicle speed in km/h</li>
+<li><strong>Y axis</strong> = steering multiplier (0 to 1)</li>
+<li>Default curve: full steering at 0 km/h, reduced to 0.2 at 100 km/h, reduced to 0.15 at 200 km/h</li>
+</ul>
+<h3 id='section-19'>Steering Limiter</h3>
+<p>When enabled (default: on), reduces the allowed steering angle when the vehicle is skidding sideways at speeds above 15 km/h. This prevents the player from oversteering into an unrecoverable spin.</p>
+<h3 id='section-20'>Counter Steering</h3>
+<p>When enabled (default: on), automatically applies a slight counter-steer correction based on front axle sideways slip. This helps stabilize the vehicle during oversteer situations.</p>
+<p>The strength is controlled by <code>counterSteerFactor</code> (0 to 1, default: 0.5).</p>
+<h3 id='section-21'>Auto Reverse</h3>
+<p>When enabled (default: on) and the transmission is set to Automatic, the vehicle automatically shifts into reverse when the brake is held firmly (over 75% input) while nearly stopped (under 3 km/h). It shifts back to first gear when the vehicle starts moving forward again.</p>
+<h3 id='section-22'>Inverse Throttle/Brake on Reverse</h3>
+<p>When enabled (default: on) and the transmission is Automatic, the throttle and brake inputs are swapped while the vehicle is in reverse gear. This means pressing the throttle key drives the vehicle backward and pressing the brake key slows it down, which feels more natural.</p>
+<h3 id='section-23'>Cut Throttle When Shifting</h3>
+<p>When enabled (default: on), throttle input is forced to zero during an active gear shift. This creates a brief power interruption similar to a real manual gearbox, preventing harsh gear engagement.</p>
+<h3 id='section-24'>Brake/Handbrake on Disable</h3>
+<p>Two options control what happens when the vehicle loses player control (<code>canControl</code> becomes false):</p>
+<ul>
+<li><strong>Apply Brake On Disable</strong> (default: off) -- Applies full brake when the vehicle is not controllable.</li>
+<li><strong>Apply HandBrake On Disable</strong> (default: on) -- Applies full handbrake when the vehicle is not controllable. This prevents the vehicle from rolling away.</li>
+</ul>
+<h3 id='section-25'>Deadzones</h3>
+<p>Configurable per input axis to prevent analog stick drift or minor input noise from affecting the vehicle. Each deadzone is a float from 0 to 0.2 (default: 0.05 for all axes).</p>
+<table>
+<tr><th>Deadzone Property</th><th>Applies To</th></tr>
+<tr><td><code>steeringDeadzone</code></td><td>Steering input</td></tr>
+<tr><td><code>throttleDeadzone</code></td><td>Throttle input</td></tr>
+<tr><td><code>brakeDeadzone</code></td><td>Brake input</td></tr>
+<tr><td><code>handbrakeDeadzone</code></td><td>Handbrake input</td></tr>
+<tr><td><code>nosDeadzone</code></td><td>Nitrous input</td></tr>
+<tr><td><code>clutchDeadzone</code></td><td>Clutch input</td></tr>
+</table>
+<p>Values below the deadzone threshold are treated as zero. The remaining range is remapped to 0-1 so you do not lose any usable range.</p>
+<h2 id='section-26'>Input Rebinding at Runtime</h2>
+<p>RCCP supports letting players remap controls at runtime using Unity's built-in interactive rebinding API.</p>
+<h3 id='section-27'>How It Works</h3>
+<ol>
+<li>The player clicks a rebind button in the UI.</li>
+<li>An overlay appears with a &quot;Waiting for input...&quot; prompt.</li>
+<li>The player presses the desired key or button.</li>
+<li>The new binding is applied and displayed.</li>
+<li>Bindings are saved to PlayerPrefs as JSON.</li>
+</ol>
+<h3 id='section-28'>Key Classes</h3>
+<table>
+<tr><th>Class</th><th>Purpose</th></tr>
+<tr><td><code>RCCP_RebindSaveLoad</code></td><td>Static utility that saves and loads binding overrides to/from PlayerPrefs using the key <code>&quot;rebinds&quot;</code>.</td></tr>
+<tr><td><code>RCCP_UI_RebindInput</code></td><td>UI component that handles interactive rebinding for a single action. Attach to a UI button, assign an <code>InputActionReference</code>, and wire up the text labels.</td></tr>
+<tr><td><code>RCCP_UI_RebindInputReset</code></td><td>UI component that resets all rebind overrides back to defaults.</td></tr>
+</table>
+<h3 id='section-29'>Auto Save/Load</h3>
+<p>When <code>autoSaveLoadInputRebind</code> is enabled in <a href='04_settings.html'>RCCP_Settings</a>, rebind overrides are automatically saved after changes and loaded on startup via <code>RCCP_RebindSaveLoad.Save()</code> and <code>RCCP_RebindSaveLoad.Load()</code>.</p>
+<h3 id='section-30'>Setting Up Rebind UI</h3>
+<ol>
+<li>Create a UI button for each action you want to be rebindable.</li>
+<li>Add the <code>RCCP_UI_RebindInput</code> component to each button.</li>
+<li>Assign the <code>InputActionReference</code> for the target action.</li>
+<li>Assign TextMeshPro labels for the action name and current binding display.</li>
+<li>Optionally assign a rebind overlay GameObject that appears during rebinding.</li>
+<li>Call <code>StartInteractiveRebind()</code> from the button's OnClick event.</li>
+</ol>
+<h2 id='section-31'>Input Events</h2>
+<p>The RCCP_InputManager fires static events for all button-press actions. These events are not carried in the RCCP_Inputs struct because they are one-shot triggers rather than continuous analog values.</p>
+<h3 id='section-32'>Gear Events</h3>
+<table>
+<tr><th>Event</th><th>Signature</th><th>Fired When</th></tr>
+<tr><td><code>OnGearShiftedUp</code></td><td><code>void()</code></td><td>Player shifts up one gear</td></tr>
+<tr><td><code>OnGearShiftedDown</code></td><td><code>void()</code></td><td>Player shifts down one gear</td></tr>
+<tr><td><code>OnGearShiftedTo</code></td><td><code>void(int gearIndex)</code></td><td>Player selects a specific gear (0-5 for gears 1-6, -1 for reverse)</td></tr>
+<tr><td><code>OnGearShiftedToN</code></td><td><code>void()</code></td><td>Player toggles neutral gear</td></tr>
+<tr><td><code>OnGearToggle</code></td><td><code>void(TransmissionType)</code></td><td>Transmission type is switched</td></tr>
+<tr><td><code>OnAutomaticGear</code></td><td><code>void(SemiAutomaticDNRPGear)</code></td><td>DNRP selector position changes (D, N, R, or P)</td></tr>
+</table>
+<h3 id='section-33'>Camera Events</h3>
+<table>
+<tr><th>Event</th><th>Signature</th><th>Fired When</th></tr>
+<tr><td><code>OnChangedCamera</code></td><td><code>void()</code></td><td>Player cycles to next camera</td></tr>
+<tr><td><code>OnLookBackCamera</code></td><td><code>void(bool state)</code></td><td>Look-back pressed (true) or released (false)</td></tr>
+<tr><td><code>OnHoldOrbitCamera</code></td><td><code>void(bool state)</code></td><td>Orbit hold pressed (true) or released (false)</td></tr>
+</table>
+<h3 id='section-34'>Light Events</h3>
+<table>
+<tr><th>Event</th><th>Signature</th><th>Fired When</th></tr>
+<tr><td><code>OnPressedLowBeamLights</code></td><td><code>void()</code></td><td>Low beam headlights toggled</td></tr>
+<tr><td><code>OnPressedHighBeamLights</code></td><td><code>void()</code></td><td>High beam headlights toggled</td></tr>
+<tr><td><code>OnPressedLeftIndicatorLights</code></td><td><code>void()</code></td><td>Left turn signal toggled</td></tr>
+<tr><td><code>OnPressedRightIndicatorLights</code></td><td><code>void()</code></td><td>Right turn signal toggled</td></tr>
+<tr><td><code>OnPressedIndicatorLights</code></td><td><code>void()</code></td><td>Hazard lights toggled</td></tr>
+</table>
+<h3 id='section-35'>Engine Events</h3>
+<table>
+<tr><th>Event</th><th>Signature</th><th>Fired When</th></tr>
+<tr><td><code>OnStartEngine</code></td><td><code>void()</code></td><td>Engine start/stop requested</td></tr>
+<tr><td><code>OnStopEngine</code></td><td><code>void()</code></td><td>Engine stop requested</td></tr>
+</table>
+<h3 id='section-36'>Stability Helper Events</h3>
+<table>
+<tr><th>Event</th><th>Signature</th><th>Fired When</th></tr>
+<tr><td><code>OnSteeringHelper</code></td><td><code>void()</code></td><td>Steering helper toggled</td></tr>
+<tr><td><code>OnTractionHelper</code></td><td><code>void()</code></td><td>Traction helper toggled</td></tr>
+<tr><td><code>OnAngularDragHelper</code></td><td><code>void()</code></td><td>Angular drag helper toggled</td></tr>
+<tr><td><code>OnABS</code></td><td><code>void()</code></td><td>ABS toggled</td></tr>
+<tr><td><code>OnESP</code></td><td><code>void()</code></td><td>ESP toggled</td></tr>
+<tr><td><code>OnTCS</code></td><td><code>void()</code></td><td>TCS toggled</td></tr>
+</table>
+<h3 id='section-37'>Other Events</h3>
+<table>
+<tr><th>Event</th><th>Signature</th><th>Fired When</th></tr>
+<tr><td><code>OnTrailerDetach</code></td><td><code>void()</code></td><td>Trailer detach requested</td></tr>
+<tr><td><code>OnRecord</code></td><td><code>void()</code></td><td>Recording toggled</td></tr>
+<tr><td><code>OnReplay</code></td><td><code>void()</code></td><td>Replay toggled</td></tr>
+<tr><td><code>OnOptions</code></td><td><code>void()</code></td><td>Options menu requested</td></tr>
+</table>
+<h3 id='section-38'>Subscribing to Events</h3>
+<p>To listen for input events from your own scripts:</p>
+<pre><code>
+void OnEnable() {
+    RCCP_InputManager.OnGearShiftedUp += HandleGearUp;
+    RCCP_InputManager.OnPressedLowBeamLights += HandleLowBeam;
+}
+
+void OnDisable() {
+    RCCP_InputManager.OnGearShiftedUp -= HandleGearUp;
+    RCCP_InputManager.OnPressedLowBeamLights -= HandleLowBeam;
+}
+
+void HandleGearUp() {
+    Debug.Log(&quot;Player shifted up!&quot;);
+}
+
+void HandleLowBeam() {
+    Debug.Log(&quot;Low beam toggled!&quot;);
+}
+</code></pre>
+<p>Always unsubscribe in <code>OnDisable()</code> to prevent memory leaks and errors from destroyed objects.</p>
+<h2 id='section-39'>Mobile Input</h2>
+<p>When <code>mobileControllerEnabled</code> is turned on in <a href='04_settings.html'>RCCP_Settings</a>, the RCCP_InputManager switches from reading the InputActionAsset to reading values from <code>RCCP_MobileInputs.Instance</code> instead. This provides touch-based on-screen controls for throttle, brake, steering, handbrake, and NOS.</p>
+<p>For detailed information on setting up mobile controls, see <a href='07_mobile.html'>Mobile</a>.</p>
+<h2 id='section-40'>Troubleshooting</h2>
+<h3 id='section-41'>No input response at all</h3>
+<ul>
+<li>Verify the <code>com.unity.inputsystem</code> package is installed in the Package Manager.</li>
+<li>Make sure the <code>RCCP_InputActions</code> ScriptableObject exists in <code>Resources/</code> and has a valid InputActionAsset reference.</li>
+<li>Check the Console for errors like &quot;Could not find action map: Vehicle&quot; which indicate a misconfigured InputActionAsset.</li>
+<li>Ensure the Active Input Handling in Project Settings &gt; Player is set to &quot;Input System Package (New)&quot; or &quot;Both&quot;.</li>
+</ul>
+<h3 id='section-42'>Vehicle not responding to input</h3>
+<ul>
+<li>Confirm the vehicle has an <code>RCCP_Input</code> component attached.</li>
+<li>Check that <code>canControl</code> is true on the <code>RCCP_CarController</code>.</li>
+<li>Check that <code>externalControl</code> is false on the <code>RCCP_CarController</code> (if true, the vehicle expects inputs from an external source like AI).</li>
+<li>Make sure <code>overridePlayerInputs</code> is false on the <code>RCCP_Input</code> component (unless you intend to override inputs from code).</li>
+</ul>
+<h3 id='section-43'>Stuck inputs after alt-tabbing</h3>
+<p>RCCP automatically handles application focus and pause events. When the application loses focus or is paused, all input values are reset to zero and the InputActionAsset is temporarily disabled. If you still experience stuck inputs, check that no custom code is overriding the RCCP_InputManager inputs.</p>
+<h3 id='section-44'>Rebindings not saving</h3>
+<ul>
+<li>Verify <code>autoSaveLoadInputRebind</code> is enabled in <a href='04_settings.html'>RCCP_Settings</a>.</li>
+<li>Rebindings are stored in PlayerPrefs under the key <code>&quot;rebinds&quot;</code>. If PlayerPrefs are being cleared elsewhere in your project, saved bindings will be lost.</li>
+<li>Call <code>RCCP_RebindSaveLoad.Save()</code> manually after rebinding if auto-save is not enabled.</li>
+</ul>
+<h3 id='section-45'>Gamepad not detected</h3>
+<ul>
+<li>Make sure your gamepad is connected before entering Play Mode.</li>
+<li>Check that the Gamepad control scheme exists in the InputActionAsset.</li>
+<li>Some gamepads require specific drivers. Install the manufacturer's driver if Unity does not detect the device.</li>
+</ul>
+<h2 id='section-46'>Next Steps</h2>
+<ul>
+<li><a href='06_overriding_inputs.html'>Overriding Inputs</a> -- Control vehicles programmatically from code</li>
+<li><a href='07_mobile.html'>Mobile</a> -- Set up mobile touch controls</li>
+<li><a href='04_settings.html'>Settings</a> -- Configure global input settings and rebinding</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

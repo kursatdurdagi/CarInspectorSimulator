@@ -1,0 +1,759 @@
+/* ──── RCCP Welcome Window ─────────────────────────────── */
+/* Component styles for the Welcome Window EditorWindow.
+   Theme variables come from rccp_orange_theme.uss. */
+
+/* ──── Root & Layout ──────────────────────────────────── */
+
+.rccp-welcome-root {
+    flex-grow: 1;
+    background-color: var(--color-bg);
+}
+
+.rccp-welcome-body {
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.rccp-welcome-sidebar {
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 220px;
+    padding: var(--space-sm) 0;
+    border-right-width: 1px;
+    border-right-color: var(--color-border);
+    background-color: var(--color-surface);
+}
+
+.rccp-welcome-sidebar-banner {
+    height: 100px;
+    margin: var(--space-sm) var(--space-sm) var(--space-md) var(--space-sm);
+    border-radius: var(--radius-md);
+    -unity-background-scale-mode: scale-and-crop;
+    flex-shrink: 0;
+}
+
+.rccp-welcome-tabbar {
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.rccp-welcome-tabbar__button {
+    flex-direction: row;
+    align-items: center;
+    height: 34px;
+    font-size: var(--font-sm);
+    -unity-text-align: middle-left;
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--color-text-secondary);
+    border-width: 0;
+    border-radius: var(--radius-sm);
+    margin: 2px var(--space-sm);
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+    transition: background-color var(--transition-fast) ease-out;
+}
+
+.rccp-welcome-tabbar__button:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text);
+}
+
+.rccp-welcome-tab-active {
+    background-color: rgba(219, 125, 61, 0.85);
+    color: #ffffff;
+    border-bottom-color: rgba(0, 0, 0, 0);
+}
+
+.rccp-welcome-tab-active:hover {
+    background-color: rgba(219, 125, 61, 0.85);
+}
+
+.rccp-welcome-tabbar__icon {
+    width: 16px;
+    height: 16px;
+    margin-right: var(--space-sm);
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.rccp-welcome-tab-active .rccp-welcome-tabbar__icon {
+    -unity-background-image-tint-color: #ffffff;
+}
+
+.rccp-welcome-tabbar__label {
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+    -unity-text-align: middle-left;
+}
+
+.rccp-welcome-tabbar__button:hover .rccp-welcome-tabbar__label {
+    color: var(--color-text);
+}
+
+.rccp-welcome-tab-active .rccp-welcome-tabbar__label {
+    color: #ffffff;
+}
+
+.rccp-welcome-content {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.rccp-welcome-footer {
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-lg);
+    border-top-width: 1px;
+    border-top-color: var(--color-separator);
+    background-color: var(--color-surface);
+}
+
+.rccp-welcome-footer__label {
+    font-size: var(--font-xs);
+    color: var(--color-text-disabled);
+}
+
+/* ──── Content Components ─────────────────────────────── */
+
+.rccp-welcome-section {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md);
+    border-width: 1px;
+    border-color: var(--color-border);
+}
+
+.rccp-welcome-section__title {
+    font-size: var(--font-lg);
+    -unity-font-style: bold;
+    color: var(--color-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.rccp-welcome-section__subtitle {
+    font-size: var(--font-md);
+    -unity-font-style: bold;
+    color: var(--color-text);
+    margin-bottom: var(--space-xs);
+}
+
+.rccp-welcome-section__body {
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+    white-space: normal;
+    margin-bottom: var(--space-sm);
+}
+
+/* ──── Steps ──────────────────────────────────────────── */
+
+.rccp-welcome-step {
+    flex-direction: row;
+    margin-bottom: var(--space-md);
+    padding: var(--space-sm);
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-sm);
+}
+
+.rccp-welcome-step__number {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-size: var(--font-md);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    flex-shrink: 0;
+    margin-right: var(--space-md);
+}
+
+.rccp-welcome-step__content {
+    flex-grow: 1;
+}
+
+.rccp-welcome-step__title {
+    font-size: var(--font-md);
+    -unity-font-style: bold;
+    color: var(--color-text);
+    margin-bottom: 2px;
+}
+
+.rccp-welcome-step__description {
+    font-size: var(--font-xs);
+    color: var(--color-text-secondary);
+    white-space: normal;
+}
+
+/* ──── Buttons ────────────────────────────────────────── */
+
+.rccp-welcome-button {
+    height: 28px;
+    font-size: var(--font-sm);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
+    border-width: 1px;
+    border-color: var(--color-border);
+    margin-top: var(--space-xs);
+    margin-bottom: var(--space-xs);
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+    transition: background-color var(--transition-fast) ease-out;
+}
+
+.rccp-welcome-button:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.rccp-welcome-button--primary {
+    background-color: rgba(255, 87, 34, 0.85);
+    color: #ffffff;
+    border-color: rgba(255, 87, 34, 0.6);
+}
+
+.rccp-welcome-button--primary:hover {
+    background-color: rgba(255, 112, 67, 1.0);
+}
+
+.rccp-welcome-button--success {
+    background-color: rgba(76, 175, 80, 0.7);
+    color: #ffffff;
+    border-color: rgba(76, 175, 80, 0.5);
+}
+
+.rccp-welcome-button--success:hover {
+    background-color: rgba(76, 175, 80, 0.9);
+}
+
+.rccp-welcome-button--danger {
+    background-color: rgba(244, 67, 54, 0.7);
+    color: #ffffff;
+    border-color: rgba(244, 67, 54, 0.5);
+}
+
+.rccp-welcome-button--danger:hover {
+    background-color: rgba(244, 67, 54, 0.9);
+}
+
+.rccp-welcome-button--link {
+    background-color: rgba(0, 0, 0, 0);
+    color: var(--color-secondary);
+    border-width: 0;
+    padding: 0;
+    height: auto;
+    margin: 0;
+}
+
+.rccp-welcome-button--link:hover {
+    color: #64B5F6;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.rccp-welcome-button--promo {
+    background-color: rgba(33, 150, 243, 0.82);
+    color: #ffffff;
+    border-color: rgba(33, 150, 243, 0.5);
+}
+
+.rccp-welcome-button--promo:hover {
+    background-color: rgba(33, 150, 243, 1.0);
+}
+
+.rccp-welcome-button-row {
+    flex-direction: row;
+    margin-top: var(--space-sm);
+}
+
+.rccp-welcome-button-row > Button {
+    flex-grow: 1;
+    margin-right: var(--space-xs);
+}
+
+/* ──── Help Box ───────────────────────────────────────── */
+
+.rccp-welcome-helpbox {
+    padding: var(--space-md);
+    border-radius: var(--radius-sm);
+    border-left-width: 3px;
+    border-left-color: var(--color-border);
+    margin-bottom: var(--space-sm);
+}
+
+.rccp-welcome-helpbox__text {
+    font-size: var(--font-sm);
+    white-space: normal;
+}
+
+.rccp-welcome-helpbox--info {
+    background-color: rgba(33, 150, 243, 0.1);
+    border-left-color: var(--color-info);
+}
+
+.rccp-welcome-helpbox--info > .rccp-welcome-helpbox__text {
+    color: #90CAF9;
+}
+
+.rccp-welcome-helpbox--warning {
+    background-color: rgba(255, 152, 0, 0.1);
+    border-left-color: var(--color-warning);
+}
+
+.rccp-welcome-helpbox--warning > .rccp-welcome-helpbox__text {
+    color: #FFE082;
+}
+
+.rccp-welcome-helpbox--error {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-left-color: var(--color-error);
+}
+
+.rccp-welcome-helpbox--error > .rccp-welcome-helpbox__text {
+    color: #EF9A9A;
+}
+
+.rccp-welcome-helpbox--success {
+    background-color: rgba(76, 175, 80, 0.1);
+    border-left-color: var(--color-success);
+}
+
+.rccp-welcome-helpbox--success > .rccp-welcome-helpbox__text {
+    color: #A5D6A7;
+}
+
+/* ──── Scene/Addon Cards ──────────────────────────────── */
+
+.rccp-welcome-addon-card {
+    flex-direction: row;
+    align-items: center;
+    padding: var(--space-md);
+    margin-bottom: var(--space-xs);
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-sm);
+    border-width: 1px;
+    border-color: var(--color-border);
+}
+
+.rccp-welcome-addon-card__info {
+    flex-grow: 1;
+}
+
+.rccp-welcome-addon-card__title {
+    font-size: var(--font-md);
+    -unity-font-style: bold;
+    color: var(--color-text);
+}
+
+.rccp-welcome-addon-card__description {
+    font-size: var(--font-xs);
+    color: var(--color-text-secondary);
+}
+
+.rccp-welcome-addon-card__status {
+    font-size: var(--font-xs);
+    -unity-font-style: bold;
+    margin-left: var(--space-md);
+}
+
+.rccp-welcome-addon-card__status--installed {
+    color: var(--color-success);
+}
+
+.rccp-welcome-addon-card__status--available {
+    color: var(--color-text-secondary);
+}
+
+.rccp-welcome-scene-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: var(--space-sm);
+}
+
+.rccp-welcome-scene-button {
+    height: 26px;
+    font-size: var(--font-xs);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
+    border-width: 1px;
+    border-color: var(--color-border);
+    margin-right: var(--space-xs);
+    margin-bottom: var(--space-xs);
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+    transition: background-color var(--transition-fast) ease-out;
+}
+
+.rccp-welcome-scene-button:hover {
+    background-color: var(--color-surface-hover);
+}
+
+/* ──── Modal Overlay ──────────────────────────────────── */
+
+.rccp-welcome-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-overlay);
+    align-items: center;
+    justify-content: center;
+}
+
+.rccp-welcome-modal-panel {
+    width: 420px;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xxl);
+    border-width: 1px;
+    border-color: var(--color-border);
+}
+
+.rccp-welcome-modal-panel__title {
+    font-size: var(--font-xl);
+    -unity-font-style: bold;
+    color: var(--color-primary);
+    -unity-text-align: middle-center;
+    margin-bottom: var(--space-md);
+}
+
+.rccp-welcome-modal-panel__subtitle {
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-bottom: var(--space-lg);
+}
+
+.rccp-welcome-modal-message {
+    font-size: var(--font-sm);
+    -unity-text-align: middle-center;
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-sm);
+}
+
+.rccp-welcome-modal-message--error {
+    color: var(--color-error);
+}
+
+.rccp-welcome-modal-message--success {
+    color: var(--color-success);
+}
+
+/* ──── Grace Period Banner ────────────────────────────── */
+
+.rccp-welcome-grace-banner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-sm) var(--space-lg);
+    background-color: rgba(255, 152, 0, 0.2);
+    border-top-width: 1px;
+    border-top-color: rgba(255, 152, 0, 0.5);
+    flex-shrink: 0;
+}
+
+.rccp-welcome-grace-banner__label {
+    font-size: var(--font-sm);
+    color: #FFE082;
+    margin-right: var(--space-md);
+}
+
+/* ──── Separator ──────────────────────────────────────── */
+
+.rccp-welcome-separator {
+    height: 1px;
+    background-color: var(--color-separator);
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+/* ──── Version Badge ──────────────────────────────────── */
+
+.rccp-welcome-version {
+    font-size: var(--font-xs);
+    color: var(--color-text-disabled);
+    -unity-text-align: middle-center;
+    margin-top: var(--space-sm);
+}
+
+/* ──── Diagnostics Strip ──────────────────────────────── */
+
+.rccp-welcome-diagnostics {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: var(--space-sm) var(--space-md);
+    margin-bottom: var(--space-md);
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-sm);
+    border-left-width: 3px;
+    border-left-color: var(--color-primary);
+}
+
+.rccp-welcome-diagnostics__item {
+    font-size: var(--font-xs);
+    color: var(--color-text-secondary);
+    margin-right: var(--space-lg);
+}
+
+.rccp-welcome-diagnostics__item--ok {
+    color: var(--color-success);
+}
+
+.rccp-welcome-diagnostics__item--warn {
+    color: var(--color-warning);
+}
+
+.rccp-welcome-diagnostics__item--err {
+    color: var(--color-error);
+}
+
+/* ──── Step Card Row (Getting Started grid) ───────────── */
+
+.rccp-welcome-step-row {
+    flex-direction: row;
+    margin-bottom: var(--space-md);
+}
+
+.rccp-welcome-step-card {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 0 var(--space-xs);
+    padding: var(--space-md);
+    background-color: var(--color-surface);
+    border-width: 1px;
+    border-color: var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.rccp-welcome-step-card__header {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+}
+
+.rccp-welcome-step-card__badge {
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-size: var(--font-xs);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    flex-shrink: 0;
+}
+
+.rccp-welcome-step-card__title {
+    font-size: var(--font-sm);
+    -unity-font-style: bold;
+    color: var(--color-text);
+    margin-bottom: 4px;
+    white-space: normal;
+}
+
+.rccp-welcome-step-card__desc {
+    font-size: var(--font-xs);
+    color: var(--color-text-secondary);
+    white-space: normal;
+    margin-bottom: var(--space-sm);
+    min-height: 28px;
+}
+
+.rccp-welcome-step-card__button {
+    height: 26px;
+    font-size: var(--font-xs);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
+    border-width: 1px;
+    border-color: var(--color-border);
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+    transition: background-color var(--transition-fast) ease-out;
+}
+
+.rccp-welcome-step-card__button:hover {
+    background-color: rgba(255, 87, 34, 0.85);
+    border-color: rgba(255, 87, 34, 0.6);
+    color: #ffffff;
+}
+
+/* ──── Quick Start Row (4-column links section) ───────── */
+
+.rccp-welcome-quickstart-row {
+    flex-direction: row;
+    padding: var(--space-md);
+    background-color: var(--color-surface);
+    border-width: 1px;
+    border-color: var(--color-border);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+}
+
+.rccp-welcome-quickstart-col {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin-right: var(--space-md);
+}
+
+.rccp-welcome-quickstart__title {
+    font-size: var(--font-sm);
+    -unity-font-style: bold;
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+}
+
+.rccp-welcome-quickstart__row {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.rccp-welcome-quickstart__row--margin-top {
+    margin-top: var(--space-sm);
+}
+
+.rccp-welcome-quickstart__bullet {
+    font-size: var(--font-xs);
+    color: var(--color-text);
+    margin-bottom: 4px;
+}
+
+/* ──── Scene Card Row (Demos grid, wraps to N per line) ─ */
+
+.rccp-welcome-scene-card-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    margin-bottom: var(--space-md);
+}
+
+.rccp-welcome-scene-card {
+    flex-grow: 1;
+    flex-basis: 0;
+    flex-shrink: 0;
+    min-width: 180px;
+    align-self: flex-start;
+    margin: var(--space-xs);
+    padding: var(--space-md);
+    background-color: var(--color-surface);
+    border-width: 1px;
+    border-color: var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.rccp-welcome-scene-card__title {
+    font-size: var(--font-sm);
+    -unity-font-style: bold;
+    color: var(--color-text);
+    margin-bottom: 2px;
+    white-space: normal;
+}
+
+.rccp-welcome-scene-card__subtitle {
+    font-size: var(--font-xs);
+    color: var(--color-text-secondary);
+    white-space: normal;
+    margin-bottom: var(--space-sm);
+    min-height: 22px;
+}
+
+.rccp-welcome-scene-card__button {
+    height: 24px;
+    font-size: var(--font-xs);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
+    border-width: 1px;
+    border-color: var(--color-border);
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+    transition: background-color var(--transition-fast) ease-out;
+}
+
+.rccp-welcome-scene-card__button:hover {
+    background-color: rgba(255, 87, 34, 0.85);
+    border-color: rgba(255, 87, 34, 0.6);
+    color: #ffffff;
+}
+
+/* ──── Feature Card Row (Addons grid, wraps to N per line) ── */
+
+.rccp-welcome-feature-card-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    margin-bottom: var(--space-md);
+}
+
+.rccp-welcome-feature-card {
+    flex-grow: 1;
+    flex-basis: 0;
+    flex-shrink: 0;
+    min-width: 220px;
+    align-self: flex-start;
+    margin: var(--space-xs);
+    padding: var(--space-md);
+    background-color: var(--color-surface);
+    border-width: 1px;
+    border-color: var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.rccp-welcome-feature-card__title {
+    font-size: var(--font-md);
+    -unity-font-style: bold;
+    color: var(--color-text);
+    margin-bottom: var(--space-xs);
+    white-space: normal;
+}
+
+.rccp-welcome-feature-card__desc {
+    font-size: var(--font-xs);
+    color: var(--color-text-secondary);
+    white-space: normal;
+    margin-bottom: var(--space-sm);
+    min-height: 36px;
+}
+
+.rccp-welcome-feature-card__status {
+    font-size: var(--font-xs);
+    -unity-font-style: bold;
+    color: var(--color-success);
+    -unity-text-align: middle-left;
+    margin-top: var(--space-xs);
+}
+
+.rccp-welcome-feature-card__button {
+    height: 26px;
+    font-size: var(--font-xs);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
+    border-width: 1px;
+    border-color: var(--color-border);
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+    transition: background-color var(--transition-fast) ease-out;
+}
+
+.rccp-welcome-feature-card__button:hover {
+    background-color: rgba(255, 87, 34, 0.85);
+    border-color: rgba(255, 87, 34, 0.6);
+    color: #ffffff;
+}
+
+.rccp-welcome-feature-card__button--promo {
+    background-color: rgba(255, 87, 34, 0.85);
+    border-color: rgba(255, 87, 34, 0.6);
+    color: #ffffff;
+}
+
+.rccp-welcome-feature-card__button--promo:hover {
+    background-color: rgba(255, 112, 67, 1.0);
+    border-color: rgba(255, 112, 67, 0.8);
+    color: #ffffff;
+}

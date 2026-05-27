@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>11_damage_system</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Damage System</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Damage System</a></li>
+<li style='margin-left:20px'><a href='#section-1'>RCCP_Damage Component</a></li>
+<li style='margin-left:40px'><a href='#section-2'>Key Properties</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Mesh Deformation</a></li>
+<li style='margin-left:40px'><a href='#section-4'>How It Works</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Configuration</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Example: Adjusting Deformation Sensitivity</a></li>
+<li style='margin-left:20px'><a href='#section-7'>Detachable Parts (RCCP_DetachablePart)</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Setup Requirements</a></li>
+<li style='margin-left:40px'><a href='#section-9'>Part Types</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Damage Lifecycle</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Configuration</a></li>
+<li style='margin-left:40px'><a href='#section-12'>RCCP_Damage Part Settings</a></li>
+<li style='margin-left:20px'><a href='#section-13'>Wheel Damage</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Configuration</a></li>
+<li style='margin-left:20px'><a href='#section-15'>Light Damage</a></li>
+<li style='margin-left:40px'><a href='#section-16'>RCCP_Light Damage Properties</a></li>
+<li style='margin-left:40px'><a href='#section-17'>RCCP_Damage Light Settings</a></li>
+<li style='margin-left:20px'><a href='#section-18'>Saving and Loading Damage</a></li>
+<li style='margin-left:40px'><a href='#section-19'>DamageData Class</a></li>
+<li style='margin-left:40px'><a href='#section-20'>Save / Load API</a></li>
+<li style='margin-left:20px'><a href='#section-21'>Repairing Vehicles</a></li>
+<li style='margin-left:40px'><a href='#section-22'>Using the Public API</a></li>
+<li style='margin-left:40px'><a href='#section-23'>What Repair Does</a></li>
+<li style='margin-left:20px'><a href='#section-24'>Multithreading</a></li>
+<li style='margin-left:20px'><a href='#section-25'>Common Issues</a></li>
+<li style='margin-left:40px'><a href='#section-26'>Damage not showing on collision</a></li>
+<li style='margin-left:40px'><a href='#section-27'>Detachable parts not falling off</a></li>
+<li style='margin-left:40px'><a href='#section-28'>Repair not working</a></li>
+<li style='margin-left:40px'><a href='#section-29'>Wheel detachment not triggering</a></li>
+<li style='margin-left:40px'><a href='#section-30'>Performance concerns with deformation</a></li>
+<li style='margin-left:20px'><a href='#section-31'>Related Topics</a></li>
+</ul></div>
+<p>RCCP includes a comprehensive damage system that supports four types of vehicle damage: <strong>mesh deformation</strong>, <strong>detachable parts</strong>, <strong>wheel damage</strong>, and <strong>light breakage</strong>. All damage types are managed through the <code>RCCP_Damage</code> component attached to the vehicle, and every type can be toggled independently.</p>
+<p>When a collision occurs, RCCP calculates the impulse magnitude, converts it to a contact point, and distributes the damage across all enabled subsystems within range. The system caches original mesh data at startup so that vehicles can be fully repaired at any time.</p>
+<h2 id='section-1'>RCCP_Damage Component</h2>
+<p>The <code>RCCP_Damage</code> component is the central controller for all vehicle damage. Add it to any vehicle that should support collision damage.</p>
+<h3 id='section-2'>Key Properties</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>automaticInstallation</code></td><td>bool</td><td><code>true</code></td><td>When enabled, automatically finds all damageable meshes, detachable parts, lights, and wheels on the vehicle at startup. When disabled, you must assign each array manually in the Inspector.</td></tr>
+<tr><td><code>damageFilter</code></td><td>LayerMask</td><td>Everything</td><td>Controls which layers can cause damage to the vehicle. Only collisions with objects on these layers will trigger damage calculations.</td></tr>
+<tr><td><code>maximumDamage</code></td><td>float</td><td><code>0.75</code></td><td>Maximum vertex displacement distance in meters. Limits how far any single vertex can move from its original position. Set to <code>0</code> to disable the limit.</td></tr>
+<tr><td><code>processInactiveGameobjects</code></td><td>bool</td><td><code>false</code></td><td>Whether to include inactive child GameObjects when collecting meshes and parts during automatic installation.</td></tr>
+<tr><td><code>saveName</code></td><td>string</td><td>Vehicle name</td><td>Identifier used for saving and loading damage data via JSON. Auto-populated from the vehicle's GameObject name.</td></tr>
+</table>
+<h2 id='section-3'>Mesh Deformation</h2>
+<p>Mesh deformation displaces individual vertices of the vehicle's body meshes when a collision occurs. Vertices within the deformation radius of the contact point are pushed inward along the collision direction, producing realistic crumple effects.</p>
+<h3 id='section-4'>How It Works</h3>
+<ol>
+<li>On collision, the system converts the contact point to local space for each mesh.</li>
+<li>An <strong>octree</strong> spatial structure is used for fast nearest-vertex lookup, avoiding the cost of iterating every vertex on every collision.</li>
+<li>Vertices within <code>deformationRadius</code> of the contact point are displaced. Damage is stronger at the center and falls off toward the edges.</li>
+<li>Original mesh vertex positions are cached at startup so they can be restored during repair.</li>
+<li>Meshes must have <strong>Read/Write Enabled</strong> in their import settings. Non-readable meshes are automatically skipped with a console warning.</li>
+</ol>
+<h3 id='section-5'>Configuration</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>meshDeformation</code></td><td>bool</td><td><code>true</code></td><td>Master toggle for mesh deformation.</td></tr>
+<tr><td><code>deformationRadius</code></td><td>float</td><td><code>0.75</code></td><td>Radius around the contact point (in meters) within which vertices are affected. Larger values create wider dents.</td></tr>
+<tr><td><code>deformationMultiplier</code></td><td>float</td><td><code>1.0</code></td><td>Scales the amount of vertex displacement. Higher values produce deeper dents from the same collision force.</td></tr>
+<tr><td><code>recalculateNormals</code></td><td>bool</td><td><code>false</code></td><td>Recalculates mesh normals after deformation. Enable this if lighting looks incorrect on deformed areas. Costs some performance.</td></tr>
+<tr><td><code>recalculateBounds</code></td><td>bool</td><td><code>false</code></td><td>Recalculates mesh bounds after deformation. Enable this if parts of the mesh disappear from view after heavy damage. Costs some performance.</td></tr>
+</table>
+<h3 id='section-6'>Example: Adjusting Deformation Sensitivity</h3>
+<pre><code>
+// Make the vehicle more resistant to dents
+RCCP_Damage damage = vehicle.GetComponentInChildren&lt;RCCP_Damage&gt;();
+damage.deformationMultiplier = 0.5f;  // Half the normal deformation
+damage.deformationRadius = 0.5f;      // Smaller affected area
+damage.maximumDamage = 0.4f;          // Limit maximum displacement
+</code></pre>
+<h2 id='section-7'>Detachable Parts (RCCP_DetachablePart)</h2>
+<p>Detachable parts are vehicle body panels (hoods, doors, bumpers, trunks) that can become loose and eventually fall off the vehicle when damaged. Each part uses a <code>ConfigurableJoint</code> to attach it to the vehicle body.</p>
+<h3 id='section-8'>Setup Requirements</h3>
+<ol>
+<li>The part must be a <strong>separate child GameObject</strong> of the vehicle with its own <code>Rigidbody</code>.</li>
+<li>A <code>ConfigurableJoint</code> is required (automatically created when adding the component via <code>Reset()</code>).</li>
+<li>The part's GameObject and children must be on the <strong>RCCP_DetachablePart</strong> layer.</li>
+<li>The joint's <code>connectedBody</code> should reference the vehicle's main <code>Rigidbody</code>.</li>
+</ol>
+<h3 id='section-9'>Part Types</h3>
+<p>The <code>DetachablePartType</code> enum identifies the role of each part:</p>
+<table>
+<tr><th>Part Type</th><th>Damage Multiplier</th><th>Description</th></tr>
+<tr><td><code>Bumper_F</code></td><td>1.5x</td><td>Front bumper -- takes the most damage</td></tr>
+<tr><td><code>Bumper_R</code></td><td>1.5x</td><td>Rear bumper -- takes the most damage</td></tr>
+<tr><td><code>Trunk</code></td><td>1.2x</td><td>Trunk lid</td></tr>
+<tr><td><code>Hood</code></td><td>1.0x</td><td>Engine hood</td></tr>
+<tr><td><code>Other</code></td><td>1.0x</td><td>Any other body panel</td></tr>
+<tr><td><code>Door</code></td><td>0.8x</td><td>Doors -- slightly more resistant</td></tr>
+</table>
+<p>Damage multipliers are applied when <code>useDamageWeighting</code> is enabled (default: <code>true</code>). Bumpers absorb 50% more damage per collision than hoods, while doors absorb 20% less.</p>
+<h3 id='section-10'>Damage Lifecycle</h3>
+<p>A detachable part goes through three stages as its <code>strength</code> decreases:</p>
+<ol>
+<li><strong>Locked</strong> -- The <code>ConfigurableJoint</code> motions are locked. The part is rigidly attached to the vehicle.</li>
+<li><strong>Loose</strong> (<code>strength &lt;= loosePoint</code>) -- Joint motions are unlocked to their original settings. The part wobbles and can flap in the wind (controlled by <code>addTorqueAfterLoose</code>).</li>
+<li><strong>Detached</strong> (<code>strength &lt;= detachPoint</code>) -- The part breaks free from the vehicle, becomes an independent physics object, and is deactivated after <code>deactiveAfterSeconds</code>.</li>
+</ol>
+<h3 id='section-11'>Configuration</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>partType</code></td><td>DetachablePartType</td><td><code>Hood</code></td><td>Identifies this part's role for damage weighting.</td></tr>
+<tr><td><code>strength</code></td><td>float</td><td><code>100</code></td><td>Current durability. Decreases on each collision.</td></tr>
+<tr><td><code>lockAtStart</code></td><td>bool</td><td><code>true</code></td><td>Lock the ConfigurableJoint motions at startup so the part stays firmly attached.</td></tr>
+<tr><td><code>isDetachable</code></td><td>bool</td><td><code>true</code></td><td>Whether this part can fully detach. If <code>false</code>, the part can become loose but never falls off.</td></tr>
+<tr><td><code>loosePoint</code></td><td>int</td><td><code>50</code></td><td>Strength threshold below which the part becomes loose (joint unlocks).</td></tr>
+<tr><td><code>detachPoint</code></td><td>int</td><td><code>0</code></td><td>Strength threshold below which the part fully detaches from the vehicle.</td></tr>
+<tr><td><code>deactiveAfterSeconds</code></td><td>float</td><td><code>5.0</code></td><td>Seconds after detachment before the part's GameObject is deactivated.</td></tr>
+<tr><td><code>addTorqueAfterLoose</code></td><td>Vector3</td><td><code>(0,0,0)</code></td><td>Torque applied in local space when the part is loose, scaled by vehicle speed. Creates a flapping effect.</td></tr>
+<tr><td><code>useDamageWeighting</code></td><td>bool</td><td><code>true</code></td><td>Apply the part-type-based damage multiplier.</td></tr>
+<tr><td><code>COM</code></td><td>Transform</td><td>Auto-created</td><td>Optional center of mass override for the part's Rigidbody.</td></tr>
+</table>
+<h3 id='section-12'>RCCP_Damage Part Settings</h3>
+<p>The <code>RCCP_Damage</code> component has its own toggles that control whether detachable parts receive damage at all:</p>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>partDamage</code></td><td>bool</td><td><code>true</code></td><td>Master toggle for detachable part damage.</td></tr>
+<tr><td><code>partDamageRadius</code></td><td>float</td><td><code>1.0</code></td><td>Radius around the contact point in which parts are checked for damage.</td></tr>
+<tr><td><code>partDamageMultiplier</code></td><td>float</td><td><code>1.0</code></td><td>Global multiplier applied to all part damage (stacks with per-part type multipliers).</td></tr>
+</table>
+<h2 id='section-13'>Wheel Damage</h2>
+<p>Wheel damage displaces <code>RCCP_WheelCollider</code> positions on collision, simulating bent axles and misaligned wheels. When damage exceeds <code>maximumDamage</code>, wheels can optionally detach from the vehicle entirely.</p>
+<h3 id='section-14'>Configuration</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>wheelDamage</code></td><td>bool</td><td><code>true</code></td><td>Master toggle for wheel damage.</td></tr>
+<tr><td><code>wheelDamageRadius</code></td><td>float</td><td><code>2.0</code></td><td>Radius around the contact point within which wheels are affected.</td></tr>
+<tr><td><code>wheelDamageMultiplier</code></td><td>float</td><td><code>1.0</code></td><td>Scales the amount of wheel displacement.</td></tr>
+<tr><td><code>wheelDetachment</code></td><td>bool</td><td><code>true</code></td><td>When enabled, wheels that exceed <code>maximumDamage</code> displacement will detach from the vehicle.</td></tr>
+</table>
+<p>When a wheel detaches, <code>RCCP_WheelCollider.DetachWheel()</code> is called, which separates the wheel model from the vehicle and creates an independent physics object.</p>
+<h2 id='section-15'>Light Damage</h2>
+<p>Light damage reduces the <code>strength</code> of <code>RCCP_Light</code> components near the collision point. When a light's strength falls below its <code>breakPoint</code>, the light is marked as <code>broken</code> and turns off.</p>
+<h3 id='section-16'>RCCP_Light Damage Properties</h3>
+<p>Each <code>RCCP_Light</code> component has its own durability settings:</p>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>isBreakable</code></td><td>bool</td><td><code>true</code></td><td>Whether this light can be broken by collisions.</td></tr>
+<tr><td><code>strength</code></td><td>float</td><td><code>100</code></td><td>Current durability. Reduced by <code>impulse * 20</code> on each nearby collision.</td></tr>
+<tr><td><code>breakPoint</code></td><td>int</td><td><code>35</code></td><td>Strength threshold below which the light is considered broken.</td></tr>
+<tr><td><code>broken</code></td><td>bool</td><td><code>false</code></td><td>Read at runtime to check if the light is broken.</td></tr>
+</table>
+<h3 id='section-17'>RCCP_Damage Light Settings</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>lightDamage</code></td><td>bool</td><td><code>true</code></td><td>Master toggle for light damage.</td></tr>
+<tr><td><code>lightDamageRadius</code></td><td>float</td><td><code>0.75</code></td><td>Radius around the contact point within which lights are checked.</td></tr>
+<tr><td><code>lightDamageMultiplier</code></td><td>float</td><td><code>1.0</code></td><td>Scales the damage applied to lights.</td></tr>
+</table>
+<h2 id='section-18'>Saving and Loading Damage</h2>
+<p>Damage state can be persisted between sessions using JSON serialization via PlayerPrefs.</p>
+<h3 id='section-19'>DamageData Class</h3>
+<p>The <code>RCCP_Damage.DamageData</code> class stores the complete damage snapshot:</p>
+<ul>
+<li><code>originalMeshData</code> -- Original vertex positions for all meshes</li>
+<li><code>damagedMeshData</code> -- Current (deformed) vertex positions</li>
+<li><code>originalWheelData</code> -- Original wheel positions and rotations</li>
+<li><code>damagedWheelData</code> -- Current wheel positions</li>
+<li><code>lightData</code> -- Boolean array of broken/intact state for each light</li>
+</ul>
+<h3 id='section-20'>Save / Load API</h3>
+<pre><code>
+RCCP_Damage damage = vehicle.GetComponentInChildren&lt;RCCP_Damage&gt;();
+
+// Save current damage state
+damage.Save();
+
+// Load previously saved damage state
+damage.Load();
+
+// Delete saved damage data
+damage.Delete();
+</code></pre>
+<p>The <code>saveName</code> property is used as the PlayerPrefs key (with <code>_DamageData</code> appended). Make sure each vehicle has a unique <code>saveName</code> if you want independent save slots.</p>
+<h2 id='section-21'>Repairing Vehicles</h2>
+<p>There are two ways to repair a vehicle:</p>
+<h3 id='section-22'>Using the Public API</h3>
+<pre><code>
+// Repair a specific vehicle
+RCCP.Repair(carController);
+
+// Repair the current player vehicle
+RCCP.Repair();
+</code></pre>
+<p>Both methods set <code>repairNow = true</code> on the vehicle's <code>RCCP_Damage</code> component, which triggers the repair process on the next frame.</p>
+<h3 id='section-23'>What Repair Does</h3>
+<p>When <code>repairNow</code> is set to <code>true</code>:</p>
+<ol>
+<li><strong>Meshes</strong> -- All deformed vertices are moved back to their original positions.</li>
+<li><strong>Wheels</strong> -- Wheel positions and rotations are restored. Deflated tires are re-inflated via <code>Inflate()</code>.</li>
+<li><strong>Detachable Parts</strong> -- Each part's <code>OnRepair()</code> is called: strength is restored, the ConfigurableJoint is recreated if destroyed, joint properties are restored, and the part is re-enabled if it was deactivated.</li>
+<li><strong>Lights</strong> -- Each light's <code>OnRepair()</code> is called: strength is restored and <code>broken</code> is set to <code>false</code>.</li>
+</ol>
+<p>The <code>repaired</code> flag is set to <code>true</code> once all vertices have returned to within a small tolerance (<code>0.002</code> units) of their original positions. If the repair is not complete in one frame, it continues on subsequent frames.</p>
+<h2 id='section-24'>Multithreading</h2>
+<p>When <code>RCCP_SceneManager.multithreadingSupported</code> is <code>true</code>, mesh deformation and repair operations use <code>Task.Run()</code> to offload vertex calculations to background threads. This prevents frame drops on vehicles with high-polygon meshes. The system uses a <code>CancellationTokenSource</code> to safely cancel async operations when the component is destroyed or disabled.</p>
+<p>When multithreading is not supported, equivalent synchronous methods (<code>CheckRepairRaw()</code>, <code>CheckDamageRaw()</code>) are used instead.</p>
+<h2 id='section-25'>Common Issues</h2>
+<h3 id='section-26'>Damage not showing on collision</h3>
+<ul>
+<li>Verify <code>automaticInstallation</code> is enabled, or that meshes are manually assigned to the <code>meshFilters</code> array.</li>
+<li>Check that the colliding object's layer is included in <code>damageFilter</code>.</li>
+<li>Confirm the vehicle's meshes have <strong>Read/Write Enabled</strong> in their import settings. Non-readable meshes are silently skipped.</li>
+<li>Ensure meshes have enough vertices for visible deformation. Low-poly meshes may not show noticeable dents.</li>
+</ul>
+<h3 id='section-27'>Detachable parts not falling off</h3>
+<ul>
+<li>The part's GameObject and its children must be on the <strong>RCCP_DetachablePart</strong> layer.</li>
+<li>Verify that <code>strength</code>, <code>loosePoint</code>, and <code>detachPoint</code> are set correctly. The default values are <code>100</code>, <code>50</code>, and <code>0</code> respectively.</li>
+<li>Make sure <code>isDetachable</code> is <code>true</code> on the <code>RCCP_DetachablePart</code> component.</li>
+<li>Check that the part has a valid <code>ConfigurableJoint</code> connected to the vehicle's <code>Rigidbody</code>.</li>
+</ul>
+<h3 id='section-28'>Repair not working</h3>
+<ul>
+<li><code>repairNow</code> must be set to <code>true</code>. Use <code>RCCP.Repair(vehicle)</code> rather than manipulating the flag directly.</li>
+<li>If the vehicle was not damaged (<code>repaired</code> is already <code>true</code>), the repair process will not run.</li>
+<li>After calling repair, check <code>repaired</code> on subsequent frames to confirm completion.</li>
+</ul>
+<h3 id='section-29'>Wheel detachment not triggering</h3>
+<ul>
+<li>Confirm <code>wheelDetachment</code> is <code>true</code> on the <code>RCCP_Damage</code> component.</li>
+<li>The wheel displacement must exceed <code>maximumDamage</code> before detachment is triggered.</li>
+<li>Make sure <code>wheelDamage</code> is enabled.</li>
+</ul>
+<h3 id='section-30'>Performance concerns with deformation</h3>
+<ul>
+<li>Enable multithreading via <code>RCCP_SceneManager</code> for vehicles with high-polygon meshes.</li>
+<li>Reduce <code>deformationRadius</code> to limit the number of vertices processed per collision.</li>
+<li>Disable <code>recalculateNormals</code> and <code>recalculateBounds</code> if they are not visually necessary.</li>
+</ul>
+<h2 id='section-31'>Related Topics</h2>
+<ul>
+<li><a href='03_vehicle_setup.html'>Vehicle Setup</a> -- Adding components to a vehicle</li>
+<li><a href='12_customization.html'>Customization</a> -- Paint, wheels, and upgrades</li>
+<li><a href='25_troubleshooting.html'>Troubleshooting</a> -- General debugging guide</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

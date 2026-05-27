@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 65df3655794f4299b8c2537971bf3018
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178967
+  packageName: Realistic Car Controller Pro
+  packageVersion: 2.41.1
+  assetPath: Assets/Realistic Car Controller Pro/Scripts/Shaders/BCG_TextureArrayHDRP.hlsl
+  uploadId: 912608

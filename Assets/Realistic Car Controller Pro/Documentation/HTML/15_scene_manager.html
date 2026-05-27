@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>15_scene_manager</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Scene Manager</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Scene Manager</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Adding the Scene Manager to Your Scene</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Key Properties</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Vehicle Registration</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Registering a Vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-5'>De-Registering a Vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Automatic Registration</a></li>
+<li style='margin-left:20px'><a href='#section-7'>Transport (Teleport)</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Overloads</a></li>
+<li style='margin-left:40px'><a href='#section-9'>What Happens During Transport</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Example: Respawn at a Checkpoint</a></li>
+<li style='margin-left:20px'><a href='#section-11'>Terrain Caching</a></li>
+<li style='margin-left:40px'><a href='#section-12'>How It Works</a></li>
+<li style='margin-left:40px'><a href='#section-13'>Relevant Properties</a></li>
+<li style='margin-left:20px'><a href='#section-14'>Multithreading Support</a></li>
+<li style='margin-left:20px'><a href='#section-15'>Runtime Settings Applied on Awake</a></li>
+<li style='margin-left:20px'><a href='#section-16'>Events Fired by the Scene Manager</a></li>
+<li style='margin-left:40px'><a href='#section-17'>Example: Listen for Vehicle Changes</a></li>
+<li style='margin-left:20px'><a href='#section-18'>Additional Methods</a></li>
+<li style='margin-left:20px'><a href='#section-19'>Common Issues</a></li>
+<li style='margin-left:40px'><a href='#section-20'>Camera not following the vehicle</a></li>
+<li style='margin-left:40px'><a href='#section-21'>UI not showing</a></li>
+<li style='margin-left:40px'><a href='#section-22'>Vehicle not responding to input</a></li>
+<li style='margin-left:40px'><a href='#section-23'>Multiple vehicles but wrong one is controlled</a></li>
+<li style='margin-left:40px'><a href='#section-24'>Terrain surface detection not working</a></li>
+<li style='margin-left:20px'><a href='#section-25'>Next Steps</a></li>
+</ul></div>
+<p>The <strong>RCCP_SceneManager</strong> is a singleton component that acts as the central hub for all RCCP vehicles at runtime. It tracks every vehicle in the scene, manages the active player vehicle, connects the camera and UI automatically, caches terrain data for surface detection, and applies global runtime settings such as fixed timestep and frame rate overrides.</p>
+<p>You do not need to interact with RCCP_SceneManager directly in most cases. The static helper class <code>RCCP</code> wraps its methods so you can call <code>RCCP.RegisterPlayerVehicle()</code>, <code>RCCP.Transport()</code>, and other convenience methods from anywhere in your code.</p>
+<hr>
+<h2 id='section-1'>Adding the Scene Manager to Your Scene</h2>
+<p><strong>Menu path:</strong> Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Create &gt; Scene Managers &gt; Add Scene Manager</p>
+<p>If you forget to add it manually, RCCP_SceneManager will auto-create itself at runtime the first time any RCCP system accesses <code>RCCP_SceneManager.Instance</code>. This is because it inherits from <code>RCCP_Singleton<T></code>, which creates a new GameObject automatically when the singleton is first requested.</p>
+<p>That said, it is good practice to place the Scene Manager in your scene ahead of time so you can configure its Inspector properties (such as <code>registerLastVehicleAsPlayer</code>) before entering Play mode.</p>
+<hr>
+<h2 id='section-2'>Key Properties</h2>
+<table>
+<tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>activePlayerVehicle</code></td><td><code>RCCP_CarController</code></td><td>null</td><td>The vehicle currently receiving player input. Set via registration methods.</td></tr>
+<tr><td><code>activePlayerCamera</code></td><td><code>RCCP_Camera</code></td><td>null</td><td>The RCCP camera following the player vehicle. Auto-assigned when an RCCP camera spawns.</td></tr>
+<tr><td><code>activePlayerCanvas</code></td><td><code>RCCP_UIManager</code></td><td>null</td><td>The UI manager displaying dashboard gauges, buttons, etc. Auto-assigned when the UI spawns.</td></tr>
+<tr><td><code>activeMainCamera</code></td><td><code>Camera</code></td><td>null</td><td>Unity's <code>Camera.main</code> reference, updated every frame.</td></tr>
+<tr><td><code>allVehicles</code></td><td><code>List<RCCP_CarController></code></td><td>empty</td><td>Every RCCP vehicle in the scene, including AI vehicles. Vehicles are added on spawn and removed on destroy.</td></tr>
+<tr><td><code>registerLastVehicleAsPlayer</code></td><td><code>bool</code></td><td>true</td><td>When enabled, any newly spawned RCCP vehicle is automatically registered as the player vehicle.</td></tr>
+<tr><td><code>disableUIWhenNoPlayerVehicle</code></td><td><code>bool</code></td><td>false</td><td>When enabled, the UI canvas is hidden whenever there is no active player vehicle.</td></tr>
+</table>
+<hr>
+<h2 id='section-3'>Vehicle Registration</h2>
+<p>Registering a vehicle tells the Scene Manager &quot;this is the player's car.&quot; The camera and UI automatically switch to the registered vehicle.</p>
+<h3 id='section-4'>Registering a Vehicle</h3>
+<p>Use the static <code>RCCP</code> class from any script:</p>
+<pre><code>
+// Register a vehicle as the player vehicle
+RCCP.RegisterPlayerVehicle(myVehicle);
+
+// Register with controllable state (true = player can drive it)
+RCCP.RegisterPlayerVehicle(myVehicle, true);
+
+// Register with controllable state and engine state
+RCCP.RegisterPlayerVehicle(myVehicle, true, true);
+</code></pre>
+<table>
+<tr><th>Overload</th><th>Parameters</th><th>Behavior</th></tr>
+<tr><td><code>RegisterPlayerVehicle(vehicle)</code></td><td>Vehicle only</td><td>Sets the vehicle as active. Camera follows it.</td></tr>
+<tr><td><code>RegisterPlayerVehicle(vehicle, isControllable)</code></td><td>Vehicle + controllable flag</td><td>Same as above, plus enables or disables player input on the vehicle.</td></tr>
+<tr><td><code>RegisterPlayerVehicle(vehicle, isControllable, engineState)</code></td><td>Vehicle + controllable + engine</td><td>Same as above, plus starts or stops the engine.</td></tr>
+</table>
+<p>When a vehicle is registered, the following happens automatically:</p>
+<ol>
+<li><code>activePlayerVehicle</code> is set to the new vehicle.</li>
+<li>If an RCCP camera exists, it calls <code>SetTarget()</code> to follow the new vehicle.</li>
+<li>On the next frame, the <code>OnVehicleChanged</code> and <code>OnVehicleChangedToVehicle</code> events fire (see <a href='16_api_reference.html'>API Reference</a> for event details).</li>
+</ol>
+<h3 id='section-5'>De-Registering a Vehicle</h3>
+<pre><code>
+RCCP.DeRegisterPlayerVehicle();
+</code></pre>
+<p>This disables player control on the current vehicle, sets <code>activePlayerVehicle</code> to null, and tells the camera to remove its target.</p>
+<h3 id='section-6'>Automatic Registration</h3>
+<p>If <code>registerLastVehicleAsPlayer</code> is enabled (the default), every vehicle that spawns via <code>RCCP.SpawnRCC()</code> or is already in the scene will be registered automatically. The last vehicle to spawn becomes the player vehicle.</p>
+<p>If you are managing multiple vehicles and want manual control over which one the player drives, set <code>registerLastVehicleAsPlayer</code> to false and call <code>RCCP.RegisterPlayerVehicle()</code> yourself.</p>
+<hr>
+<h2 id='section-7'>Transport (Teleport)</h2>
+<p>Transport instantly moves a vehicle to a new position and rotation. This is useful for respawning after a crash, moving to a checkpoint, or switching between gameplay areas.</p>
+<h3 id='section-8'>Overloads</h3>
+<pre><code>
+// Teleport the active player vehicle
+RCCP.Transport(newPosition, newRotation);
+
+// Teleport a specific vehicle
+RCCP.Transport(targetVehicle, newPosition, newRotation);
+
+// Teleport a specific vehicle, with optional velocity reset
+RCCP.Transport(targetVehicle, newPosition, newRotation, resetVelocity);
+</code></pre>
+<table>
+<tr><th>Overload</th><th>Parameters</th><th>Description</th></tr>
+<tr><td><code>Transport(position, rotation)</code></td><td>Position + Rotation</td><td>Teleports the active player vehicle. Always resets velocity.</td></tr>
+<tr><td><code>Transport(vehicle, position, rotation)</code></td><td>Vehicle + Position + Rotation</td><td>Teleports a specific vehicle. Always resets velocity.</td></tr>
+<tr><td><code>Transport(vehicle, position, rotation, resetVelocity)</code></td><td>Vehicle + Position + Rotation + bool</td><td>Teleports a specific vehicle. If <code>resetVelocity</code> is false, the vehicle keeps its current speed.</td></tr>
+</table>
+<h3 id='section-9'>What Happens During Transport</h3>
+<ol>
+<li>Rigidbody interpolation is temporarily set to <code>None</code> to prevent visual glitches.</li>
+<li>Linear and angular velocity are zeroed (unless <code>resetVelocity</code> is false).</li>
+<li>The vehicle is moved via <code>Rigidbody.MovePosition()</code> and <code>Rigidbody.MoveRotation()</code>.</li>
+<li>All wheel collider motor torques are reset to zero.</li>
+<li>If the vehicle has a connected trailer, the trailer is moved along with it, maintaining its relative offset.</li>
+<li><code>Physics.SyncTransforms()</code> is called to ensure the physics engine recognizes the new position immediately.</li>
+</ol>
+<h3 id='section-10'>Example: Respawn at a Checkpoint</h3>
+<pre><code>
+public Transform respawnPoint;
+
+public void RespawnPlayer() {
+    RCCP.Transport(respawnPoint.position, respawnPoint.rotation);
+}
+</code></pre>
+<hr>
+<h2 id='section-11'>Terrain Caching</h2>
+<p>RCCP_SceneManager caches Unity Terrain splatmap data at startup so that wheel colliders can look up ground materials efficiently at runtime. This is how the system knows whether a wheel is on grass, asphalt, gravel, or any other surface defined in your <a href='10_ground_materials.html'>Ground Materials</a> setup.</p>
+<h3 id='section-12'>How It Works</h3>
+<ol>
+<li>On <code>Start()</code>, the Scene Manager calls <code>GetAllTerrains()</code> as a coroutine.</li>
+<li>It collects all active terrains via <code>Terrain.activeTerrains</code>.</li>
+<li>For each terrain, it caches:</li>
+</ol>
+<ul>
+<li>The <code>TerrainData</code> reference</li>
+<li>The terrain collider's physics material</li>
+<li>The alphamap dimensions</li>
+<li>The full splatmap data array (<code>GetAlphamaps</code>)</li>
+<li>The number of texture layers</li>
+</ul>
+<ol>
+<li>Once complete, the <code>terrainsInitialized</code> flag is set to true.</li>
+</ol>
+<h3 id='section-13'>Relevant Properties</h3>
+<table>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>allTerrains</code></td><td><code>Terrain[]</code></td><td>Array of all Unity Terrains found in the scene.</td></tr>
+<tr><td><code>terrains</code></td><td><code>Terrains[]</code></td><td>Cached terrain data (splatmap, alphamap dimensions, physics material) for each terrain.</td></tr>
+<tr><td><code>terrainsInitialized</code></td><td><code>bool</code></td><td>True once all terrain data has been cached and is ready for ground material queries.</td></tr>
+</table>
+<p>If your scene does not use Unity Terrains (for example, you use mesh-based roads only), these properties will remain empty and the flag will stay false. Ground material detection will then rely on physics material assignments on your mesh colliders instead.</p>
+<hr>
+<h2 id='section-14'>Multithreading Support</h2>
+<p>RCCP_SceneManager checks at startup whether the current platform supports async/await operations. Some platforms (such as WebGL) do not support multithreading.</p>
+<pre><code>
+RCCP_SceneManager.multithreadingSupported  // static bool
+</code></pre>
+<p>The check works by attempting to run a trivial <code>Task.Run()</code> call. If it completes within one second, <code>multithreadingSupported</code> is set to true. If it fails or times out, it is set to false and RCCP falls back to synchronous methods.</p>
+<p>This flag is used primarily by the <a href='11_damage_system.html'>Damage System</a> for async mesh deformation and repair operations.</p>
+<p><strong>Note:</strong> Multithreading can be disabled globally in <a href='04_settings.html'>RCCP Settings</a> by unchecking the <code>multithreading</code> toggle, regardless of platform support.</p>
+<hr>
+<h2 id='section-15'>Runtime Settings Applied on Awake</h2>
+<p>When RCCP_SceneManager initializes, it reads several values from <a href='04_settings.html'>RCCP_Settings</a> and applies them to the Unity runtime:</p>
+<table>
+<tr><th>Setting</th><th>Condition</th><th>Effect</th></tr>
+<tr><td>Fixed Timestep</td><td><code>overrideFixedTimeStep</code> is true</td><td>Sets <code>Time.fixedDeltaTime</code> to the configured <code>fixedTimeStep</code> value (default 0.02).</td></tr>
+<tr><td>Frame Rate</td><td><code>overrideFPS</code> is true</td><td>Sets <code>Application.targetFrameRate</code> to the configured <code>maxFPS</code> value (default 120).</td></tr>
+<tr><td>Telemetry UI</td><td><code>useTelemetry</code> is true</td><td>Instantiates the telemetry overlay prefab for real-time vehicle data display.</td></tr>
+<tr><td>Input Rebinds</td><td><code>autoSaveLoadInputRebind</code> is true</td><td>Loads saved input rebind overrides from PlayerPrefs on Awake, and saves them on disable.</td></tr>
+</table>
+<p>These overrides are applied once during Awake. If you need different values at runtime, you can modify <code>Time.fixedDeltaTime</code> or <code>Application.targetFrameRate</code> directly after the Scene Manager initializes.</p>
+<hr>
+<h2 id='section-16'>Events Fired by the Scene Manager</h2>
+<p>The Scene Manager monitors the active player vehicle each frame and fires events when it changes:</p>
+<table>
+<tr><th>Event</th><th>Signature</th><th>When It Fires</th></tr>
+<tr><td><code>RCCP_Events.OnVehicleChanged</code></td><td><code>void()</code></td><td>A different vehicle becomes the active player vehicle.</td></tr>
+<tr><td><code>RCCP_Events.OnVehicleChangedToVehicle</code></td><td><code>void(RCCP_CarController)</code></td><td>Same as above, but passes the new vehicle as a parameter.</td></tr>
+</table>
+<h3 id='section-17'>Example: Listen for Vehicle Changes</h3>
+<pre><code>
+void OnEnable() {
+    RCCP_Events.OnVehicleChanged += OnPlayerVehicleChanged;
+}
+
+void OnDisable() {
+    RCCP_Events.OnVehicleChanged -= OnPlayerVehicleChanged;
+}
+
+void OnPlayerVehicleChanged() {
+    Debug.Log(&quot;Player switched to: &quot; + 
+        RCCP_SceneManager.Instance.activePlayerVehicle.name);
+}
+</code></pre>
+<p>The Scene Manager also listens to these internal events to track vehicles:</p>
+<table>
+<tr><th>Event</th><th>Purpose</th></tr>
+<tr><td><code>OnRCCPSpawned</code></td><td>Adds the vehicle to <code>allVehicles</code>. Registers as player if <code>registerLastVehicleAsPlayer</code> is true.</td></tr>
+<tr><td><code>OnRCCPAISpawned</code></td><td>Adds the AI vehicle to <code>allVehicles</code>.</td></tr>
+<tr><td><code>OnRCCPDestroyed</code></td><td>Removes the vehicle from <code>allVehicles</code>.</td></tr>
+<tr><td><code>OnRCCPAIDestroyed</code></td><td>Removes the AI vehicle from <code>allVehicles</code>.</td></tr>
+<tr><td><code>OnRCCPCameraSpawned</code></td><td>Sets <code>activePlayerCamera</code>. If a player vehicle already exists, sets it as the camera target.</td></tr>
+<tr><td><code>OnRCCPUISpawned</code></td><td>Sets <code>activePlayerCanvas</code>.</td></tr>
+</table>
+<hr>
+<h2 id='section-18'>Additional Methods</h2>
+<table>
+<tr><th>Method</th><th>Parameters</th><th>Description</th></tr>
+<tr><td><code>SetBehavior(int behaviorIndex)</code></td><td>Index of the behavior preset</td><td>Activates behavior override mode and applies the preset at the given index from the behavior types array in RCCP_Settings.</td></tr>
+<tr><td><code>SetMobileController(MobileController type)</code></td><td><code>TouchScreen</code>, <code>Gyro</code>, <code>SteeringWheel</code>, or <code>Joystick</code></td><td>Switches the active mobile controller type. See <a href='07_mobile.html'>Mobile Input</a>.</td></tr>
+<tr><td><code>ChangeCamera()</code></td><td>None</td><td>Cycles to the next camera mode on the active RCCP camera. See <a href='09_camera_system.html'>Camera System</a>.</td></tr>
+</table>
+<hr>
+<h2 id='section-19'>Common Issues</h2>
+<h3 id='section-20'>Camera not following the vehicle</h3>
+<ul>
+<li>Make sure an <code>RCCP_Camera</code> component exists in the scene, or that auto-creation of the camera is enabled in <a href='04_settings.html'>RCCP Settings</a>.</li>
+<li>If you manually placed the camera and the vehicle in the scene, the camera should auto-target the vehicle once <code>OnRCCPCameraSpawned</code> fires. If the vehicle spawns before the camera, the Scene Manager handles this by setting the target when the camera spawns.</li>
+</ul>
+<h3 id='section-21'>UI not showing</h3>
+<ul>
+<li>Check that <code>disableUIWhenNoPlayerVehicle</code> is not hiding the canvas. If this is enabled and no vehicle is registered, the UI will be hidden.</li>
+<li>Ensure an <code>RCCP_UIManager</code> prefab is in the scene or configured for auto-creation in <a href='04_settings.html'>RCCP Settings</a>.</li>
+</ul>
+<h3 id='section-22'>Vehicle not responding to input</h3>
+<ul>
+<li>Confirm the vehicle is registered as the player vehicle. Call <code>RCCP.RegisterPlayerVehicle(vehicle, true)</code> to register it with input enabled.</li>
+<li>If <code>registerLastVehicleAsPlayer</code> is enabled, the last spawned vehicle automatically becomes the player vehicle. Earlier vehicles lose player status.</li>
+</ul>
+<h3 id='section-23'>Multiple vehicles but wrong one is controlled</h3>
+<ul>
+<li>Set <code>registerLastVehicleAsPlayer</code> to false in the Scene Manager Inspector.</li>
+<li>Manually call <code>RCCP.RegisterPlayerVehicle()</code> on the vehicle you want the player to control.</li>
+</ul>
+<h3 id='section-24'>Terrain surface detection not working</h3>
+<ul>
+<li>Make sure your scene uses Unity Terrain objects (not just mesh colliders).</li>
+<li>Check that <code>terrainsInitialized</code> is true after the first few frames.</li>
+<li>If using mesh-based roads, assign appropriate physics materials to the mesh colliders and configure them in <a href='10_ground_materials.html'>Ground Materials</a>.</li>
+</ul>
+<hr>
+<h2 id='section-25'>Next Steps</h2>
+<ul>
+<li><a href='16_api_reference.html'>API Reference</a> -- Full list of public methods in the RCCP static class</li>
+<li><a href='09_camera_system.html'>Camera System</a> -- Camera modes, setup, and configuration</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

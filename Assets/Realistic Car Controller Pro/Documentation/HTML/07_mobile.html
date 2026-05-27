@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>07_mobile</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Mobile Controls</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Mobile Controls</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Overview</a></li>
+<li style='margin-left:20px'><a href='#section-2'>Enabling Mobile Controls</a></li>
+<li style='margin-left:40px'><a href='#section-3'>Settings Reference</a></li>
+<li style='margin-left:20px'><a href='#section-4'>Controller Types</a></li>
+<li style='margin-left:40px'><a href='#section-5'>TouchScreen</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Gyro (Accelerometer)</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Steering Wheel</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Joystick</a></li>
+<li style='margin-left:20px'><a href='#section-9'>Switching Controller Type at Runtime</a></li>
+<li style='margin-left:20px'><a href='#section-10'>How Mobile Input Flows</a></li>
+<li style='margin-left:20px'><a href='#section-11'>UI Canvas Setup</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Sporty Mobile UI Skin</a></li>
+<li style='margin-left:40px'><a href='#section-13'>Customizing the Layout</a></li>
+<li style='margin-left:40px'><a href='#section-14'>Required Scene Components</a></li>
+<li style='margin-left:20px'><a href='#section-15'>Platform Notes</a></li>
+<li style='margin-left:20px'><a href='#section-16'>Common Issues</a></li>
+<li style='margin-left:20px'><a href='#section-17'>Next Steps</a></li>
+</ul></div>
+<p>Realistic Car Controller Pro includes a complete mobile input system with four controller types to choose from. The system is driven by the <code>RCCP_MobileInputs</code> component, which reads values from on-screen UI elements and feeds them into the main input pipeline. All mobile controller settings live inside <code>RCCP_Settings</code>, and the visual controls are part of the RCCP UI Canvas prefab.</p>
+<hr>
+<h2 id='section-1'>Overview</h2>
+<p>RCCP provides four mobile controller types:</p>
+<table>
+<tr><th>Controller</th><th>Steering Method</th><th>UI Elements Shown</th></tr>
+<tr><td>TouchScreen</td><td>Left/Right buttons</td><td>Steer Left, Steer Right, Throttle, Brake, Handbrake, NOS</td></tr>
+<tr><td>Gyro</td><td>Device tilt (accelerometer)</td><td>Throttle, Brake, Handbrake, NOS (no steering buttons)</td></tr>
+<tr><td>SteeringWheel</td><td>Rotatable on-screen wheel</td><td>Steering Wheel, Throttle, Brake, Handbrake, NOS</td></tr>
+<tr><td>Joystick</td><td>Draggable analog stick</td><td>Joystick, Throttle, Brake, Handbrake, NOS</td></tr>
+</table>
+<p>The NOS button only appears when the active player vehicle has a NOS addon component attached.</p>
+<hr>
+<h2 id='section-2'>Enabling Mobile Controls</h2>
+<ol>
+<li>Open RCCP Settings: <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Settings</strong></li>
+<li>In the <strong>Mobile Input</strong> section, enable <code>mobileControllerEnabled</code> (set to <code>true</code>)</li>
+<li>Select the desired controller type from the <code>mobileController</code> dropdown</li>
+</ol>
+<p>When <code>mobileControllerEnabled</code> is <code>false</code>, the mobile canvas is automatically hidden regardless of platform. When <code>true</code>, the canvas activates and shows the appropriate UI elements for the selected controller type.</p>
+<h3 id='section-3'>Settings Reference</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>mobileControllerEnabled</code></td><td>bool</td><td><code>false</code></td><td>Master toggle for mobile controls</td></tr>
+<tr><td><code>mobileController</code></td><td>enum</td><td><code>TouchScreen</code></td><td>Active controller type</td></tr>
+<tr><td><code>gyroSensitivity</code></td><td>float</td><td><code>2.5</code></td><td>Accelerometer sensitivity multiplier (Gyro mode only)</td></tr>
+</table>
+<hr>
+<h2 id='section-4'>Controller Types</h2>
+<h3 id='section-5'>TouchScreen</h3>
+<p>The simplest mobile input mode. Six on-screen buttons handle all vehicle controls:</p>
+<ul>
+<li><strong>Steer Left / Steer Right</strong> -- each is a <code>RCCP_UIController</code> that outputs a value from 0 to 1</li>
+<li><strong>Throttle</strong> -- ramps up while held, ramps down when released</li>
+<li><strong>Brake</strong> -- same behavior as throttle</li>
+<li><strong>Handbrake</strong> -- toggle-style press</li>
+<li><strong>NOS</strong> -- only visible when the vehicle has a NOS addon</li>
+</ul>
+<p>Steering is computed as <code>-left.input + right.input</code>, giving a final range of -1 (full left) to 1 (full right).</p>
+<h4>Sensitivity and Gravity</h4>
+<p>Each <code>RCCP_UIController</code> button has two tuning parameters:</p>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>What It Does</th></tr>
+<tr><td><code>sensitivity</code></td><td><code>5.0</code></td><td>How fast the input value ramps up toward 1 when the button is held. Higher values produce snappier response.</td></tr>
+<tr><td><code>gravity</code></td><td><code>5.0</code></td><td>How fast the input value returns to 0 when the button is released. Higher values make the input drop off faster.</td></tr>
+</table>
+<p>Both values are multiplied by <code>Time.deltaTime</code> each frame, so the actual ramp speed is framerate-independent. The input is clamped between 0 and 1.</p>
+<h3 id='section-6'>Gyro (Accelerometer)</h3>
+<p>In Gyro mode, the device's built-in accelerometer controls steering. RCCP uses Unity's New Input System accelerometer (<code>UnityEngine.InputSystem.Accelerometer.current</code>) to read the device tilt.</p>
+<ul>
+<li>The X component of the acceleration vector is multiplied by <code>gyroSensitivity</code> and added to the steering input</li>
+<li>The steering left/right buttons are hidden</li>
+<li>Throttle, brake, handbrake, and NOS buttons remain visible and functional</li>
+<li>The accelerometer device is automatically enabled when Gyro mode is active</li>
+</ul>
+<p><strong>Tuning tip:</strong> Start with the default <code>gyroSensitivity</code> of 2.5. Increase it if steering feels too sluggish on tilt, decrease it if small movements cause oversteering.</p>
+<h3 id='section-7'>Steering Wheel</h3>
+<p>An on-screen rotatable steering wheel rendered by <code>RCCP_UI_SteeringWheelController</code>. The player drags the wheel image to rotate it, and the rotation angle is converted to a normalized steering value between -1 and 1.</p>
+<table>
+<tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>steeringWheelMaximumsteerAngle</code></td><td><code>270</code></td><td>Maximum rotation angle in degrees (both directions). The wheel can rotate from -270 to +270.</td></tr>
+<tr><td><code>steeringWheelResetPosSpeed</code></td><td><code>20</code></td><td>How fast the wheel auto-centers when released. Uses <code>Mathf.MoveTowards</code> scaled by <code>Time.deltaTime * 100</code>.</td></tr>
+<tr><td><code>steeringWheelCenterDeadZoneRadius</code></td><td><code>5</code></td><td>Pixel radius around the wheel center where touch input is ignored. Prevents jitter from imprecise touches near the center.</td></tr>
+</table>
+<p>The steering input is calculated as:</p>
+<pre><code>
+input = Round(currentAngle / maximumAngle * 100) / 100
+</code></pre>
+<p>This gives two decimal places of precision. When the player releases the wheel, it smoothly returns to center at the configured reset speed.</p>
+<p>The steering wheel uses Unity's <code>EventTrigger</code> system with three events: <code>PointerDown</code> (start tracking), <code>Drag</code> (update angle), and <code>EndDrag</code> (release and auto-center).</p>
+<h3 id='section-8'>Joystick</h3>
+<p>A standard analog joystick handled by <code>RCCP_UI_Joystick</code>. It consists of a background sprite and a draggable handle sprite.</p>
+<ul>
+<li><code>inputHorizontal</code> (range -1 to 1) is used for steering</li>
+<li><code>inputVertical</code> (range -1 to 1) is available but not used for throttle/brake by default</li>
+<li>The handle snaps back to center when released</li>
+<li>If the drag distance exceeds half the background size, the input is clamped to a normalized direction (magnitude of 1)</li>
+</ul>
+<p>The joystick implements <code>IDragHandler</code>, <code>IPointerUpHandler</code>, and <code>IPointerDownHandler</code> from Unity's EventSystems.</p>
+<hr>
+<h2 id='section-9'>Switching Controller Type at Runtime</h2>
+<p>You can change the active mobile controller type from code at any time:</p>
+<pre><code>
+// Switch to Gyro mode
+RCCP.SetMobileController(RCCP_Settings.MobileController.Gyro);
+
+// Switch to Joystick mode
+RCCP.SetMobileController(RCCP_Settings.MobileController.Joystick);
+
+// Switch to TouchScreen mode
+RCCP.SetMobileController(RCCP_Settings.MobileController.TouchScreen);
+
+// Switch to SteeringWheel mode
+RCCP.SetMobileController(RCCP_Settings.MobileController.SteeringWheel);
+</code></pre>
+<p>There is also a ready-made UI component, <code>RCCP_UI_SetMobileController</code>, that you can attach to buttons in your own UI. It accepts an integer index:</p>
+<table>
+<tr><th>Index</th><th>Controller</th></tr>
+<tr><td>0</td><td>TouchScreen</td></tr>
+<tr><td>1</td><td>Gyro</td></tr>
+<tr><td>2</td><td>SteeringWheel</td></tr>
+<tr><td>3</td><td>Joystick</td></tr>
+</table>
+<hr>
+<h2 id='section-10'>How Mobile Input Flows</h2>
+<p>Understanding the input pipeline helps when debugging:</p>
+<ol>
+<li><code>RCCP_MobileInputs</code> reads values from its assigned UI components (<code>throttle</code>, <code>brake</code>, <code>left</code>, <code>right</code>, <code>ebrake</code>, <code>nos</code>, <code>steeringWheel</code>, <code>joystick</code>) every frame in <code>Update()</code></li>
+<li>It computes combined values: <code>steerInput = -left.input + right.input + steeringWheel.input + joystick.inputHorizontal</code> (only the active controller contributes since others are disabled)</li>
+<li>In Gyro mode, the accelerometer reading is added to <code>steerInput</code></li>
+<li>NOS input is added to throttle input (then clamped to 0-1)</li>
+<li>All values are clamped to their valid ranges</li>
+<li><code>RCCP_InputManager</code> reads these values from <code>RCCP_MobileInputs.Instance</code> and passes them to the active vehicle</li>
+</ol>
+<hr>
+<h2 id='section-11'>UI Canvas Setup</h2>
+<p>The mobile UI is part of the <strong>RCCP UI Canvas</strong> prefab, which is referenced in <code>RCCP_Settings</code>. The canvas contains all mobile control elements, and <code>RCCP_MobileInputs</code> manages which elements are visible based on the active controller type.</p>
+<h3 id='section-12'>Sporty Mobile UI Skin</h3>
+<p>The current default mobile UI is the <strong>Sporty</strong> skin. The legacy button set was replaced in V2.31.1+ to give a clearer, more focused on-screen control surface:</p>
+<ul>
+<li><strong>Removed legacy buttons:</strong> Demo, EBrake, NOS, Fuel, NOS-Bottle.</li>
+<li><strong>Added clearer buttons:</strong> HandBrake, NOS1.</li>
+</ul>
+<p>The four input methods (TouchScreen, Gyro, SteeringWheel, Joystick) are unchanged -- only the button artwork and the labels for handbrake / NOS were updated.</p>
+<h3 id='section-13'>Customizing the Layout</h3>
+<p>To customize button positions, sizes, or visuals:</p>
+<ol>
+<li>Locate the RCCP UI Canvas prefab in your scene (or in the project at the path referenced by RCCP Settings)</li>
+<li>Open the prefab and find the mobile control GameObjects</li>
+<li>Modify RectTransform positions, sizes, and Image sprites as needed</li>
+<li>The <code>RCCP_UIController</code>, <code>RCCP_UI_SteeringWheelController</code>, and <code>RCCP_UI_Joystick</code> components must remain on the correct GameObjects for input to work</li>
+<li>Make sure the <code>RCCP_MobileInputs</code> component references are not broken after rearranging</li>
+</ol>
+<h3 id='section-14'>Required Scene Components</h3>
+<ul>
+<li>An <strong>EventSystem</strong> must be present in the scene for touch/pointer input to work</li>
+<li>The RCCP UI Canvas must be in the scene (it is normally instantiated automatically if referenced in Settings)</li>
+</ul>
+<hr>
+<h2 id='section-15'>Platform Notes</h2>
+<ul>
+<li><strong>iOS and Android</strong> are both fully supported</li>
+<li>Gyro mode uses <code>UnityEngine.InputSystem.Accelerometer</code>, which works on most modern mobile devices</li>
+<li>The accelerometer device is enabled automatically by RCCP when Gyro mode is selected</li>
+<li>Test mobile controls using <strong>Unity Remote</strong> (for quick iteration) or by building directly to device (for accurate touch behavior)</li>
+<li>On desktop platforms, mobile controls still work if <code>mobileControllerEnabled</code> is set to <code>true</code> -- this is useful for testing</li>
+</ul>
+<hr>
+<h2 id='section-16'>Common Issues</h2>
+<table>
+<tr><th>Problem</th><th>Likely Cause</th><th>Solution</th></tr>
+<tr><td>Controls not showing on device</td><td><code>mobileControllerEnabled</code> is <code>false</code></td><td>Enable it in RCCP Settings</td></tr>
+<tr><td>Steering too sensitive in Gyro mode</td><td><code>gyroSensitivity</code> too high</td><td>Lower the value (try 1.0 - 2.0)</td></tr>
+<tr><td>Steering too sluggish in Gyro mode</td><td><code>gyroSensitivity</code> too low</td><td>Raise the value (try 3.0 - 5.0)</td></tr>
+<tr><td>Buttons not responding to touch</td><td>Missing EventSystem in scene</td><td>Add an EventSystem GameObject to the scene</td></tr>
+<tr><td>NOS button not visible</td><td>Vehicle has no NOS addon</td><td>Add RCCP NOS component to the vehicle via OtherAddonsManager</td></tr>
+<tr><td>TouchScreen buttons respond slowly</td><td>Low <code>sensitivity</code> on RCCP_UIController</td><td>Increase the <code>sensitivity</code> value on the button component</td></tr>
+<tr><td>Input sticks after switching controllers</td><td>UI element not resetting</td><td>Inputs auto-reset on enable/disable; check that references in RCCP_MobileInputs are assigned</td></tr>
+<tr><td>Steering wheel jitters near center</td><td>Dead zone too small</td><td>Increase <code>steeringWheelCenterDeadZoneRadius</code></td></tr>
+</table>
+<hr>
+<h2 id='section-17'>Next Steps</h2>
+<ul>
+<li><a href='05_inputs.html'>Inputs</a> -- Keyboard and gamepad input configuration</li>
+<li><a href='08_logitech_steering_wheels.html'>Logitech Steering Wheels</a> -- Hardware racing wheel support</li>
+<li><a href='04_settings.html'>Settings</a> -- Full RCCP Settings reference including mobile options</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

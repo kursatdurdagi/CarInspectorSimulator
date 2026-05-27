@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>01_installation</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Installation</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Installation</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Prerequisites</a></li>
+<li style='margin-left:40px'><a href='#section-2'>Required Packages</a></li>
+<li style='margin-left:20px'><a href='#section-3'>Importing from Asset Store</a></li>
+<li style='margin-left:20px'><a href='#section-4'>First-Time Setup</a></li>
+<li style='margin-left:40px'><a href='#section-5'>Welcome Window</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Layer Setup</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Input System</a></li>
+<li style='margin-left:20px'><a href='#section-8'>Installing Addon Packages</a></li>
+<li style='margin-left:40px'><a href='#section-9'>Available Addon Packages</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Shader Packages by Unity Version</a></li>
+<li style='margin-left:40px'><a href='#section-11'>How to Install</a></li>
+<li style='margin-left:20px'><a href='#section-12'>Verifying Installation</a></li>
+<li style='margin-left:20px'><a href='#section-13'>Upgrading from a Previous Version</a></li>
+<li style='margin-left:20px'><a href='#section-14'>Common Installation Issues</a></li>
+<li style='margin-left:20px'><a href='#section-15'>Next Steps</a></li>
+</ul></div>
+<p>This guide walks you through installing Realistic Car Controller Pro (RCCP) in your Unity project, from prerequisites to your first test drive. If you follow these steps in order, you will have a working vehicle simulation running in under ten minutes.</p>
+<hr>
+<h2 id='section-1'>Prerequisites</h2>
+<p>Before importing RCCP, make sure your project meets these requirements:</p>
+<table>
+<tr><th>Requirement</th><th>Details</th></tr>
+<tr><td><strong>Unity Version</strong></td><td>Unity 6000.0 or above</td></tr>
+<tr><td><strong>Scripting Backend</strong></td><td>.NET Standard 2.1 or .NET Framework</td></tr>
+</table>
+<h3 id='section-2'>Required Packages</h3>
+<p>RCCP depends on the following Unity packages. The versions below match the project's <code>Packages/manifest.json</code> for the current RCCP release:</p>
+<table>
+<tr><th>Package</th><th>Package ID</th><th>Version</th></tr>
+<tr><td>Editor Coroutines</td><td><code>com.unity.editorcoroutines</code></td><td>1.0.1</td></tr>
+<tr><td>Input System</td><td><code>com.unity.inputsystem</code></td><td>1.17.0</td></tr>
+<tr><td>Newtonsoft JSON</td><td><code>com.unity.nuget.newtonsoft-json</code></td><td>3.2.2</td></tr>
+<tr><td>AI Navigation</td><td><code>com.unity.ai.navigation</code></td><td>2.0.12</td></tr>
+<tr><td>Shader Graph</td><td><code>com.unity.shadergraph</code></td><td>17.3.0</td></tr>
+<tr><td>uGUI</td><td><code>com.unity.ugui</code></td><td>2.0.0</td></tr>
+<tr><td>2D Sprite</td><td><code>com.unity.2d.sprite</code></td><td>1.0.0</td></tr>
+<tr><td>Visual Studio Editor</td><td><code>com.unity.ide.visualstudio</code></td><td>2.0.22</td></tr>
+<tr><td>ProBuilder</td><td><code>com.unity.probuilder</code></td><td>6.0.9</td></tr>
+</table>
+<p>All packages are available from the Unity Registry in the Package Manager. If any of them are missing, RCCP may show compiler errors immediately after import -- so it is best to install them first.</p>
+<p><strong>A note on Assembly Definitions:</strong> RCCP does not use <code>.asmdef</code> files. All scripts compile into the default Assembly-CSharp assembly. This keeps integration simple and avoids dependency headaches when you reference RCCP types from your own code.</p>
+<hr>
+<h2 id='section-3'>Importing from Asset Store</h2>
+<ol>
+<li>Open the Package Manager by going to <strong>Window &gt; Package Manager</strong>.</li>
+<li>In the top-left dropdown, select <strong>My Assets</strong>.</li>
+<li>Search for <strong>Realistic Car Controller Pro</strong> in your purchased assets list.</li>
+<li>Click <strong>Download</strong> if you have not already, then click <strong>Import</strong>.</li>
+<li>Leave all files selected in the import dialog and click <strong>Import</strong> again.</li>
+<li>Wait for Unity to finish compiling. This may take a minute or two depending on your machine. Do not interact with the editor while the progress bar is active.</li>
+</ol>
+<p>Once compilation finishes with no errors, RCCP is ready to configure.</p>
+<hr>
+<h2 id='section-4'>First-Time Setup</h2>
+<h3 id='section-5'>Welcome Window</h3>
+<p>The first time you import RCCP, a <strong>Welcome Window</strong> opens automatically. If it does not appear, you can open it manually from <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Welcome Window</strong>.</p>
+<p>The Welcome Window has several tabs that help you get started:</p>
+<table>
+<tr><th>Tab</th><th>Purpose</th></tr>
+<tr><td><strong>Welcome</strong></td><td>Shows the current RCCP version, quick links, and an overview of what is new.</td></tr>
+<tr><td><strong>Demos</strong></td><td>One-click install for demo content including sample vehicles and environments.</td></tr>
+<tr><td><strong>Addons</strong></td><td>Install integration packages for multiplayer, traffic simulation, and other systems.</td></tr>
+<tr><td><strong>Shaders</strong></td><td>Install the correct shader package for your render pipeline (Built-in, URP, or HDRP).</td></tr>
+<tr><td><strong>Keys</strong></td><td>Displays the default input keybindings so you know how to control vehicles right away.</td></tr>
+<tr><td><strong>Updates</strong></td><td>Check whether a newer version of RCCP is available on the Asset Store.</td></tr>
+<tr><td><strong>DOC</strong></td><td>Links to online documentation, tutorials, and the support email.</td></tr>
+</table>
+<p>Take a moment to explore each tab. At minimum, you should install the shader package that matches your render pipeline (see the Shaders tab) to avoid pink or magenta materials.</p>
+<h3 id='section-6'>Layer Setup</h3>
+<p>RCCP automatically creates five layers in your project the first time it initializes. These layers are essential for the physics collision matrix to work correctly:</p>
+<table>
+<tr><th>Layer</th><th>Assigned To</th><th>Why It Exists</th></tr>
+<tr><td><strong>RCCP_Vehicle</strong></td><td>All vehicle GameObjects</td><td>Lets RCCP identify vehicles in the physics system and apply vehicle-specific collision rules.</td></tr>
+<tr><td><strong>RCCP_WheelCollider</strong></td><td>Wheel collider GameObjects</td><td>Separates wheel physics from the vehicle body so wheels can interact with surfaces independently.</td></tr>
+<tr><td><strong>RCCP_DetachablePart</strong></td><td>Detachable body panels</td><td>Prevents detached parts (doors, bumpers, hoods) from colliding with the vehicle they came from.</td></tr>
+<tr><td><strong>RCCP_Prop</strong></td><td>Interactive props (cones, barriers)</td><td>Allows props to react to vehicle collisions differently from static environment geometry.</td></tr>
+<tr><td><strong>RCCP_Obstacle</strong></td><td>Obstacles</td><td>Defines collision behavior for objects that should damage or slow down vehicles.</td></tr>
+</table>
+<p>These layers power the collision matrix -- for example, vehicles do not collide with their own freshly-detached parts, which prevents explosive physics glitches after a crash. You should not rename or delete these layers.</p>
+<h3 id='section-7'>Input System</h3>
+<p>RCCP uses Unity's <strong>New Input System</strong> with an <code>InputActionAsset</code> called <code>RCCP_InputActions</code>. This asset is included in the package and located in the Resources folder.</p>
+<p>Make sure the Input System package is installed and that your project's <strong>Player Settings &gt; Active Input Handling</strong> is set to either <strong>Input System Package (New)</strong> or <strong>Both</strong>. If it is set to the old input manager only, RCCP inputs will not work.</p>
+<hr>
+<h2 id='section-8'>Installing Addon Packages</h2>
+<p>RCCP ships with optional addon packages for extended functionality. These are <code>.unitypackage</code> files located in:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/Addons/Installers/
+</code></pre>
+<h3 id='section-9'>Available Addon Packages</h3>
+<table>
+<tr><th>Package</th><th>Description</th></tr>
+<tr><td><code>RCCP_DemoAssets.unitypackage</code></td><td>Demo vehicles, environments, and prefabs for testing and learning.</td></tr>
+<tr><td><code>BCG_SharedAssets.unitypackage</code></td><td>Character controller for enter/exit vehicle gameplay.</td></tr>
+<tr><td><code>RCCP_PhotonIntegration.unitypackage</code></td><td>Photon PUN 2 multiplayer integration.</td></tr>
+<tr><td><code>RCCP_MirrorIntegration.unitypackage</code></td><td>Mirror networking integration.</td></tr>
+<tr><td><code>RCCP_ProFlareIntegration.unitypackage</code></td><td>ProFlares lens flare effects for headlights and tail lights.</td></tr>
+<tr><td><code>RCCP_RealisticTrafficControllerIntegration.unitypackage</code></td><td>AI traffic simulation integration.</td></tr>
+<tr><td><code>RCCP_BuiltinShaders.unitypackage</code></td><td>Shaders for the Built-in Render Pipeline.</td></tr>
+</table>
+<h3 id='section-10'>Shader Packages by Unity Version</h3>
+<p>Render pipeline shaders are organized by Unity version in the <code>Shaders/</code> subfolder:</p>
+<table>
+<tr><th>Folder</th><th>Contents</th></tr>
+<tr><td><code>Shaders/2021/</code></td><td>URP shaders for Unity 2021</td></tr>
+<tr><td><code>Shaders/2022/</code></td><td>URP and HDRP shaders for Unity 2022</td></tr>
+<tr><td><code>Shaders/2023/</code></td><td>URP and HDRP shaders for Unity 2023</td></tr>
+<tr><td><code>Shaders/6/</code></td><td>URP and HDRP shaders for Unity 6</td></tr>
+<tr><td><code>BCG_HDRPVolumeProfile.unitypackage</code></td><td>HDRP post-processing volume preset</td></tr>
+</table>
+<h3 id='section-11'>How to Install</h3>
+<p>You can install addon packages in two ways:</p>
+<ul>
+<li><strong>From the Welcome Window:</strong> Open the Addons or Shaders tab and click the install button next to the package you want.</li>
+<li><strong>Manually:</strong> Navigate to the Installers folder in the Project window and double-click the <code>.unitypackage</code> file. Unity will show an import dialog -- click Import to add the files to your project.</li>
+</ul>
+<p>Only install the addons you actually need. Each addon adds scripts and assets to your project, and multiplayer integrations (Photon, Mirror) require their respective SDKs to be installed separately.</p>
+<hr>
+<h2 id='section-12'>Verifying Installation</h2>
+<p>The fastest way to confirm everything is working:</p>
+<ol>
+<li>Open the prototype scene: <code>Assets/Realistic Car Controller Pro/Scenes/RCCP_Scene_Blank_Prototype.unity</code></li>
+<li>Press <strong>Play</strong>.</li>
+<li>Drive with <strong>WASD</strong> keys, brake with <strong>Space</strong>, and look around with the <strong>mouse</strong>.</li>
+<li>If the car drives and responds to input, your installation is successful.</li>
+</ol>
+<p>If you installed the demo content, you can also try the full city scene:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/Addons/Installed/Demo Content/Scenes/RCCP_Scene_CityNew.unity
+</code></pre>
+<p>Check the <strong>Console</strong> window (Window &gt; General &gt; Console) for any errors. A clean console with no red messages means RCCP is fully operational.</p>
+<hr>
+<h2 id='section-13'>Upgrading from a Previous Version</h2>
+<p>Upgrading RCCP requires a clean re-import to avoid stale scripts or missing references. Follow these steps carefully:</p>
+<ol>
+<li><strong>Back up your entire project.</strong> Copy your project folder to a safe location, or commit to version control. This step is not optional.</li>
+<li><strong>Delete the old RCCP folder.</strong> In the Project window, right-click <code>Assets/Realistic Car Controller Pro</code> and select Delete. Wait for Unity to recompile.</li>
+<li><strong>Import the new version.</strong> Follow the same steps as <a href='#importing-from-asset-store'>Importing from Asset Store</a> above.</li>
+<li><strong>Re-import addon packages.</strong> Any addon packages you had installed (demo content, multiplayer integrations, shader packages) need to be imported again from the Installers folder.</li>
+<li><strong>Check the Console.</strong> Look for deprecation warnings or errors. Address anything in red before continuing development.</li>
+</ol>
+<p>Your vehicle prefabs and scene references should survive the upgrade as long as you are using the same major Unity version. RCCP maintains consistent script GUIDs across versions to preserve serialized data.</p>
+<hr>
+<h2 id='section-14'>Common Installation Issues</h2>
+<table>
+<tr><th>Problem</th><th>Cause</th><th>Solution</th></tr>
+<tr><td><strong>&quot;Input System not found&quot;</strong> compiler errors</td><td>The Input System package is not installed.</td><td>Open <strong>Window &gt; Package Manager</strong>, switch to <strong>Unity Registry</strong>, find <strong>Input System</strong>, and click Install.</td></tr>
+<tr><td><strong>Pink or magenta materials</strong></td><td>The shader package for your render pipeline is missing.</td><td>Install the correct shader package from the Welcome Window Shaders tab or from <code>Addons/Installers/Shaders/</code>. See <a href='18_render_pipelines.html'>Render Pipelines</a> for details.</td></tr>
+<tr><td><strong>Missing layers warning</strong></td><td>The RCCP layers were not created automatically.</td><td>Go to <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Settings</strong> and click the layer setup button. Layers are normally created automatically on first import.</td></tr>
+<tr><td><strong>&quot;Missing script&quot; on prefabs</strong></td><td>An addon integration package was removed but prefabs still reference its scripts.</td><td>Either re-import the addon package, or select the affected prefab and remove the components with missing scripts.</td></tr>
+<tr><td><strong>NullReferenceException on Play</strong></td><td>The <code>RCCP_Settings</code> asset is missing or was accidentally deleted from the Resources folder.</td><td>Re-import RCCP to restore the Settings asset, or check that <code>Assets/Realistic Car Controller Pro/Resources/RCCP_Settings.asset</code> exists.</td></tr>
+</table>
+<p>If your issue is not listed here, see the full <a href='25_troubleshooting.html'>Troubleshooting</a> guide.</p>
+<hr>
+<h2 id='section-15'>Next Steps</h2>
+<p>Now that RCCP is installed and verified, here is where to go next:</p>
+<ul>
+<li><a href='03_vehicle_setup.html'>Vehicle Setup</a> -- Set up your first vehicle from scratch using the Setup Wizard.</li>
+<li><a href='04_settings.html'>Settings</a> -- Configure global RCCP behavior, physics, and input options.</li>
+<li><a href='19_demo_content.html'>Demo Content</a> -- Explore the included demo scenes and learn from example vehicles.</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a>  </p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

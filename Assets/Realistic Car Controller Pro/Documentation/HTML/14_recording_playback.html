@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>14_recording_playback</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Recording and Playback</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Recording and Playback</a></li>
+<li style='margin-left:20px'><a href='#section-1'>How Recording Works</a></li>
+<li style='margin-left:40px'><a href='#section-2'>Recorder Modes</a></li>
+<li style='margin-left:20px'><a href='#section-3'>The RCCP_Recorder Component</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Key Fields</a></li>
+<li style='margin-left:20px'><a href='#section-5'>Recording a Session</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Using the Keyboard</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Using the API</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Using the Recorder Directly</a></li>
+<li style='margin-left:20px'><a href='#section-9'>Playback Details</a></li>
+<li style='margin-left:20px'><a href='#section-10'>Saving and Loading Recordings</a></li>
+<li style='margin-left:40px'><a href='#section-11'>RCCP_Records ScriptableObject</a></li>
+<li style='margin-left:40px'><a href='#section-12'>Playing a Saved Recording</a></li>
+<li style='margin-left:40px'><a href='#section-13'>Note on Persistence</a></li>
+<li style='margin-left:20px'><a href='#section-14'>Complete Example</a></li>
+<li style='margin-left:20px'><a href='#section-15'>RecordedClip Data Structure</a></li>
+<li style='margin-left:40px'><a href='#section-16'>VehicleInput Fields</a></li>
+<li style='margin-left:40px'><a href='#section-17'>VehicleTransform Fields</a></li>
+<li style='margin-left:40px'><a href='#section-18'>VehicleVelocity Fields</a></li>
+<li style='margin-left:20px'><a href='#section-19'>Common Issues</a></li>
+</ul></div>
+<p>RCCP includes a built-in recording and playback system that captures vehicle movement and inputs at the physics framerate. You can record a driving session and replay it exactly, including throttle, brake, steering, gear changes, light states, and rigidbody velocities. Recordings can be saved persistently to a ScriptableObject asset for reuse across play sessions.</p>
+<p><strong>Prerequisites:</strong> The vehicle must have the <code>RCCP_OtherAddons</code> component, which provides access to the <code>RCCP_Recorder</code>. See <a href='03_vehicle_setup.html'>Vehicle Setup</a> for configuring a complete vehicle.</p>
+<h2 id='section-1'>How Recording Works</h2>
+<p>The <code>RCCP_Recorder</code> component captures three types of data every <code>FixedUpdate</code> frame:</p>
+<table>
+<tr><th>Data Type</th><th>Class</th><th>What It Stores</th></tr>
+<tr><td>Vehicle Input</td><td><code>VehicleInput</code></td><td>Throttle, brake, steer, handbrake, clutch, NOS, direction, current gear, gear state, neutral gear flag, low beam, high beam, left/right/all indicators</td></tr>
+<tr><td>Vehicle Transform</td><td><code>VehicleTransform</code></td><td>World position and rotation</td></tr>
+<tr><td>Vehicle Velocity</td><td><code>VehicleVelocity</code></td><td>Rigidbody linear velocity and angular velocity</td></tr>
+</table>
+<p>These three arrays are stored together in a <code>RecordedClip</code> object. During playback, the recorder feeds these values back into the vehicle frame by frame, reproducing the original driving session.</p>
+<h3 id='section-2'>Recorder Modes</h3>
+<p>The recorder operates in one of three modes:</p>
+<table>
+<tr><th>Mode</th><th>Description</th></tr>
+<tr><td><strong>Neutral</strong></td><td>Idle state. No recording or playback in progress.</td></tr>
+<tr><td><strong>Record</strong></td><td>Actively capturing input, transform, and velocity data every physics frame.</td></tr>
+<tr><td><strong>Play</strong></td><td>Playing back a previously recorded clip. Vehicle input and gearbox are overridden.</td></tr>
+</table>
+<h2 id='section-3'>The RCCP_Recorder Component</h2>
+<p><code>RCCP_Recorder</code> inherits from <code>RCCP_Component</code> and is part of the <code>RCCP_OtherAddons</code> system. It is accessed at runtime through <code>vehicle.OtherAddonsManager.Recorder</code>.</p>
+<h3 id='section-4'>Key Fields</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>recorded</code></td><td>RecordedClip</td><td>The most recently saved or loaded recorded clip</td></tr>
+<tr><td><code>mode</code></td><td>RecorderMode</td><td>Current operational mode (Neutral, Record, or Play)</td></tr>
+</table>
+<h2 id='section-5'>Recording a Session</h2>
+<h3 id='section-6'>Using the Keyboard</h3>
+<p>RCCP maps recording to the <strong>Optional</strong> action map in the Input System. The default key bindings are:</p>
+<table>
+<tr><th>Action</th><th>Default Key</th><th>Description</th></tr>
+<tr><td>Record</td><td><strong>R</strong></td><td>Toggle recording on/off</td></tr>
+<tr><td>Replay</td><td><strong>P</strong></td><td>Toggle playback of the last recorded clip</td></tr>
+</table>
+<p>These bindings are defined in the <code>RCCP_InputActions</code> asset and can be customized through the Unity Input System settings.</p>
+<h3 id='section-7'>Using the API</h3>
+<p>The <code>RCCP</code> static class provides convenience methods for recording:</p>
+<pre><code>
+// Start recording (call again to stop and save)
+RCCP.StartStopRecord(myVehicle);
+
+// Start/stop replay of the last recorded clip
+RCCP.StartStopReplay(myVehicle);
+
+// Replay a specific recorded clip
+RCCP.StartStopReplay(myVehicle, specificClip);
+
+// Stop both recording and playback
+RCCP.StopRecordReplay(myVehicle);
+</code></pre>
+<h3 id='section-8'>Using the Recorder Directly</h3>
+<p>You can also call methods on the <code>RCCP_Recorder</code> component directly:</p>
+<pre><code>
+RCCP_Recorder recorder = myVehicle.OtherAddonsManager.Recorder;
+
+// Toggle recording
+recorder.Record();
+
+// Toggle playback of last recorded clip
+recorder.Play();
+
+// Play a specific clip
+recorder.Play(myClip);
+
+// Stop everything and return to neutral
+recorder.Stop();
+</code></pre>
+<h2 id='section-9'>Playback Details</h2>
+<p>When playback starts, the recorder:</p>
+<ol>
+<li>Sets the vehicle to <code>overridePlayerInputs</code> and <code>overrideExternalInputs</code> so recorded data takes full control</li>
+<li>Overrides the gearbox so recorded gear changes are replayed</li>
+<li>Moves the vehicle to the first recorded position and rotation</li>
+<li>Feeds recorded inputs, velocities, and gear states frame by frame in <code>WaitForFixedUpdate</code> coroutines</li>
+</ol>
+<p>When playback finishes (all frames consumed) or is stopped manually, the recorder:</p>
+<ol>
+<li>Returns to Neutral mode</li>
+<li>Restores normal player input and gearbox control</li>
+</ol>
+<p><strong>Important:</strong> Playback starts from the first recorded position. The vehicle is automatically teleported to that position when playback begins.</p>
+<h2 id='section-10'>Saving and Loading Recordings</h2>
+<h3 id='section-11'>RCCP_Records ScriptableObject</h3>
+<p>Recorded clips are automatically saved to the <code>RCCP_Records</code> ScriptableObject when recording stops. This asset is located at:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/Resources/RCCP_Records.asset
+</code></pre>
+<p>It is loaded via <code>RCCP_Records.Instance</code> (a singleton pattern using <code>Resources.Load</code>).</p>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>records</code></td><td>List\<RecordedClip\></td><td>All saved recorded clips</td></tr>
+</table>
+<p>Each <code>RecordedClip</code> has a <code>recordName</code> field that is auto-generated as <code>{index}_{vehicleName}</code> when saved.</p>
+<h3 id='section-12'>Playing a Saved Recording</h3>
+<pre><code>
+// Get all saved recordings
+List&lt;RCCP_Recorder.RecordedClip&gt; allRecords = RCCP_Records.Instance.records;
+
+// Play the first saved recording
+if (allRecords.Count &gt; 0) {
+    RCCP.StartStopReplay(myVehicle, allRecords[0]);
+}
+</code></pre>
+<h3 id='section-13'>Note on Persistence</h3>
+<p><code>RCCP_Records</code> is a ScriptableObject asset. In the Unity Editor, recordings saved during Play Mode will persist to the asset file. In a built game, ScriptableObject data does not persist between sessions unless you implement your own serialization. For runtime persistence in builds, consider serializing the <code>RecordedClip</code> data to JSON or binary files.</p>
+<h2 id='section-14'>Complete Example</h2>
+<pre><code>
+using UnityEngine;
+
+public class RecordingExample : MonoBehaviour {
+
+    public RCCP_CarController myVehicle;
+
+    void Update() {
+        // Press F5 to toggle recording
+        if (Input.GetKeyDown(KeyCode.F5)) {
+            RCCP.StartStopRecord(myVehicle);
+        }
+
+        // Press F6 to toggle replay
+        if (Input.GetKeyDown(KeyCode.F6)) {
+            RCCP.StartStopReplay(myVehicle);
+        }
+
+        // Press F7 to stop everything
+        if (Input.GetKeyDown(KeyCode.F7)) {
+            RCCP.StopRecordReplay(myVehicle);
+        }
+    }
+}
+</code></pre>
+<h2 id='section-15'>RecordedClip Data Structure</h2>
+<p>For advanced users who want to inspect or manipulate recording data:</p>
+<pre><code>
+[System.Serializable]
+public class RecordedClip {
+    public string recordName;
+    public VehicleInput[] inputs;       // Per-frame input data
+    public VehicleTransform[] transforms; // Per-frame position/rotation
+    public VehicleVelocity[] rigids;     // Per-frame velocity data
+}
+</code></pre>
+<h3 id='section-16'>VehicleInput Fields</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>throttleInput</code></td><td>float</td><td>Throttle amount (0-1)</td></tr>
+<tr><td><code>brakeInput</code></td><td>float</td><td>Brake amount (0-1)</td></tr>
+<tr><td><code>steerInput</code></td><td>float</td><td>Steering amount (-1 to 1)</td></tr>
+<tr><td><code>handbrakeInput</code></td><td>float</td><td>Handbrake amount (0-1)</td></tr>
+<tr><td><code>clutchInput</code></td><td>float</td><td>Clutch amount (0-1)</td></tr>
+<tr><td><code>nosInput</code></td><td>float</td><td>Nitrous input (0-1)</td></tr>
+<tr><td><code>direction</code></td><td>int</td><td>Drive direction (1 = forward, -1 = reverse)</td></tr>
+<tr><td><code>currentGear</code></td><td>int</td><td>Current gear index</td></tr>
+<tr><td><code>gearState</code></td><td>GearState</td><td>Gearbox state enum</td></tr>
+<tr><td><code>NGear</code></td><td>bool</td><td>Whether neutral gear is engaged</td></tr>
+<tr><td><code>lowBeamHeadLightsOn</code></td><td>bool</td><td>Low beam headlight state</td></tr>
+<tr><td><code>highBeamHeadLightsOn</code></td><td>bool</td><td>High beam headlight state</td></tr>
+<tr><td><code>indicatorsLeft</code></td><td>bool</td><td>Left indicator state</td></tr>
+<tr><td><code>indicatorsRight</code></td><td>bool</td><td>Right indicator state</td></tr>
+<tr><td><code>indicatorsAll</code></td><td>bool</td><td>Hazard lights (all indicators) state</td></tr>
+</table>
+<h3 id='section-17'>VehicleTransform Fields</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>position</code></td><td>Vector3</td><td>World position of the vehicle</td></tr>
+<tr><td><code>rotation</code></td><td>Quaternion</td><td>World rotation of the vehicle</td></tr>
+</table>
+<h3 id='section-18'>VehicleVelocity Fields</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>velocity</code></td><td>Vector3</td><td>Rigidbody linear velocity</td></tr>
+<tr><td><code>angularVelocity</code></td><td>Vector3</td><td>Rigidbody angular velocity</td></tr>
+</table>
+<h2 id='section-19'>Common Issues</h2>
+<table>
+<tr><th>Problem</th><th>Possible Cause</th><th>Solution</th></tr>
+<tr><td>Recording not starting</td><td>Missing <code>RCCP_Recorder</code> component</td><td>Ensure the vehicle has <code>RCCP_OtherAddons</code> which provides access to the Recorder</td></tr>
+<tr><td>R key not triggering record</td><td>Input action not bound</td><td>Check that the <strong>Optional</strong> action map is enabled in <code>RCCP_InputActions</code> with the Record action bound to the R key</td></tr>
+<tr><td>Replay looks jerky</td><td>Inconsistent physics timestep</td><td>Ensure a consistent <code>Time.fixedDeltaTime</code> value. Recording captures at the physics rate, so changes to the timestep during playback can cause uneven motion.</td></tr>
+<tr><td>Vehicle teleports at replay start</td><td>Expected behavior</td><td>Playback always starts from the first recorded position. The vehicle is teleported there automatically.</td></tr>
+<tr><td>Replay drifts from original path</td><td>Physics nondeterminism</td><td>Small floating-point differences in physics can cause divergence over long replays. The velocity data helps reduce this, but perfect reproduction is not guaranteed over very long clips.</td></tr>
+<tr><td>Recordings lost after restarting the game (build)</td><td>ScriptableObject data does not persist in builds</td><td>Implement your own serialization (JSON, binary) to save <code>RecordedClip</code> data to disk in builds</td></tr>
+<tr><td>Cannot access Recorder</td><td>Null reference on <code>OtherAddonsManager</code></td><td>Add the <code>RCCP_OtherAddons</code> component to the vehicle. The Recorder is accessed through <code>vehicle.OtherAddonsManager.Recorder</code>.</td></tr>
+</table>
+<hr>
+<p><strong>Related topics:</strong> <a href='03_vehicle_setup.html'>Vehicle Setup</a> | <a href='05_inputs.html'>Inputs</a> | <a href='13_ai_vehicles.html'>AI Vehicles</a> | <a href='16_api_reference.html'>API Reference</a></p>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

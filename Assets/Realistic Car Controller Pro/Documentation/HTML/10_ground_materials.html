@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<title>10_ground_materials</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+.content { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+h1, h2, h3, h4 { color: #2c3e50; } h1 { border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+a { color: #3498db; text-decoration: none; } a:hover { text-decoration: underline; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; color: #c7254e; }
+pre code { background: none; color: inherit; padding: 0; }
+blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 20px; color: #666; background: #f9f9f9; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }
+ul, ol { margin: 0.5em 0; padding-left: 2em; }
+li { margin: 0.25em 0; }
+.toc { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 5px; margin-bottom: 30px; }
+.toc h3 { margin-top: 0; } .toc ul { padding-left: 20px; list-style: none; } .toc li { margin: 0.3em 0; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+</style></head><body>
+<div class='content'>
+<h1 id='section-0'>Ground Materials</h1>
+<div class='toc'><h3>Table of Contents</h3><ul>
+<li style='margin-left:0px'><a href='#section-0'>Ground Materials</a></li>
+<li style='margin-left:20px'><a href='#section-1'>Overview</a></li>
+<li style='margin-left:20px'><a href='#section-2'>RCCP_GroundMaterials ScriptableObject</a></li>
+<li style='margin-left:20px'><a href='#section-3'>GroundMaterialFrictions</a></li>
+<li style='margin-left:40px'><a href='#section-4'>Example Configurations</a></li>
+<li style='margin-left:20px'><a href='#section-5'>Setting Up a New Surface</a></li>
+<li style='margin-left:40px'><a href='#section-6'>Step 1: Create a PhysicMaterial</a></li>
+<li style='margin-left:40px'><a href='#section-7'>Step 2: Assign It to Your Ground Collider</a></li>
+<li style='margin-left:40px'><a href='#section-8'>Step 3: Open the Ground Materials Asset</a></li>
+<li style='margin-left:40px'><a href='#section-9'>Step 4: Add a New Friction Entry</a></li>
+<li style='margin-left:40px'><a href='#section-10'>Step 5: Configure the Entry</a></li>
+<li style='margin-left:40px'><a href='#section-11'>Step 6: Validate Particle Prefabs</a></li>
+<li style='margin-left:20px'><a href='#section-12'>Terrain Support</a></li>
+<li style='margin-left:40px'><a href='#section-13'>How It Works</a></li>
+<li style='margin-left:40px'><a href='#section-14'>TerrainFrictions Configuration</a></li>
+<li style='margin-left:40px'><a href='#section-15'>Setting Up Terrain Surfaces</a></li>
+<li style='margin-left:40px'><a href='#section-16'>Example</a></li>
+<li style='margin-left:20px'><a href='#section-17'>Skidmarks System</a></li>
+<li style='margin-left:40px'><a href='#section-18'>Architecture</a></li>
+<li style='margin-left:40px'><a href='#section-19'>How Skidmarks Are Generated</a></li>
+<li style='margin-left:40px'><a href='#section-20'>Skidmark Prefab Settings</a></li>
+<li style='margin-left:40px'><a href='#section-21'>Cleaning Skidmarks at Runtime</a></li>
+<li style='margin-left:40px'><a href='#section-22'>Performance Notes</a></li>
+<li style='margin-left:20px'><a href='#section-23'>Common Issues</a></li>
+<li style='margin-left:40px'><a href='#section-24'>No Skidmarks on a Surface</a></li>
+<li style='margin-left:40px'><a href='#section-25'>Wrong Particles or Sounds on a Surface</a></li>
+<li style='margin-left:40px'><a href='#section-26'>Terrain Surface Not Detected</a></li>
+<li style='margin-left:40px'><a href='#section-27'>Particles Do Not Appear</a></li>
+<li style='margin-left:40px'><a href='#section-28'>Skidmarks Flicker or Z-Fight</a></li>
+<li style='margin-left:20px'><a href='#section-29'>Related Topics</a></li>
+</ul></div>
+<p>RCCP uses <strong>PhysicMaterial-based surface detection</strong> to vary friction, particles, sounds, and skidmarks depending on what surface the wheels are touching. Every ground collider in your scene can be mapped to a set of surface properties, and Unity Terrains are supported through splatmap-based detection.</p>
+<p>For general project setup, see <a href='01_installation.html'>Installation</a>. For vehicle configuration, see <a href='03_vehicle_setup.html'>Vehicle Setup</a>.</p>
+<hr>
+<h2 id='section-1'>Overview</h2>
+<p>The ground materials system works as follows:</p>
+<ol>
+<li>Each wheel checks which PhysicMaterial is on the collider it is touching.</li>
+<li>The system looks up that PhysicMaterial in the <code>RCCP_GroundMaterials</code> asset.</li>
+<li>If a match is found, the corresponding friction, particle, sound, and skidmark settings are applied to that wheel.</li>
+<li>For Unity Terrains, the system reads the splatmap to determine which terrain texture has the highest weight at the wheel's position, then maps that texture to a PhysicMaterial.</li>
+</ol>
+<hr>
+<h2 id='section-2'>RCCP_GroundMaterials ScriptableObject</h2>
+<p><code>RCCP_GroundMaterials</code> is a singleton ScriptableObject loaded from the Resources folder. Access it at runtime via:</p>
+<pre><code>
+RCCP_GroundMaterials groundMats = RCCP_GroundMaterials.Instance;
+</code></pre>
+<p>The asset is located at:</p>
+<pre><code>
+Assets/Realistic Car Controller Pro/Resources/RCCP_GroundMaterials.asset
+</code></pre>
+<p>It contains two main arrays:</p>
+<table>
+<tr><th>Array</th><th>Type</th><th>Purpose</th></tr>
+<tr><td><code>frictions</code></td><td><code>GroundMaterialFrictions[]</code></td><td>Per-surface settings for regular colliders</td></tr>
+<tr><td><code>terrainFrictions</code></td><td><code>TerrainFrictions[]</code></td><td>Splatmap-to-PhysicMaterial mappings for terrains</td></tr>
+</table>
+<hr>
+<h2 id='section-3'>GroundMaterialFrictions</h2>
+<p>Each entry in the <code>frictions</code> array defines how a specific surface type behaves. Here are all the fields:</p>
+<table>
+<tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>groundMaterial</code></td><td><code>PhysicsMaterial</code></td><td>(none)</td><td>The Unity physics material assigned to ground colliders. This is the key used for surface matching.</td></tr>
+<tr><td><code>forwardStiffness</code></td><td><code>float</code></td><td>1</td><td>Affects braking and acceleration grip. Higher values mean more grip along the wheel's forward axis.</td></tr>
+<tr><td><code>sidewaysStiffness</code></td><td><code>float</code></td><td>1</td><td>Affects cornering grip. Higher values mean less lateral sliding.</td></tr>
+<tr><td><code>slip</code></td><td><code>float</code></td><td>0.25</td><td>Slip threshold before particles and skidmarks begin to appear. Lower values make effects trigger sooner.</td></tr>
+<tr><td><code>damp</code></td><td><code>float</code></td><td>1</td><td>Damping force applied to the wheel on this surface.</td></tr>
+<tr><td><code>volume</code></td><td><code>float</code></td><td>1</td><td>Volume of the tire-on-surface sound (range 0 to 1).</td></tr>
+<tr><td><code>groundParticles</code></td><td><code>GameObject</code></td><td>(none)</td><td>Particle prefab to spawn when the wheel slips on this surface (dust, gravel, snow, etc.). Must have or will receive an <code>RCCP_WheelSlipParticles</code> component.</td></tr>
+<tr><td><code>groundSound</code></td><td><code>AudioClip</code></td><td>(none)</td><td>Audio clip played when the wheel rolls on this surface.</td></tr>
+<tr><td><code>skidmark</code></td><td><code>RCCP_Skidmarks</code></td><td>(none)</td><td>Skidmark prefab used to draw tire marks on this surface.</td></tr>
+</table>
+<blockquote>
+<p><strong>Note on PhysicsMaterial vs PhysicMaterial:</strong> In Unity 2023.3 and newer (including Unity 6), the type is <code>PhysicsMaterial</code>. In older versions, it is <code>PhysicMaterial</code>. RCCP handles this automatically with preprocessor directives.</p>
+</blockquote>
+<h3 id='section-4'>Example Configurations</h3>
+<table>
+<tr><th>Surface</th><th>forwardStiffness</th><th>sidewaysStiffness</th><th>slip</th><th>damp</th><th>Particles</th><th>Sound</th></tr>
+<tr><td>Asphalt</td><td>1.0</td><td>1.0</td><td>0.25</td><td>1.0</td><td>None or light smoke</td><td>Tire hum</td></tr>
+<tr><td>Gravel</td><td>0.7</td><td>0.7</td><td>0.15</td><td>0.8</td><td>Gravel dust</td><td>Crunching gravel</td></tr>
+<tr><td>Grass</td><td>0.5</td><td>0.5</td><td>0.1</td><td>0.6</td><td>Grass/dirt particles</td><td>Soft rolling</td></tr>
+<tr><td>Sand</td><td>0.4</td><td>0.4</td><td>0.1</td><td>0.5</td><td>Sand spray</td><td>Sand whoosh</td></tr>
+<tr><td>Ice</td><td>0.15</td><td>0.15</td><td>0.05</td><td>0.3</td><td>None</td><td>Ice scrape</td></tr>
+</table>
+<hr>
+<h2 id='section-5'>Setting Up a New Surface</h2>
+<p>Follow these steps to add a new ground surface type:</p>
+<h3 id='section-6'>Step 1: Create a PhysicMaterial</h3>
+<ol>
+<li>In the Unity Project window, right-click and select <strong>Create &gt; Physic Material</strong> (or <strong>Physics Material</strong> in Unity 6).</li>
+<li>Name it descriptively (for example, <code>PM_Gravel</code>).</li>
+<li>Configure its friction and bounciness values as needed.</li>
+</ol>
+<h3 id='section-7'>Step 2: Assign It to Your Ground Collider</h3>
+<ol>
+<li>Select the ground GameObject in your scene (a MeshCollider, BoxCollider, etc.).</li>
+<li>In the Inspector, find the collider component.</li>
+<li>Drag your new PhysicMaterial into the <strong>Material</strong> field of the collider.</li>
+</ol>
+<h3 id='section-8'>Step 3: Open the Ground Materials Asset</h3>
+<ol>
+<li>Navigate to <code>Assets/Realistic Car Controller Pro/Resources/</code>.</li>
+<li>Select <code>RCCP_GroundMaterials.asset</code>.</li>
+<li>Alternatively, open it from the menu: <strong>Tools &gt; BoneCracker Games &gt; Realistic Car Controller Pro &gt; Configuration &gt; Ground Physics Materials</strong>.</li>
+</ol>
+<h3 id='section-9'>Step 4: Add a New Friction Entry</h3>
+<ol>
+<li>In the Inspector for <code>RCCP_GroundMaterials</code>, find the <strong>Frictions</strong> array.</li>
+<li>Increase the array size by 1.</li>
+<li>In the new entry, assign your PhysicMaterial to the <code>groundMaterial</code> field.</li>
+</ol>
+<h3 id='section-10'>Step 5: Configure the Entry</h3>
+<ol>
+<li>Set <code>forwardStiffness</code> and <code>sidewaysStiffness</code> to control grip.</li>
+<li>Adjust <code>slip</code> to control when visual effects begin.</li>
+<li>Set <code>damp</code> for the surface damping.</li>
+<li>Assign a particle prefab to <code>groundParticles</code> (optional).</li>
+<li>Assign an audio clip to <code>groundSound</code> (optional).</li>
+<li>Assign a skidmark prefab to <code>skidmark</code> (optional).</li>
+</ol>
+<h3 id='section-11'>Step 6: Validate Particle Prefabs</h3>
+<p><code>RCCP_GroundMaterials</code> includes a <code>CheckWheelPrefabsForMissingScript()</code> method that ensures all assigned particle prefabs have the required <code>RCCP_WheelSlipParticles</code> component. This is called automatically, but you can trigger it manually if needed.</p>
+<hr>
+<h2 id='section-12'>Terrain Support</h2>
+<p>RCCP supports Unity Terrains through splatmap-based surface detection. Instead of using a single PhysicMaterial for the entire terrain, the system checks which terrain texture (layer) has the highest weight at each wheel's position and maps it to the corresponding ground material.</p>
+<h3 id='section-13'>How It Works</h3>
+<ol>
+<li>On scene start, <code>RCCP_SceneManager</code> calls <code>GetAllTerrains()</code> to find and cache all <code>Terrain.activeTerrains</code>.</li>
+<li>For each terrain, the following data is cached in a <code>Terrains</code> class:</li>
+</ol>
+<table>
+<tr><th>Field</th><th>Description</th></tr>
+<tr><td><code>terrain</code></td><td>Reference to the Unity Terrain component</td></tr>
+<tr><td><code>mTerrainData</code></td><td>Cached <code>TerrainData</code> for alphamap access</td></tr>
+<tr><td><code>terrainCollider</code></td><td>PhysicMaterial from the terrain's <code>TerrainCollider</code></td></tr>
+<tr><td><code>alphamapWidth</code></td><td>Width of the terrain alphamap in pixels</td></tr>
+<tr><td><code>alphamapHeight</code></td><td>Height of the terrain alphamap in pixels</td></tr>
+<tr><td><code>mSplatmapData</code></td><td>Full alphamap array <code>[x, y, textureIndex]</code></td></tr>
+<tr><td><code>mNumTextures</code></td><td>Number of terrain texture layers</td></tr>
+</table>
+<ol>
+<li>At runtime, each wheel that detects it is on a terrain surface reads the cached splatmap data to find which texture has the highest weight at its world position.</li>
+<li>The <code>TerrainFrictions</code> entries in <code>RCCP_GroundMaterials</code> map terrain layer indexes to PhysicMaterials.</li>
+</ol>
+<h3 id='section-14'>TerrainFrictions Configuration</h3>
+<p>The <code>terrainFrictions</code> array in <code>RCCP_GroundMaterials</code> contains entries with:</p>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>groundMaterial</code></td><td><code>PhysicsMaterial</code></td><td>The PhysicMaterial that this terrain layer maps to. Must match an entry in the <code>frictions</code> array.</td></tr>
+<tr><td><code>splatmapIndexes</code></td><td><code>SplatmapIndexes[]</code></td><td>Array of terrain texture layer indexes that use this PhysicMaterial.</td></tr>
+</table>
+<p>Each <code>SplatmapIndexes</code> entry has a single field:</p>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>index</code></td><td><code>int</code></td><td>The terrain layer index (starting at 0) in the terrain's texture list.</td></tr>
+</table>
+<h3 id='section-15'>Setting Up Terrain Surfaces</h3>
+<ol>
+<li>Open <code>RCCP_GroundMaterials.asset</code>.</li>
+<li>In the <strong>Terrain Frictions</strong> array, add one entry per surface type present on your terrain.</li>
+<li>For each entry:</li>
+</ol>
+<ul>
+<li>Assign the <code>groundMaterial</code> to the PhysicMaterial that also exists in your <code>frictions</code> array.</li>
+<li>Add the splatmap layer indexes that correspond to this surface type. For example, if your terrain's first texture (index 0) is grass, set <code>index = 0</code>.</li>
+</ul>
+<ol>
+<li>Make sure the PhysicMaterial on the TerrainCollider is also present in the <code>frictions</code> array as a fallback.</li>
+</ol>
+<h3 id='section-16'>Example</h3>
+<p>Suppose your terrain has three layers:</p>
+<table>
+<tr><th>Layer Index</th><th>Texture</th><th>Desired Surface</th></tr>
+<tr><td>0</td><td>Grass</td><td>Grass (low grip)</td></tr>
+<tr><td>1</td><td>Dirt Path</td><td>Gravel (medium grip)</td></tr>
+<tr><td>2</td><td>Rock</td><td>Asphalt (high grip)</td></tr>
+</table>
+<p>You would create three <code>terrainFrictions</code> entries, each pointing to the appropriate PhysicMaterial (which must also have a matching entry in the <code>frictions</code> array with particles, sounds, and skidmarks configured).</p>
+<hr>
+<h2 id='section-17'>Skidmarks System</h2>
+<p>Skidmarks are the tire marks left on the ground when wheels slip. RCCP uses a shared manager to handle all skidmark rendering.</p>
+<h3 id='section-18'>Architecture</h3>
+<table>
+<tr><th>Component</th><th>Role</th></tr>
+<tr><td><code>RCCP_SkidmarksManager</code></td><td>Singleton manager. Creates one <code>RCCP_Skidmarks</code> instance per ground material at scene start. Routes wheel slip data to the correct skidmark instance.</td></tr>
+<tr><td><code>RCCP_Skidmarks</code></td><td>The actual skidmark renderer. Uses a ring buffer of <code>MarkSection</code> entries and dynamically builds a mesh. Supports both multithreaded and single-threaded mesh generation.</td></tr>
+</table>
+<h3 id='section-19'>How Skidmarks Are Generated</h3>
+<ol>
+<li><code>RCCP_SkidmarksManager</code> instantiates one <code>RCCP_Skidmarks</code> prefab per entry in the <code>frictions</code> array on Awake.</li>
+<li>When a wheel slips, it calls <code>RCCP_SkidmarksManager.Instance.AddSkidMark()</code> with:</li>
+</ol>
+<ul>
+<li><code>pos</code> -- world position of the mark</li>
+<li><code>normal</code> -- surface normal</li>
+<li><code>intensity</code> -- opacity from 0 (transparent) to 1 (fully visible)</li>
+<li><code>width</code> -- width in meters</li>
+<li><code>lastIndex</code> -- index of the previous section (-1 for a new strip)</li>
+<li><code>groundIndex</code> -- which ground material the wheel is on</li>
+</ul>
+<ol>
+<li>The skidmark prefab builds quad strips from connected sections, stored in a ring buffer with a maximum of <code>maxMarks</code> sections (default 1024).</li>
+</ol>
+<h3 id='section-20'>Skidmark Prefab Settings</h3>
+<p>Each <code>RCCP_Skidmarks</code> prefab on the skidmark GameObject has:</p>
+<table>
+<tr><th>Property</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>maxMarks</code></td><td>1024</td><td>Maximum number of mark sections before the ring buffer wraps</td></tr>
+<tr><td><code>groundOffset</code></td><td>0.02</td><td>Height above the surface in meters to prevent z-fighting</td></tr>
+<tr><td><code>minDistance</code></td><td>0.04</td><td>Minimum distance between consecutive sections. Closer sections are skipped.</td></tr>
+</table>
+<h3 id='section-21'>Cleaning Skidmarks at Runtime</h3>
+<pre><code>
+// Clean all skidmarks in the scene
+RCCP.CleanSkidmarks();
+
+// Clean skidmarks for a specific ground material index
+RCCP.CleanSkidmarks(0); // Cleans skidmarks for the first ground material
+</code></pre>
+<p>These methods call through to <code>RCCP_SkidmarksManager.Instance.CleanSkidmarks()</code>, which resets the mark counter and triggers a mesh rebuild.</p>
+<h3 id='section-22'>Performance Notes</h3>
+<ul>
+<li><code>RCCP_Skidmarks</code> supports <strong>multithreaded mesh generation</strong> when <code>RCCP_SceneManager.multithreadingSupported</code> is true. The vertex, normal, UV, color, and triangle arrays are built on a background thread, then applied to the mesh on the main thread.</li>
+<li>If multithreading is not supported, the <code>DrawRaw()</code> fallback builds the mesh synchronously.</li>
+<li>The ring buffer design (<code>maxMarks</code>) means old skidmarks are automatically overwritten, preventing unlimited memory growth.</li>
+</ul>
+<hr>
+<h2 id='section-23'>Common Issues</h2>
+<h3 id='section-24'>No Skidmarks on a Surface</h3>
+<ul>
+<li>Verify that the <code>skidmark</code> field is assigned in the matching <code>GroundMaterialFrictions</code> entry.</li>
+<li>Confirm that the <code>slip</code> threshold is not set too high. If <code>slip</code> is very large, the wheel may never exceed it.</li>
+<li>Check that the <code>RCCP_SkidmarksManager</code> singleton is present in the scene. It is created automatically, but verify it exists under <code>DontDestroyOnLoad</code>.</li>
+</ul>
+<h3 id='section-25'>Wrong Particles or Sounds on a Surface</h3>
+<ul>
+<li>The most common cause is a mismatch between the PhysicMaterial on the collider and the one in the <code>frictions</code> array. Select the ground collider and verify its <strong>Material</strong> field matches the <code>groundMaterial</code> in the corresponding friction entry.</li>
+<li>If you duplicated a collider, the PhysicMaterial reference may have been lost. Reassign it.</li>
+</ul>
+<h3 id='section-26'>Terrain Surface Not Detected</h3>
+<ul>
+<li><code>RCCP_SceneManager</code> caches terrain data on Awake. If the terrain is instantiated or enabled <strong>after</strong> the scene starts, the cache will be empty. Make sure all terrains are active before play mode begins.</li>
+<li>Verify that the terrain layer indexes in <code>terrainFrictions[].splatmapIndexes</code> match the actual layer order in your Terrain's texture list.</li>
+<li>Check that <code>RCCP_SceneManager.Instance.terrainsInitialized</code> is <code>true</code> at runtime.</li>
+</ul>
+<h3 id='section-27'>Particles Do Not Appear</h3>
+<ul>
+<li>Ensure the <code>groundParticles</code> prefab is assigned in the friction entry.</li>
+<li>The prefab must have or will automatically receive an <code>RCCP_WheelSlipParticles</code> component. If the prefab is missing a ParticleSystem, no particles will be visible.</li>
+<li>Check that the particle prefab's emission settings and lifetime are configured to actually produce visible particles.</li>
+</ul>
+<h3 id='section-28'>Skidmarks Flicker or Z-Fight</h3>
+<ul>
+<li>Increase the <code>groundOffset</code> value on the <code>RCCP_Skidmarks</code> prefab. The default of 0.02 meters works for most surfaces, but very uneven terrain may need a higher value.</li>
+</ul>
+<hr>
+<h2 id='section-29'>Related Topics</h2>
+<ul>
+<li><a href='03_vehicle_setup.html'>Vehicle Setup</a> -- configuring wheels that interact with ground materials</li>
+<li><a href='04_settings.html'>Settings</a> -- global settings that reference the ground materials asset</li>
+<li><a href='09_camera_system.html'>Camera System</a> -- camera behavior over different surfaces</li>
+<li><a href='02_architecture.html'>Architecture</a> -- how singletons like <code>RCCP_GroundMaterials</code> and <code>RCCP_SkidmarksManager</code> are loaded</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> bonecrackergames@gmail.com | <a href='https://www.bonecrackergames.com'>www.bonecrackergames.com</a></p>
+<p><strong>Need help?</strong> See <a href='25_troubleshooting.html'>Troubleshooting</a></p>
+</div></body></html>

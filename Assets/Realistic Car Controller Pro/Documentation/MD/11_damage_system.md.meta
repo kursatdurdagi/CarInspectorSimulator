@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ea1b78bb21459b94c9b0119c1e062d13
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178967
+  packageName: Realistic Car Controller Pro
+  packageVersion: 2.41.1
+  assetPath: Assets/Realistic Car Controller Pro/Documentation/MD/11_damage_system.md
+  uploadId: 912608
